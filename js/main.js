@@ -57,6 +57,8 @@
     if (MOBILE()) {
       hero.style.height = '';
       band.style.removeProperty('--grass-top');
+      band.style.removeProperty('--grass-full');
+      root.style.setProperty('--grass-drop', '0px');
       band.style.setProperty('--grass-ease', '0px');
       band.classList.remove('is-landed');
       L.heroH = hero.offsetHeight;
@@ -66,6 +68,10 @@
     L.heroH = Math.round((FEET_Y - 19) * scale + L.visible);
     hero.style.height = L.heroH + 'px';
     band.style.setProperty('--grass-top', (L.heroH - L.visible) + 'px');
+    band.style.setProperty('--grass-full', Math.round(L.bandH) + 'px');
+    // ao aterrar o relvado revela a imagem toda; a diferenca empurra
+    // a seccao dos works (e as seguintes) para baixo
+    root.style.setProperty('--grass-drop', Math.round(L.bandH - L.visible) + 'px');
     L.stop = L.heroH - L.vh;
   }
 
@@ -287,11 +293,17 @@
       if (n % 2) n++;                              // par: o xadrez fecha certo
       var sq = w / n;
       el.style.setProperty('--sq', sq + 'px');
-      el.style.padding = (sq * 2) + 'px';
+      el.style.padding = (sq * 2) + 'px';       // anel de 2 quadrados, igual dos 4 lados
+      // o resto para a altura fechar num numero inteiro de quadrados vai
+      // para o conteudo, nao para a moldura
+      var inner = el.firstElementChild;
+      if (!inner) return;
+      inner.style.paddingBottom = '';
+      var base = parseFloat(getComputedStyle(inner).paddingBottom) || 0;
       for (var pass = 0; pass < 2; pass++) {
         var h = el.offsetHeight;
         var extra = Math.ceil(h / (sq * 2)) * (sq * 2) - h;
-        el.style.paddingBottom = (sq * 2 + extra) + 'px';
+        inner.style.paddingBottom = (base + extra) + 'px';
       }
     });
   }
@@ -299,8 +311,8 @@
   /* ---------------------------------------------------------
      7. MATTER.JS — sol e smiley
      --------------------------------------------------------- */
-  var physics = { engine: null, items: [], world: null, active: false };
-  function glyphs() { return [].slice.call(document.querySelectorAll('#physics .pix')); }
+  var scenes = [];
+  function glyphs() { return [].slice.call(document.querySelectorAll('.physics .pix')); }
 
   function placeGlyphs() {
     glyphs().forEach(function (el) {
@@ -313,42 +325,48 @@
   }
 
   function buildPhysics() {
-    if (typeof Matter === 'undefined' || !hero || MOBILE()) return;
+    if (typeof Matter === 'undefined' || MOBILE()) return;
     var Engine = Matter.Engine, World = Matter.World, Bodies = Matter.Bodies;
-    physics.engine = Engine.create();
-    physics.engine.gravity.x = 0; physics.engine.gravity.y = 0;
-    physics.world = physics.engine.world;
-
-    var W = hero.clientWidth, H = hero.clientHeight, t = 400;
-    World.add(physics.world, [
-      Bodies.rectangle(W / 2, -t / 2, W + t * 2, t, { isStatic: true }),
-      Bodies.rectangle(W / 2, H + t / 2, W + t * 2, t, { isStatic: true }),
-      Bodies.rectangle(-t / 2, H / 2, t, H + t * 2, { isStatic: true }),
-      Bodies.rectangle(W + t / 2, H / 2, t, H + t * 2, { isStatic: true })
-    ]);
-
     sunItem = null;
-    physics.items = glyphs().map(function (el) {
-      var r = el.getBoundingClientRect();
-      var w = r.width || parseFloat(el.dataset.w) * scale;
-      var h = r.height || parseFloat(el.dataset.h) * scale;
-      var body = Bodies.rectangle(
-        parseFloat(el.dataset.x) * scale, parseFloat(el.dataset.y) * scale, w, h,
-        { restitution: 0.62, frictionAir: 0.035, friction: 0.05, density: 0.0015,
-          angle: (parseFloat(el.dataset.rot) || 0) * Math.PI / 180 });
-      World.add(physics.world, body);
-      el.style.width = w + 'px'; el.style.height = h + 'px'; el.style.transformOrigin = 'center';
-      var item = { el: el, body: body, w: w, h: h };
-      if (el.textContent.trim() === 'X') sunItem = item;
-      return item;
-    });
+    scenes = [];
 
-    attachDrag();
-    physics.active = true;
+    [].slice.call(document.querySelectorAll('.physics')).forEach(function (host) {
+      var box = host.getBoundingClientRect();
+      var W = box.width, H = box.height;
+      if (!W || !H) return;
+
+      var engine = Engine.create();
+      engine.gravity.x = 0; engine.gravity.y = 0;   // ficam parados ate lhes tocarem
+      var world = engine.world, t = 400;
+      World.add(world, [
+        Bodies.rectangle(W / 2, -t / 2, W + t * 2, t, { isStatic: true }),
+        Bodies.rectangle(W / 2, H + t / 2, W + t * 2, t, { isStatic: true }),
+        Bodies.rectangle(-t / 2, H / 2, t, H + t * 2, { isStatic: true }),
+        Bodies.rectangle(W + t / 2, H / 2, t, H + t * 2, { isStatic: true })
+      ]);
+
+      var items = [].slice.call(host.querySelectorAll('.pix')).map(function (el) {
+        var r = el.getBoundingClientRect();
+        var w = r.width || parseFloat(el.dataset.w) * scale;
+        var h = r.height || parseFloat(el.dataset.h) * scale;
+        var body = Bodies.rectangle(
+          parseFloat(el.dataset.x) * scale, parseFloat(el.dataset.y) * scale, w, h,
+          { restitution: 0.62, frictionAir: 0.035, friction: 0.05, density: 0.0015,
+            angle: (parseFloat(el.dataset.rot) || 0) * Math.PI / 180 });
+        World.add(world, body);
+        el.style.width = w + 'px'; el.style.height = h + 'px'; el.style.transformOrigin = 'center';
+        var item = { el: el, body: body, w: w, h: h };
+        if (el.textContent.trim() === 'X') sunItem = item;
+        return item;
+      });
+
+      scenes.push({ host: host, engine: engine, world: world, items: items, active: true });
+      attachDrag(items);
+    });
   }
 
-  function attachDrag() {
-    physics.items.forEach(function (it) {
+  function attachDrag(list) {
+    list.forEach(function (it) {
       if (it.el.dataset.drag) return;
       it.el.dataset.drag = '1';
       var last = null, lastT = 0, vx = 0, vy = 0, offX = 0, offY = 0, dragging = false;
@@ -386,20 +404,27 @@
     });
   }
 
-  function renderPhysics() {
-    for (var i = 0; i < physics.items.length; i++) {
-      var it = physics.items[i], p = it.body.position;
-      it.el.style.transform = 'translate3d(' + (p.x - it.w / 2) + 'px,' + (p.y - it.h / 2) + 'px,0) rotate(' + it.body.angle + 'rad)';
+  function stepPhysics() {
+    for (var s = 0; s < scenes.length; s++) {
+      var sc = scenes[s];
+      var b = sc.host.getBoundingClientRect();
+      if (b.bottom < -200 || b.top > window.innerHeight + 200) continue;   // fora de vista
+      Matter.Engine.update(sc.engine, 1000 / 60);
+      for (var i = 0; i < sc.items.length; i++) {
+        var it = sc.items[i], p = it.body.position;
+        it.el.style.transform = 'translate3d(' + (p.x - it.w / 2) + 'px,' + (p.y - it.h / 2) + 'px,0) rotate(' + it.body.angle + 'rad)';
+      }
     }
     litUpdate();
   }
 
   function destroyPhysics() {
-    if (!physics.world) return;
-    Matter.World.clear(physics.world, false);
-    Matter.Engine.clear(physics.engine);
-    physics.items.forEach(function (it) { it.el.style.transform = ''; });
-    physics.items = []; physics.active = false; sunItem = null;
+    scenes.forEach(function (sc) {
+      Matter.World.clear(sc.world, false);
+      Matter.Engine.clear(sc.engine);
+      sc.items.forEach(function (it) { it.el.style.transform = ''; });
+    });
+    scenes = []; sunItem = null;
   }
 
   /* ---------------------------------------------------------
@@ -430,26 +455,6 @@
     }
     rider.addEventListener('pointerup', back);
     rider.addEventListener('pointercancel', back);
-  }
-
-  /* ---------------------------------------------------------
-     9. PASTA DOS WORKS — abre e fecha ao passar o rato
-     --------------------------------------------------------- */
-  function folderToy() {
-    var f = document.querySelector('.works__folder');
-    if (!f) return;
-    var OPEN = '\\', SHUT = '[', timer = null, flip = false;
-    f.addEventListener('pointerenter', function () {
-      if (timer) return;
-      timer = setInterval(function () { flip = !flip; f.textContent = flip ? SHUT : OPEN; }, 240);
-    });
-    f.addEventListener('pointerleave', function () {
-      clearInterval(timer); timer = null; flip = false; f.textContent = OPEN;
-    });
-    f.addEventListener('click', function () {
-      var c = document.querySelector('.card');
-      if (c) window.scrollTo({ top: c.getBoundingClientRect().top + window.scrollY - L.vh * 0.12, behavior: 'smooth' });
-    });
   }
 
   /* ---------------------------------------------------------
@@ -521,7 +526,9 @@
     scene();
     stackScroll();
     updateWipe();
-    if (physics.active && heroVisible) { Matter.Engine.update(physics.engine, 1000 / 60); renderPhysics(); }
+    if (scenes.length) stepPhysics();
+    navSpyUpdate();
+    animSpeed();
     requestAnimationFrame(tick);
   }
 
@@ -536,17 +543,49 @@
     }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
     targets.forEach(function (t) { io.observe(t); });
   }
-  function navSpy() {
-    var links = [].slice.call(document.querySelectorAll('.nav__links a'));
-    var sections = links.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
-    if (!sections.length || !('IntersectionObserver' in window)) return;
-    var io = new IntersectionObserver(function (en) {
-      en.forEach(function (x) {
-        if (!x.isIntersecting) return;
-        links.forEach(function (a) { a.classList.toggle('is-active', a.getAttribute('href') === '#' + x.target.id); });
-      });
-    }, { threshold: 0.4 });
-    sections.forEach(function (s) { io.observe(s); });
+  /* O IntersectionObserver nao servia: a seccao dos works tem varias telas
+     de altura e nunca chega a 40% visivel, por isso a linha ficava presa no
+     "home". Passa a ser pela posicao do scroll. */
+  var spy = [], spyLast = null;
+  function navSpyBuild() {
+    spy = [].slice.call(document.querySelectorAll('.nav__links a')).map(function (a) {
+      var el = document.querySelector(a.getAttribute('href'));
+      return el ? { a: a, el: el, top: 0 } : null;
+    }).filter(Boolean);
+    navSpyMeasure();
+  }
+  function navSpyMeasure() {
+    spy.forEach(function (x) { x.top = x.el.getBoundingClientRect().top + window.scrollY; });
+  }
+  function navSpyUpdate() {
+    if (!spy.length) return;
+    var y = window.scrollY + window.innerHeight * 0.35, best = spy[0];
+    for (var i = 0; i < spy.length; i++) if (y >= spy[i].top) best = spy[i];
+    if (best === spyLast) return;
+    spyLast = best;
+    spy.forEach(function (x) { x.a.classList.toggle('is-active', x === best); });
+  }
+
+  /* ---------------------------------------------------------
+     ANIMACAO DO HERO — abranda com o rato por cima
+     --------------------------------------------------------- */
+  var animCanvas = document.getElementById('linha-pixel');
+  var animTarget = 1, animNow = 1;
+  function animHover() {
+    if (!hero || !animCanvas) return;
+    hero.addEventListener('pointermove', function (e) {
+      var r = animCanvas.getBoundingClientRect();
+      var inside = e.clientX >= r.left && e.clientX <= r.right &&
+                   e.clientY >= r.top  && e.clientY <= r.bottom;
+      animTarget = inside ? 0.18 : 1;
+    });
+    hero.addEventListener('pointerleave', function () { animTarget = 1; });
+  }
+  function animSpeed() {
+    if (!animCanvas || !animCanvas.setAnimSpeed) return;
+    if (Math.abs(animTarget - animNow) < 0.004) return;
+    animNow += (animTarget - animNow) * 0.07;
+    animCanvas.setAnimSpeed(animNow);
   }
 
   /* ---------------------------------------------------------
@@ -560,7 +599,7 @@
       destroyPhysics(); placeGlyphs();
       if (!REDUCED) buildPhysics();
       buildWipe(); buildNavPix(); fitFrames(); stackLayout(); stackScroll();
-      cacheLit(); scene(); updateWipe();
+      navSpyMeasure(); cacheLit(); scene(); updateWipe();
     }, 180);
   });
 
@@ -574,8 +613,8 @@
     buildWipe();
     buildNavPix();
     reveals();
-    navSpy();
-    folderToy();
+    navSpyBuild();
+    animHover();
     riderDrag();
     fitFrames();
     stackLayout();
@@ -586,8 +625,8 @@
     scene();
     updateWipe();
     requestAnimationFrame(tick);
-    window.addEventListener('load', function () { layout(); fitFrames(); stackLayout(); cacheLit(); });
-    setTimeout(function () { layout(); fitFrames(); stackLayout(); cacheLit(); }, 500);
+    window.addEventListener('load', function () { layout(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); });
+    setTimeout(function () { layout(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); }, 500);
   }
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(start).catch(start);

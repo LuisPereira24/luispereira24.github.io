@@ -8,6 +8,8 @@
 
   function PixelAnim(OUT, SVG_SOURCE, CFG) {
     if (!OUT) return;
+    // permite abrandar/acelerar de fora (ex.: rato por cima do hero)
+    OUT.setAnimSpeed = function (v) { CFG.speed = v; };
 
 const ANIM_TAGS = /^(set|animate|animateTransform|animateMotion)$/i; const NUM = /-?\d*\.?\d+(?:e[-+]?\d+)?/gi;
 const COLOR_PROPS = ["fill","stroke"];

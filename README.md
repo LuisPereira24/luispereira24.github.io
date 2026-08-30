@@ -115,9 +115,10 @@ aleatório, mais denso junto às pontas. Ao passar o rato, os pixéis num raio d
 1 pixel do canvas = 1 quadrado (`image-rendering: pixelated`).
 
 **Molduras xadrez.** `fitFrames()` calcula o lado do quadrado como
-`largura / N` (N inteiro) e arredonda a altura para um múltiplo exacto desse
-lado, por isso nunca fica meio quadrado nas extremidades. Corre no arranque,
-no `load` e em cada resize.
+`largura / N` (N par) e dá à moldura um anel de exactamente 2 quadrados nos
+quatro lados. O resto que falta para a altura fechar num número inteiro de
+quadrados vai para o `padding-bottom` do **conteúdo**, não da moldura — por
+isso a margem em baixo nunca engorda. Corre no arranque, no `load` e no resize.
 
 **Animações.** `js/pixel-anim.js` é o motor exportado dos teus ficheiros do
 gerador (`LinhaPIXEL.html` e `CirculoPIXEL.html`): WebGL com mosaico +

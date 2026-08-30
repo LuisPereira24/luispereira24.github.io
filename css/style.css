@@ -135,14 +135,18 @@ a{ color: inherit; text-decoration: none; }
   bottom: 0;
   width: 100%;
   height: var(--grass-h, 20vh);
-  z-index: 5;
+  transition: height .55s cubic-bezier(.2,.85,.25,1);
+  z-index: 20;
   pointer-events: none;
   transform: translate3d(0, var(--grass-ease, 0px), 0);
   will-change: transform;
 }
 /* quando o boneco chega a altura do PORTUGAL o relvado deixa de estar preso
    ao ecra e passa a acompanhar a pagina. A travagem e amortecida em scene(). */
-.grassband.is-landed{ position: absolute; bottom: auto; top: var(--grass-top, 0px); }
+.grassband.is-landed{
+  position: absolute; bottom: auto; top: var(--grass-top, 0px);
+  height: var(--grass-full, var(--grass-h));     /* ao aterrar revela a imagem toda */
+}
 /* so a faixa de topo do relvado aparece — tambem depois de aterrar,
    para nao tapar o titulo da seccao WORKS */
 .grassband__clip{ position: absolute; inset: 0; overflow: hidden; }
@@ -260,6 +264,7 @@ a{ color: inherit; text-decoration: none; }
 
 /* ---------- Matter.js ---------- */
 .physics{ position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.physics--works{ z-index: 5; }
 .pix{
   position: absolute;
   left: 0; top: 0;
@@ -315,14 +320,16 @@ a{ color: inherit; text-decoration: none; }
 /* ============================= WORKS ============================= */
 .works{
   position: relative;
-  z-index: 1;
   background: var(--olive);
-  padding: calc(145 * var(--s)) 0 calc(160 * var(--s));
+  /* --grass-drop e o que o relvado cresce ao aterrar: empurra tudo para baixo */
+  padding: calc(var(--grass-drop, 0px) + 145 * var(--s)) 0 calc(160 * var(--s));
 }
 .works__head{
-  display: flex; align-items: center; justify-content: space-between;
+  position: relative;
+  height: calc(240 * var(--s));
   padding: 0 calc(160 * var(--s));
 }
+.works__title{ position: absolute; left: calc(160 * var(--s)); top: calc(30 * var(--s)); }
 .works__title{
   margin: 0;
   font-size: calc(96.175 * var(--s));
@@ -352,23 +359,20 @@ a{ color: inherit; text-decoration: none; }
   transform: translate3d(0, 100vh, 0) rotate(var(--tilt));
   will-change: transform;
 }
-.card:nth-of-type(1){ z-index: 1; }
-.card:nth-of-type(2){ z-index: 2; }
-.card:nth-of-type(3){ z-index: 3; }
+.card:nth-of-type(1){ z-index: 6; }
+.card:nth-of-type(2){ z-index: 7; }
+.card:nth-of-type(3){ z-index: 8; }
 
-/* animacao circular: grande, encostada a direita, por tras dos cards */
+/* animacao circular: sobe pela seccao dos works (por tras dos cards, z 6-8)
+   e desce o suficiente para roçar a foto do about (z 4 > conteudo do about) */
 .circanim{
   position: absolute;
-  z-index: 0;
-  left: 50%;
-  top: 50%;
-  width: calc(2847 * var(--s));
-  height: calc(1601 * var(--s));
+  z-index: 4;
+  right: calc(-780 * var(--s));
+  top: calc(-900 * var(--s));
+  width: calc(2500 * var(--s));
+  height: calc(1406 * var(--s));
   max-width: none;                        /* escapa ao max-width:100% global */
-  /* o circulo esta no centro do canvas: empurra-se o centro para baixo
-     e para a direita, de modo a passar por tras dos cards e assomar
-     no canto inferior direito */
-  transform: translate(calc(-50% + 620 * var(--s)), calc(-50% + 420 * var(--s)));
   image-rendering: pixelated;
   pointer-events: none;
 }
@@ -432,7 +436,6 @@ a{ color: inherit; text-decoration: none; }
 /* ============================= ABOUT ============================= */
 .about{
   position: relative;
-  z-index: 1;
   background: var(--olive);
   padding: calc(120 * var(--s)) calc(160 * var(--s)) calc(200 * var(--s));
 }
@@ -500,7 +503,6 @@ a{ color: inherit; text-decoration: none; }
 /* ============================= CONTACT ============================= */
 .contact{
   position: relative;
-  z-index: 1;
   background: var(--brown);
   padding: calc(160 * var(--s));
   min-height: calc(721 * var(--s));
@@ -545,13 +547,15 @@ a{ color: inherit; text-decoration: none; }
   .nav__pix{ width: 40px; height: 52px; }
 
   .works{ padding: 80px 0 60px; }
-  .works__head{ padding: 0 6vw; }
+  .works__head{ padding: 0 6vw; height: auto; }
+  .works__title{ position: static; }
+  .physics--works{ display: none; }
   .works__title, .works__folder, .about__title{ font-size: clamp(34px, 10vw, 64px); }
   .stack{ padding: 0 6vw; margin-top: 32px; height: auto !important; }
   .stack__pin{ position: static; height: auto; }
   .card{ position: static; margin-bottom: 40px; transform: rotate(var(--tilt)) !important; }
-  .circanim{ position: relative; left: auto; top: auto; transform: none; max-width: none;
-             width: 150vw; height: 84vw; margin: 4px 0 20px -25vw; }
+  .circanim{ position: relative; right: auto; top: auto; max-width: none;
+             width: 150vw; height: 84vw; margin: 4px 0 20px -25vw; z-index: 0; }
   .card__inner{ grid-template-columns: 1fr; gap: 24px; padding: 28px 24px 32px; }
   .card__title{ font-size: clamp(44px, 13vw, 90px); margin-bottom: 12px; }
   .card__text{ font-size: 17px; margin-bottom: 16px; }
