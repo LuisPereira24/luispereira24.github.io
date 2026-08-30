@@ -60,11 +60,25 @@ o site usa `image-rendering: pixelated`, por isso pixel a pixel importa):
 | `work-alphahike.png` | mockup 1600×900 | card ALPHAHIKE |
 | `circ-anim.webm` | a animação circular (`CIRCanimPIXEL`) | secção WORKS |
 
-E, se possível, a fonte **Mister Pixel 16 pt – ToolsOne** convertida para
-`assets/fonts/MisterPixel.woff2` (<https://cloudconvert.com/ttf-to-woff2>).
-É a fonte dos glifos `X` (sol), `D` (smiley), `L` (boneco) e da seta dos botões.
-Enquanto não estiver lá, o site usa a versão instalada no teu Windows — vê-se
-bem a ti, mas não a quem visitar o site.
+### Fonte dos pictogramas — já instalada
+
+`assets/fonts/MisterPixel.woff2` é a **Mister Pixel 16 pt – ToolsOne**, servida
+pelo próprio site (já não depende do que está instalado no Windows de quem
+visita). `MisterPixelRegular.woff2` é o alfabeto da mesma família, disponível
+sob `font-family: 'MisterPixelText'` caso venhas a precisar.
+
+Mapa dos glifos que interessam (basta escrever a letra num elemento com
+`class="pix-font"`):
+
+| Escreves | Aparece | | Escreves | Aparece |
+|---|---|---|---|---|
+| `X` | sol | | `\` | pasta aberta |
+| `D` | smiley a piscar | | `[` | pasta fechada |
+| `A` | smiley | | `_` | visto |
+| `L` | boneco | | `~` | seta (aponta à esquerda — espelha com `scaleX(-1)`) |
+| `M` | boneca | | `V` | coração |
+| `Q` | relógio | | `Y` | caixote do lixo |
+| `T` | lâmpada | | `]` `^` | lupa + / − |
 
 ---
 

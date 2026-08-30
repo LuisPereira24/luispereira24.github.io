@@ -27,11 +27,20 @@
   --hand-axes: "ELGR" 1, "ELSH" 2;
 }
 
+/* Mister Pixel 16 pt — ToolsOne: os pictogramas.
+   X = sol · D = smiley · L = boneco · \\ = pasta · ~ = seta (espelhada no CSS)
+   _ = visto · [ = pasta fechada · V = coração · Y = caixote */
 @font-face{
   font-family: 'MisterPixel';
-  src: local('Mister Pixel 16 pt - ToolsOne'),
-       local('Mister Pixel 16 pt'),
-       url('../assets/fonts/MisterPixel.woff2') format('woff2');
+  src: url('../assets/fonts/MisterPixel.woff2') format('woff2'),
+       local('Mister Pixel 16 pt - ToolsOne');
+  font-display: swap;
+}
+/* Mister Pixel 16 pt — Regular: o alfabeto, caso venhas a precisar */
+@font-face{
+  font-family: 'MisterPixelText';
+  src: url('../assets/fonts/MisterPixelRegular.woff2') format('woff2'),
+       local('Mister Pixel 16 pt - Regular');
   font-display: swap;
 }
 
@@ -360,8 +369,9 @@ a{ color: inherit; text-decoration: none; }
   line-height: .83;
   color: var(--olive);
 }
-.btn__arrow{ transition: transform .2s steps(3); }
-.btn:hover .btn__arrow{ transform: translateX(calc(20 * var(--s))); }
+/* a seta da ToolsOne aponta para a esquerda; espelhamos */
+.btn__arrow{ display: inline-block; transform: scaleX(-1); transition: transform .2s steps(3); }
+.btn:hover .btn__arrow{ transform: scaleX(-1) translateX(calc(-20 * var(--s))); }
 
 /* ============================= ABOUT ============================= */
 .about{
