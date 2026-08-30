@@ -77,9 +77,25 @@
         pela mesma ordem, revelando o painel que trocou a meio.
      --------------------------------------------------------- */
   var COLS = 18, ROWS = 9, DISPERSAO = 0.35;
-  var wipe = { el: null, cells: [], order: [], state: [], live: false };
+  var wipe = { el: null, cells: [], order: [], state: [], live: false, key: '' };
+
+  // 18 x 9 no ecra largo (16:9 da quadrados praticamente certos). Em retrato
+  // recalcula-se para as celulas continuarem quadradas em vez de tiras altas.
+  function wipeGrid() {
+    var vw = root.clientWidth, vh = window.innerHeight;
+    if (vw >= 861) return { c: 18, r: 9 };
+    var c = 8;
+    return { c: c, r: Math.max(6, Math.min(30, Math.round(c * vh / vw))) };
+  }
 
   function buildWipe() {
+    var g = wipeGrid();
+    COLS = g.c; ROWS = g.r;
+    var key = COLS + 'x' + ROWS;
+    if (wipe.el && wipe.key === key) return;
+    if (wipe.el) wipe.el.remove();
+    wipe.cells = []; wipe.order = []; wipe.state = []; wipe.live = false; wipe.key = key;
+
     var el = document.createElement('div');
     el.className = 'pxwipe-grid';
     el.style.gridTemplateColumns = 'repeat(' + COLS + ',1fr)';
@@ -375,7 +391,7 @@
     resizeT = setTimeout(function () {
       setScale(); destroyPhysics(); placeGlyphs();
       if (!REDUCED) buildPhysics();
-      buildNavPix(); fitFrames(); scene(); updateWipe();
+      buildWipe(); buildNavPix(); fitFrames(); scene(); updateWipe();
     }, 180);
   });
 
