@@ -16,62 +16,31 @@ assets/
 
 ---
 
-## 1. Pôr isto online no GitHub Pages
+## 1. Online
 
-### 1.1 Instalar o Git (uma vez)
-1. Descarrega o **Git for Windows**: <https://git-scm.com/download/win>
-2. Instala com as opções por omissão.
-3. Abre o **Git Bash** e identifica-te:
-   ```bash
-   git config --global user.name "Luis Pereira"
-   git config --global user.email "o-teu-email@exemplo.com"
-   ```
+**https://luispereira24.github.io**
 
-### 1.2 Criar o repositório no GitHub
-1. <https://github.com/new>
-2. **Repository name:**
-   - `SEU-USERNAME.github.io` → o site fica em `https://SEU-USERNAME.github.io`
-     (recomendado para um portfólio pessoal)
-   - ou `portfolio` → fica em `https://SEU-USERNAME.github.io/portfolio/`
-3. **Public**. Não marques "Add a README" (já existe um aqui).
-4. `Create repository`.
+Repositório: `LuisPereira24/luispereira24.github.io` (público, branch `main`,
+GitHub Pages a servir da raiz). Esta pasta **é** o repositório — já tem `.git`
+e o remote `origin` configurado.
 
-### 1.3 Enviar os ficheiros
-No Git Bash, dentro desta pasta:
+### Actualizar
+O Claude faz o commit e o push a partir daqui. Para fazeres tu, precisas do
+**Git for Windows** (<https://git-scm.com/download/win>) e depois, no Git Bash:
 
 ```bash
 cd "/d/1 PHOTOSHOP/Portfolio/PORTFOLIO - LUIS"
-git init
-git add .
-git commit -m "primeira versao do portfolio"
-git branch -M main
-git remote add origin https://github.com/SEU-USERNAME/SEU-REPO.git
-git push -u origin main
-```
-
-Na primeira vez o Git pede autenticação — abre uma janela do browser, faz login
-no GitHub e autoriza.
-
-### 1.4 Ligar o GitHub Pages
-1. No repositório → **Settings** → **Pages** (menu da esquerda).
-2. **Source:** `Deploy from a branch`
-3. **Branch:** `main` · **Folder:** `/ (root)` → **Save**
-4. Ao fim de ~1 minuto o URL aparece no topo dessa página.
-
-> O ficheiro `.nojekyll` já está incluído — impede o GitHub de ignorar
-> pastas começadas por `_` e evita surpresas.
-
-### 1.5 Actualizações seguintes
-```bash
 git add .
 git commit -m "o que mudou"
 git push
 ```
 
-### 1.6 Domínio próprio (opcional)
-Settings → Pages → **Custom domain** → escreve `luispereira.pt` → Save.
-No registrar do domínio cria um `CNAME` de `www` para `SEU-USERNAME.github.io`
-e registos `A` para `185.199.108.153`, `185.199.109.153`, `185.199.110.153`,
+O site actualiza sozinho ~1 minuto depois do push.
+
+### Domínio próprio (quando quiseres)
+Settings → Pages → **Custom domain** → `luispereira.pt` → Save.
+No registrar: `CNAME` de `www` para `luispereira24.github.io` e registos `A`
+para `185.199.108.153`, `185.199.109.153`, `185.199.110.153`,
 `185.199.111.153`. Depois liga **Enforce HTTPS**.
 
 ---
