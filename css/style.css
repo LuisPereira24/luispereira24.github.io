@@ -350,7 +350,7 @@ a{ color: inherit; text-decoration: none; }
    por scroll (stackScroll() no main.js). O card mais recente fica centrado
    e os anteriores empilham-se 240u acima, saindo por cima do ecra. */
 .stack{ padding: 0 calc(160 * var(--s)); position: relative; }
-.stack__pin{ position: sticky; top: 0; height: 100vh; }
+.stack__pin{ position: sticky; top: 0; height: 100vh; z-index: 6; }
 
 .card{
   position: absolute;
@@ -358,19 +358,23 @@ a{ color: inherit; text-decoration: none; }
   transform: translate3d(0, 100vh, 0) rotate(var(--tilt));
   will-change: transform;
 }
-.card:nth-of-type(1){ z-index: 6; }
-.card:nth-of-type(2){ z-index: 7; }
-.card:nth-of-type(3){ z-index: 8; }
+.card:nth-of-type(1){ z-index: 1; }
+.card:nth-of-type(2){ z-index: 2; }
+.card:nth-of-type(3){ z-index: 3; }
 
 /* animacao circular: sobe pela seccao dos works (por tras dos cards, z 6-8)
    e desce o suficiente para roçar a foto do about (z 4 > conteudo do about) */
 .circanim{
   position: absolute;
   z-index: 4;
-  right: calc(-780 * var(--s));
-  top: calc(-900 * var(--s));
-  width: calc(2500 * var(--s));
-  height: calc(1406 * var(--s));
+  /* Composicao do Figma (no 64:175 "CIRCanimPIXEL 1"): anel grande, encostado
+     a direita, a subir por tras dos cards e a cruzar a foto do about. O
+     diametro esta limitado a ~830 unidades porque acima de ~2800px de
+     largura o Chromium deixa de rasterizar o canvas ampliado por inteiro. */
+  right: calc(-1100 * var(--s));
+  top: calc(-747 * var(--s));
+  width: calc(2800 * var(--s));
+  height: calc(1575 * var(--s));
   max-width: none;                        /* escapa ao max-width:100% global */
   image-rendering: pixelated;
   pointer-events: none;
