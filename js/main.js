@@ -362,48 +362,6 @@
   }
 
   /* ---------------------------------------------------------
-     5c. TOOLKIT — a folha reage ao rato como papel
-        Inclina-se na direccao do cursor, levanta-se um pouco e baloica
-        devagar enquanto o rato la esta; ao sair volta ao lugar com mola.
-     --------------------------------------------------------- */
-  var paper = document.getElementById('paper');
-  var tilt = { rx: 0, ry: 0, up: 0, tx: 0, ty: 0, tup: 0, t: 0 };
-
-  function paperTilt() {
-    if (!paper) return;
-    paper.addEventListener('pointermove', function (e) {
-      var r = paper.getBoundingClientRect();
-      var nx = (e.clientX - r.left) / r.width - 0.5;    // -0.5 .. 0.5
-      var ny = (e.clientY - r.top) / r.height - 0.5;
-      tilt.tx = -ny * 5.5;                              // rotateX
-      tilt.ty = nx * 7;                                 // rotateY
-      tilt.tup = 1;
-    });
-    paper.addEventListener('pointerleave', function () {
-      tilt.tx = 0; tilt.ty = 0; tilt.tup = 0;
-    });
-  }
-
-  function stepPaper() {
-    if (!paper) return;
-    var k = 0.09;
-    var dx = tilt.tx - tilt.rx, dy = tilt.ty - tilt.ry, du = tilt.tup - tilt.up;
-    var moving = Math.abs(dx) > 0.002 || Math.abs(dy) > 0.002 || Math.abs(du) > 0.002;
-    if (!moving && tilt.up < 0.01) return;
-    tilt.rx += dx * k; tilt.ry += dy * k; tilt.up += du * k;
-    tilt.t += 0.028;
-    var sway = tilt.up * Math.sin(tilt.t) * 0.55;       // baloico lento, em graus
-    paper.style.transform =
-      'perspective(' + Math.round(2200 * scale) + 'px)' +
-      ' rotateX(' + tilt.rx.toFixed(2) + 'deg)' +
-      ' rotateY(' + tilt.ry.toFixed(2) + 'deg)' +
-      ' rotate(' + sway.toFixed(2) + 'deg)' +
-      ' translateY(' + (-12 * scale * tilt.up).toFixed(1) + 'px)' +
-      ' scale(' + (1 + 0.01 * tilt.up).toFixed(4) + ')';
-    paper.classList.toggle('is-lifted', tilt.up > 0.35);
-  }
-
-  /* ---------------------------------------------------------
      6. MOLDURAS XADREZ (anel de 2 quadrados, sem cortes)
      --------------------------------------------------------- */
   function fitFrames() {
@@ -648,7 +606,6 @@
   function tick() {
     scene();
     stepDither();
-    stepPaper();
     stackScroll();
     updateWipe();
     if (scenes.length) stepPhysics();
@@ -738,7 +695,6 @@
     navSpyBuild();
     animHover();
     riderDrag();
-    paperTilt();
     fitFrames();
     stackLayout();
     stackScroll();

@@ -137,22 +137,24 @@ posterize sobre um SVG animado. `PixelAnim(canvas, svg, cfg)` — os pontos de
 ligação são `<canvas id="linha-pixel">` e `<canvas id="circ-pixel">`. Ambas
 estão forçadas a `#FFE47B`.
 
-**About e Toolkit.** O about passou a bloco claro (`#f9fff9`, texto `#262626`
-justificado a 45 unidades), como no Figma novo, com os dois glifos da Mister
-Pixel (a carinha por baixo do texto, a mão sobre a foto). O título `TOOLKIT`
-fica ainda dentro desse bloco, em verde; a folha de papel sobe 198 unidades
-com `margin-top` negativa para ficar meia no claro e meia no verde — o
-`display: flow-root` na secção é o que impede essa margem de colapsar e
-arrastar a secção inteira.
+**About.** É uma faixa verde com um bloco claro "de lado" lá dentro: o bloco
+é um trapézio (`clip-path`) mais alto à esquerda, com uma franja de dois
+quadrados em cima e em baixo, cada uma inclinada no seu sentido (+0.597° e
+−0.656°), o que dá o aspecto torto do Figma. O texto é Handjet a 45 unidades
+justificado, e o botão **DOWNLOAD CV** está na posição do ficheiro
+(722, 774.5) com a moldura de quatro barras de 10 unidades e os cantos
+recortados. Ao passar o rato o interior enche-se de preto de baixo para cima,
+o texto e a seta passam a claro, o botão levanta-se e a seta faz um salto
+descendente em `steps(4)`. O ficheiro que descarrega é `assets/cv.pdf` — falta
+lá pôr o PDF.
 
-**A folha.** O fundo quadriculado é feito com dois `repeating-linear-gradient`
-(quadrícula de 27 unidades) em vez do SVG do Figma, as franjas laterais usam o
-mesmo xadrez das molduras, e a folha está inclinada 0.72° enquanto os textos
-ficam a direito, tal como no ficheiro. Ao passar o rato, `paperTilt()` inclina
-o papel na direcção do cursor (até 5.5°/7°), levanta-o um pouco, aumenta a
-sombra e mete-o a baloiçar devagar; ao sair volta ao lugar com mola.
+**Ícones pixel.** Todos passam pelo mesmo motor: `buildPhysics()` varre os
+elementos `.physics` e cria uma cena de Matter.js por cada um. São quatro —
+o hero (sol e smiley), o cabeçalho dos works (pasta), a faixa verde acima do
+about (a carinha) e o próprio bloco claro (a mão). Acrescentar outro é criar
+um `<span class="pix" data-x data-y data-w data-h>` dentro de um `.physics`.
 
-**Cards dos works.** A pilha é uma cena presa ao ecrã: `.stack__pin` é
+**Cards dos works.****Cards dos works.** A pilha é uma cena presa ao ecrã: `.stack__pin` é
 `sticky` e os cards são posicionados por scroll em `stackScroll()`. `j` é
 quantos cards já chegaram (contínuo); o mais recente fica centrado e os
 anteriores empilham-se `GAP` (240 unidades) acima, saindo por cima do ecrã.

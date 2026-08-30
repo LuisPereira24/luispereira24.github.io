@@ -386,8 +386,8 @@ a{ color: inherit; text-decoration: none; }
      a direita, a subir por tras dos cards e a cruzar a foto do about. O
      diametro esta limitado a ~830 unidades porque acima de ~2800px de
      largura o Chromium deixa de rasterizar o canvas ampliado por inteiro. */
-  right: calc(-1100 * var(--s));
-  top: calc(-747 * var(--s));
+  right: calc(-860 * var(--s));
+  top: calc(-828 * var(--s));
   width: calc(2800 * var(--s));
   height: calc(1575 * var(--s));
   max-width: none;                        /* escapa ao max-width:100% global */
@@ -454,18 +454,42 @@ a{ color: inherit; text-decoration: none; }
 /* ============================= ABOUT ============================= */
 .about{
   position: relative;
+  background: var(--olive);
+  padding: calc(232 * var(--s)) 0 calc(697 * var(--s));
+}
+/* o bloco claro esta "de lado": trapezio, mais alto a esquerda,
+   com uma franja de 2 quadrados em cima e em baixo */
+.about__band{
+  position: relative;
+  height: calc(1037 * var(--s));
   background: var(--paper);
   color: var(--ink);
-  padding: calc(107 * var(--s)) calc(160 * var(--s)) calc(288 * var(--s));
+  clip-path: polygon(0 0, 100% calc(20 * var(--s)), 100% calc(100% - 22 * var(--s)), 0 100%);
 }
+.about__edge{
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: calc(57 * var(--s));         /* 2 quadrados */
+  --sq: calc(28.5 * var(--s));
+  background-image: conic-gradient(from 90deg at 50% 50%,
+    var(--olive) 25%, var(--paper) 0 50%, var(--olive) 0 75%, var(--paper) 0);
+  background-size: var(--sq) var(--sq);
+}
+.about__edge--top{ top: 0; transform-origin: 0 0; transform: rotate(.597deg); }
+.about__edge--bottom{ bottom: 0; transform-origin: 0 100%; transform: rotate(-.656deg); }
+
 .about__grid{
+  position: absolute;
+  left: 0; top: 0; right: 0;
+  padding: calc(110.73 * var(--s)) calc(162 * var(--s)) 0 calc(155 * var(--s));
   display: grid;
   grid-template-columns: calc(1060 * var(--s)) 1fr;
-  gap: calc(115 * var(--s));
+  gap: calc(118 * var(--s));
   align-items: start;
 }
 .about__title{
-  margin: 0 0 calc(30 * var(--s));
+  margin: calc(32 * var(--s)) 0 calc(30 * var(--s));
   font-size: calc(96.175 * var(--s));
   line-height: .83;
   color: var(--ink);
@@ -489,143 +513,69 @@ a{ color: inherit; text-decoration: none; }
 }
 .about__portrait-inner{ background: #6f6f6f; }
 
-/* glifos da Mister Pixel: a carinha por baixo do texto e a mao sobre a foto */
-.about__face, .about__hand{
+/* ---------- botao DOWNLOAD CV ---------- */
+.cvbtn{
   position: absolute;
-  font-size: calc(84 * var(--s));
-  line-height: .83;
-  transform: rotate(-15.92deg);
-  pointer-events: none;
-}
-.about__face{
-  left: calc(978 * var(--s));
-  top: calc(706 * var(--s));
+  left: calc(722 * var(--s));
+  top: calc(774.5 * var(--s));
+  width: calc(427 * var(--s));
+  height: calc(104 * var(--s));
+  display: block;
   color: var(--ink);
+  transition: transform .18s cubic-bezier(.2,1.5,.4,1);
 }
-.about__hand{
-  right: calc(59 * var(--s));
-  top: calc(30 * var(--s));
-  color: var(--paper);
-  z-index: 5;
+.cvbtn__bar{ position: absolute; background: currentColor; }
+.cvbtn__bar--t{ left: calc(10 * var(--s)); top: 0; width: calc(407 * var(--s)); height: calc(10 * var(--s)); }
+.cvbtn__bar--b{ left: calc(10 * var(--s)); top: calc(94 * var(--s)); width: calc(407 * var(--s)); height: calc(10 * var(--s)); }
+.cvbtn__bar--l{ left: 0; top: calc(10 * var(--s)); width: calc(10 * var(--s)); height: calc(84 * var(--s)); }
+.cvbtn__bar--r{ left: calc(417 * var(--s)); top: calc(10 * var(--s)); width: calc(10 * var(--s)); height: calc(84 * var(--s)); }
+.cvbtn__fill{
+  position: absolute;
+  left: calc(10 * var(--s)); top: calc(10 * var(--s));
+  width: calc(407 * var(--s)); height: calc(84 * var(--s));
+  background: var(--ink);
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform .22s cubic-bezier(.2,.85,.25,1);
 }
-
-/* titulo da seccao seguinte, ainda dentro do bloco claro */
-.toolkit__title{
-  margin: calc(79 * var(--s)) 0 0;
-  font-size: calc(96.175 * var(--s));
-  line-height: .83;
-  color: var(--olive);
-}
-.about__portrait-inner img{ width: 100%; height: auto; }
-.about__portrait-inner.is-missing{
-  aspect-ratio: 423 / 629;
-  display: grid; place-items: center;
-}
-.about__portrait-inner.is-missing::after{
-  content: "retrato.png";
-  color: #eee;
+.cvbtn__label{
+  position: absolute;
+  left: calc(31.29 * var(--s));
+  top: calc(20.91 * var(--s));
   font-family: var(--font-hand);
-  font-size: calc(26 * var(--s));
+  font-variation-settings: var(--hand-axes);
+  font-weight: 500;
+  font-size: calc(69.019 * var(--s));
+  line-height: .92;
+  white-space: nowrap;
+  transition: color .2s linear;
+}
+.cvbtn__arrow{
+  position: absolute;
+  left: calc(360.5 * var(--s));
+  top: calc(38.2 * var(--s));
+  width: calc(38.45 * var(--s));
+  height: auto;
+  transform: rotate(89.23deg);
+  transition: color .2s linear;
+}
+.cvbtn:hover{ transform: translateY(calc(-4 * var(--s))); }
+.cvbtn:hover .cvbtn__fill{ transform: scaleY(1); }
+.cvbtn:hover .cvbtn__label, .cvbtn:hover .cvbtn__arrow{ color: var(--paper); }
+.cvbtn:hover .cvbtn__arrow{ animation: cvdrop .62s steps(4) infinite; }
+.cvbtn:active{ transform: translateY(calc(2 * var(--s))); }
+@keyframes cvdrop{
+  0%   { transform: rotate(89.23deg) translateX(0); }
+  55%  { transform: rotate(89.23deg) translateX(calc(16 * var(--s))); }
+  100% { transform: rotate(89.23deg) translateX(0); }
 }
 
-/* ---------- letras: cada uma reage ao rato ---------- */
-.w{ display: inline-block; white-space: pre; }
-.ch{
-  display: inline-block;
-  transition: transform .18s cubic-bezier(.2,1.7,.4,1);
-}
-.ch:hover{
-  transform: translateY(-.07em);
-  -webkit-text-stroke: .035em currentColor;
-}
-/* Handjet tem eixo de peso: engrossa mesmo */
-.hero__name .ch, .card__title .ch, .contact__mail .ch{
-  transition: transform .18s cubic-bezier(.2,1.7,.4,1), font-variation-settings .18s linear;
-}
-.hero__name .ch:hover, .card__title .ch:hover, .contact__mail .ch:hover{
-  -webkit-text-stroke: 0;
-  font-variation-settings: "ELGR" 2, "ELSH" 2;
-  font-weight: 900;
-}
-
-/* o sol (glifo X) a passar por cima do texto do hero acende-o */
-.hero__hi .ch, .hero__name .ch{ transition: transform .18s cubic-bezier(.2,1.7,.4,1), color .22s linear, font-variation-settings .18s linear; }
-.ch.is-lit{ color: var(--paper); }
+/* zonas de fisica: o glifo solto no verde e a mao sobre o bloco */
+.physics--gap{ position: absolute; left: 0; right: 0; top: 0; height: calc(232 * var(--s)); z-index: 5; }
+.physics--about{ position: absolute; inset: 0; z-index: 5; }
 
 .reveal{ opacity: 0; transform: translateY(calc(40 * var(--s))); transition: opacity .6s linear, transform .6s cubic-bezier(.2,.8,.2,1); }
 .reveal.is-in{ opacity: 1; transform: none; }
-
-/* ============================= TOOLKIT ============================= */
-/* A folha sobe 198 unidades para ficar meia no bloco claro e meia no verde,
-   como no Figma. O papel inteiro reage ao rato (paperTilt() no main.js). */
-.toolkit{
-  position: relative;
-  display: flow-root;                    /* impede o colapso da margem negativa */
-  background: var(--olive);
-  padding: 0 calc(157 * var(--s)) calc(234 * var(--s));
-}
-.paper{
-  position: relative;
-  width: calc(1606.56 * var(--s));
-  height: calc(628.17 * var(--s));
-  margin-top: calc(-198 * var(--s));
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-/* a folha (fundo, grelha e franjas) esta ligeiramente torta; os textos ficam
-   a direito por cima dela, tal como no Figma */
-.paper__sheet{
-  position: absolute;
-  inset: 0;
-  --sq: calc(27 * var(--s));
-  background-color: #fffff5;
-  background-image:
-    repeating-linear-gradient(0deg,  rgba(38,38,38,.10) 0 1px, transparent 1px var(--sq)),
-    repeating-linear-gradient(90deg, rgba(38,38,38,.10) 0 1px, transparent 1px var(--sq));
-  transform: rotate(.72deg);
-  box-shadow: 0 calc(6 * var(--s)) 0 rgba(0,0,0,.10);
-  transition: box-shadow .35s ease;
-}
-.paper.is-lifted .paper__sheet{ box-shadow: 0 calc(18 * var(--s)) calc(26 * var(--s)) rgba(0,0,0,.22); }
-.paper__strip{
-  position: absolute;
-  top: 0; bottom: 0;
-  width: calc(54 * var(--s));
-  background-image: conic-gradient(from 90deg at 50% 50%,
-    var(--olive) 25%, #fffff5 0 50%, var(--olive) 0 75%, #fffff5 0);
-  background-size: var(--sq) var(--sq);
-}
-.paper__strip--l{ left: calc(4 * var(--s)); }
-.paper__strip--r{ right: 0; }
-
-.paper__cat, .paper__tools{
-  position: absolute;
-  margin: 0;
-  top: calc(var(--y) * var(--s));
-  font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes);
-  font-weight: 400;
-  font-size: calc(79.95 * var(--s));
-  line-height: .83;
-  white-space: nowrap;
-}
-.paper__cat{ left: calc(204 * var(--s)); color: #fa5558; }
-.paper__tools{ left: calc(144 * var(--s)); color: #4e6ff5; }
-.paper__dot{
-  position: absolute;
-  left: calc(178 * var(--s));
-  top: calc(var(--y) * var(--s));
-  width: calc(6.18 * var(--s));
-  height: calc(14.07 * var(--s));
-  background: #fa5558;
-}
-.paper__ico{
-  position: absolute;
-  font-size: calc(84 * var(--s));
-  line-height: .83;
-}
-.paper__ico--bulb{ left: calc(927 * var(--s)); top: calc(203 * var(--s)); color: #4e6ff5; transform: rotate(15.81deg); }
-.paper__ico--glass{ left: calc(1273 * var(--s)); top: calc(404 * var(--s)); color: #fa5558; transform: rotate(-9.69deg); }
 
 /* ============================= CONTACT ============================= */
 .contact{
@@ -690,19 +640,21 @@ a{ color: inherit; text-decoration: none; }
   .card__media{ font-size: 14px; }
 
 
-  .about{ padding: 48px 6vw 70px; }
-  .about__face, .about__hand{ display: none; }
-  .toolkit__title{ margin-top: 34px; font-size: clamp(34px, 10vw, 64px); }
+  .about{ padding: 26px 0 40px; }
+  .about__band{ height: auto; clip-path: none; padding: 34px 6vw 40px; }
+  .about__edge{ height: 26px; --sq: 13px; transform: none !important; }
+  .about__grid{ position: static; padding: 0; grid-template-columns: 1fr; gap: 30px; }
+  .about__title{ margin-top: 0; }
+  .cvbtn{ position: relative; left: auto; top: auto; width: 260px; height: 64px; margin: 30px auto 0; }
+  .cvbtn__bar--t{ left: 6px; width: 248px; height: 6px; }
+  .cvbtn__bar--b{ left: 6px; top: 58px; width: 248px; height: 6px; }
+  .cvbtn__bar--l{ top: 6px; width: 6px; height: 52px; }
+  .cvbtn__bar--r{ left: 254px; top: 6px; width: 6px; height: 52px; }
+  .cvbtn__fill{ left: 6px; top: 6px; width: 248px; height: 52px; }
+  .cvbtn__label{ left: 19px; top: 13px; font-size: 42px; }
+  .cvbtn__arrow{ left: 219px; top: 24px; width: 24px; }
+  .physics--gap, .physics--about{ display: none; }
 
-  .toolkit{ padding: 0 5vw 60px; }
-  .paper{ width: 90vw; height: auto; margin: -34px auto 0; padding: 26px 0 30px; }
-  .paper__sheet{ --sq: 13px; transform: rotate(.72deg); }
-  .paper__strip{ width: 26px; }
-  .paper__cat, .paper__tools, .paper__dot, .paper__ico{ position: static; }
-  .paper__cat{ margin: 0 0 2px 44px; font-size: clamp(28px, 8vw, 46px); }
-  .paper__tools{ margin: 0 0 22px 38px; font-size: clamp(26px, 7.4vw, 42px); white-space: normal; }
-  .paper__dot{ display: none; }
-  .paper__ico{ display: none; }
   .about__grid{ grid-template-columns: 1fr; gap: 40px; }
   .about__text{ font-size: clamp(17px, 4.6vw, 26px); text-align: left; }
   .about__portrait-frame{ width: 70vw; margin: 0 auto; }

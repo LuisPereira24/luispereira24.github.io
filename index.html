@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Handjet:ELGR,ELSH,wght@1,2,100..900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v=202608302258">
+<link rel="stylesheet" href="css/style.css?v=202608302325">
 </head>
 <body>
 
@@ -130,47 +130,46 @@
   <!-- ============ ABOUT ============ -->
   <section class="about" id="about">
     <canvas class="circanim" id="circ-pixel" width="1600" height="900" aria-hidden="true"></canvas>
-    <div class="about__grid">
-      <div class="about__col reveal">
-        <h2 class="about__title">ABOUT ME</h2>
-        <p class="about__text">Lorem ipsum dolor sit amet consectetur. Sit aliquet cras porta neque dolor. Tellus turpis pellentesque parturient ultricies magna sed bibendum in. Massa ullamcorper consectetur pretium volutpat placerat enim mauris. Etiam at gravida sed phasellus a augue sed facilisi id. Vitae quisque odio venenatis semper pellentesque diam bibendum dignissim tortor.</p>
-        <p class="about__text">Etiam at gravida sed phasellus a augue sed facilisi id. Vitae quisque odio venenatis semper pellentesque diam bibendum dignissim tortor.Etiam at gravida sed phasellus a augue sed facilisi id. Vitae quisque odio.</p>
-      </div>
-      <div class="about__portrait reveal">
-        <div class="about__portrait-frame pxframe">
-          <div class="about__portrait-inner">
-            <img src="assets/img/retrato.png" alt="Luis Pereira" onerror="this.closest('.about__portrait-inner').classList.add('is-missing');this.remove()">
+
+    <!-- glifo solto na faixa verde, por cima do bloco claro -->
+    <div class="physics physics--gap" id="physics-gap" aria-hidden="true">
+      <span class="pix" data-x="268" data-y="71" data-w="106" data-h="92"
+            style="--size:84; --color:#f9fff9">E</span>
+    </div>
+
+    <div class="about__band">
+      <span class="about__edge about__edge--top" aria-hidden="true"></span>
+      <span class="about__edge about__edge--bottom" aria-hidden="true"></span>
+
+      <div class="about__grid">
+        <div class="about__col reveal">
+          <h2 class="about__title">ABOUT ME</h2>
+          <p class="about__text">Lorem ipsum dolor sit amet consectetur. Sit aliquet cras porta neque dolor. Tellus turpis pellentesque parturient ultricies magna sed bibendum in. Massa ullamcorper consectetur pretium volutpat placerat enim mauris. Etiam at gravida sed phasellus a augue sed facilisi id. Vitae quisque odio venenatis semper pellentesque diam bibendum dignissim tortor.</p>
+          <p class="about__text">Etiam at gravida sed phasellus a augue sed facilisi id. Vitae quisque odio venenatis semper pellentesque diam bibendum dignissim tortor.Etiam at gravida sed phasellus a augue sed facilisi id. Vitae quisque odio.</p>
+        </div>
+        <div class="about__portrait reveal">
+          <div class="about__portrait-frame pxframe">
+            <div class="about__portrait-inner">
+              <img src="assets/img/retrato.png" alt="Luis Pereira" onerror="this.closest('.about__portrait-inner').classList.add('is-missing');this.remove()">
+            </div>
           </div>
         </div>
-        <span class="about__hand pix-font" aria-hidden="true">&#8220;</span>
-      </div>
-    </div>
-    <span class="about__face pix-font" aria-hidden="true">E</span>
-    <h2 class="toolkit__title">TOOLKIT</h2>
-  </section>
-
-  <!-- ============ TOOLKIT ============ -->
-  <section class="toolkit" id="toolkit">
-    <div class="paper" id="paper">
-      <div class="paper__sheet" aria-hidden="true">
-        <span class="paper__strip paper__strip--l"></span>
-        <span class="paper__strip paper__strip--r"></span>
       </div>
 
-      <i class="paper__dot" style="--y:65"></i>
-      <h3 class="paper__cat" style="--y:42">BRAND</h3>
-      <p class="paper__tools" style="--y:101.53">illustrator, photoshop &amp; figma</p>
+      <a class="cvbtn" id="cvbtn" href="assets/cv.pdf" download>
+        <span class="cvbtn__bar cvbtn__bar--t"></span>
+        <span class="cvbtn__bar cvbtn__bar--b"></span>
+        <span class="cvbtn__bar cvbtn__bar--l"></span>
+        <span class="cvbtn__bar cvbtn__bar--r"></span>
+        <span class="cvbtn__fill" aria-hidden="true"></span>
+        <span class="cvbtn__label">DOWNLOAD CV</span>
+        <svg class="cvbtn__arrow" viewBox="0 0 98.59 70.42" fill="currentColor" aria-hidden="true"><rect x="56.34" y="56.34" width="14.08" height="14.08"/><polygon points="98.59 28.17 98.59 42.25 84.51 42.25 84.51 56.34 70.42 56.34 70.42 42.25 0 42.25 0 28.17 70.42 28.17 70.42 14.08 84.51 14.08 84.51 28.17 98.59 28.17"/><rect x="56.34" width="14.08" height="14.08"/></svg>
+      </a>
 
-      <i class="paper__dot" style="--y:249"></i>
-      <h3 class="paper__cat" style="--y:227">WEB</h3>
-      <p class="paper__tools" style="--y:287.53">html, css, wordpress &amp; js</p>
-
-      <i class="paper__dot" style="--y:436"></i>
-      <h3 class="paper__cat" style="--y:414">MOTION</h3>
-      <p class="paper__tools" style="--y:474.53">after effects &amp; premiere pro</p>
-
-      <span class="paper__ico paper__ico--bulb pix-font" aria-hidden="true">T</span>
-      <span class="paper__ico paper__ico--glass pix-font" aria-hidden="true">S</span>
+      <div class="physics physics--about" id="physics-about" aria-hidden="true">
+        <span class="pix" data-x="1308" data-y="209" data-w="102" data-h="79"
+              style="--size:84; --color:#262626">&#8220;</span>
+      </div>
     </div>
   </section>
 
@@ -198,7 +197,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
-<script src="js/pixel-anim.js?v=202608302258" defer></script>
-<script src="js/main.js?v=202608302258" defer></script>
+<script src="js/pixel-anim.js?v=202608302325" defer></script>
+<script src="js/main.js?v=202608302325" defer></script>
 </body>
 </html>
