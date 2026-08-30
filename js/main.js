@@ -258,9 +258,15 @@
 
   function stackLayout() {
     if (!stack || !cards.length) return;
-    if (MOBILE()) { stack.style.height = ''; cards.forEach(function (c) { c.style.transform = ''; }); return; }
+    if (MOBILE()) { stack.style.height = ''; stack.style.marginTop = ''; cards.forEach(function (c) { c.style.transform = ''; c.style.width = ''; }); return; }
     SPC = Math.round(window.innerHeight * 0.8);
     stack.style.height = ((cards.length - 1) * SPC + window.innerHeight) + 'px';
+    // O primeiro card fica logo abaixo do titulo WORKS, com o mesmo respiro
+    // que o ABOUT ME da ao seu texto (34 unidades). Como dentro do painel o
+    // card esta centrado (C), puxa-se a pilha para cima nessa diferenca.
+    var vh0 = window.innerHeight, navH0 = 68 * scale, h0 = cards[0].offsetHeight;
+    var C0 = Math.max(navH0 * 0.4, navH0 + (vh0 - navH0 - h0) / 2);
+    stack.style.marginTop = Math.round(34 * scale - C0) + 'px';
     stackTop = stack.getBoundingClientRect().top + window.scrollY;   // coords de pagina
   }
 
@@ -291,7 +297,8 @@
       if (!w) return;
       var n = Math.max(8, Math.round(w / target));
       if (n % 2) n++;                              // par: o xadrez fecha certo
-      var sq = w / n;
+      var sq = Math.max(2, Math.round(w / n));   // pixeis inteiros: sem falhas nas arestas
+      el.style.width = (n * sq) + 'px';           // largura multipla exacta do quadrado
       el.style.setProperty('--sq', sq + 'px');
       el.style.padding = (sq * 2) + 'px';       // anel de 2 quadrados, igual dos 4 lados
       // o resto para a altura fechar num numero inteiro de quadrados vai
@@ -570,21 +577,17 @@
      ANIMACAO DO HERO — abranda com o rato por cima
      --------------------------------------------------------- */
   var animCanvas = document.getElementById('linha-pixel');
-  var animTarget = 1, animNow = 1;
+  var animTarget = 1, animNow = 1, ANIM_FAST = 3;
   function animHover() {
-    if (!hero || !animCanvas) return;
-    hero.addEventListener('pointermove', function (e) {
-      var r = animCanvas.getBoundingClientRect();
-      var inside = e.clientX >= r.left && e.clientX <= r.right &&
-                   e.clientY >= r.top  && e.clientY <= r.bottom;
-      animTarget = inside ? 0.18 : 1;
-    });
-    hero.addEventListener('pointerleave', function () { animTarget = 1; });
+    var role = document.querySelector('.hero__role');
+    if (!animCanvas || !role) return;
+    role.addEventListener('mouseenter', function () { animTarget = ANIM_FAST; });
+    role.addEventListener('mouseleave', function () { animTarget = 1; });
   }
   function animSpeed() {
     if (!animCanvas || !animCanvas.setAnimSpeed) return;
-    if (Math.abs(animTarget - animNow) < 0.004) return;
-    animNow += (animTarget - animNow) * 0.07;
+    if (Math.abs(animTarget - animNow) < 0.01) return;
+    animNow += (animTarget - animNow) * 0.09;
     animCanvas.setAnimSpeed(animNow);
   }
 
