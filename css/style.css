@@ -135,6 +135,9 @@ a{ color: inherit; text-decoration: none; }
   transform: translate3d(0, var(--grass-y), 0);
   will-change: transform;
 }
+/* quando o boneco chega a altura do PORTUGAL, o relvado deixa de estar
+   preso ao ecra e passa a acompanhar a pagina (aterra no fim do hero) */
+.grassband.is-landed{ position: absolute; bottom: auto; top: var(--grass-top, 0px); }
 .grassband img{ width: 100%; height: auto; }
 .grassband .pix--rider{
   position: absolute;
@@ -144,8 +147,16 @@ a{ color: inherit; text-decoration: none; }
   font-size: calc(var(--size) * var(--s));
   line-height: .83;
   color: var(--color);
-  transform: rotate(1.1deg);
+  --rx: 0px; --ry: 0px;
+  transform: translate3d(var(--rx), var(--ry), 0) rotate(1.1deg);
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none; -webkit-user-select: none;
+  touch-action: none;
+  transition: transform .75s cubic-bezier(.2,1.5,.35,1);
 }
+.grassband .pix--rider:hover{ filter: brightness(1.15); }
+.grassband .pix--rider.is-dragging{ cursor: grabbing; transition: none; }
 
 /* ============================= HERO ============================= */
 .hero{
@@ -285,9 +296,10 @@ a{ color: inherit; text-decoration: none; }
    fique cortado nas extremidades (ver fitFrames() em main.js). */
 .pxframe{
   --sq: calc(14 * var(--s));
-  padding: var(--sq);
+  --frame-bg: var(--card-bg, var(--paper));
+  padding: calc(var(--sq) * 2);           /* anel de 2 quadrados, como no Figma */
   background-image: conic-gradient(from 90deg at 50% 50%,
-    var(--ink) 25%, var(--paper) 0 50%, var(--ink) 0 75%, var(--paper) 0);
+    var(--frame-bg) 25%, transparent 0 50%, var(--frame-bg) 0 75%, transparent 0);
   background-size: calc(var(--sq) * 2) calc(var(--sq) * 2);
   background-position: 0 0;
 }
@@ -309,29 +321,38 @@ a{ color: inherit; text-decoration: none; }
   line-height: .83;
   color: var(--paper);
 }
-.works__folder{ font-size: calc(96.175 * var(--s)); line-height: .83; color: var(--paper); }
+.works__folder{
+  font-size: calc(96.175 * var(--s));
+  line-height: .83;
+  color: var(--paper);
+  background: none; border: 0; padding: 0;
+  cursor: pointer;
+  transition: transform .18s cubic-bezier(.2,1.6,.4,1);
+}
+.works__folder:hover{ transform: translateY(calc(-8 * var(--s))) rotate(-4deg); }
+.works__folder:active{ transform: translateY(calc(2 * var(--s))); }
 
 .stack{ margin-top: calc(80 * var(--s)); padding: 0 calc(160 * var(--s)); }
 
 .card{
   position: sticky;
-  top: calc(140 * var(--s));
-  margin-bottom: calc(120 * var(--s));
+  top: calc(90 * var(--s));
+  margin-bottom: calc(220 * var(--s));
   transform: rotate(var(--tilt)) translateY(calc(60 * var(--s)));
   opacity: 0;
   transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .5s linear;
 }
 .card.is-in{ opacity: 1; transform: rotate(var(--tilt)) translateY(0); }
 .card:nth-child(1){ z-index: 1; }
-.card:nth-child(2){ z-index: 2; }
-.card:nth-child(3){ z-index: 3; }
+.card:nth-child(2){ z-index: 2; top: calc(320 * var(--s)); }
+.card:nth-child(3){ z-index: 3; top: calc(550 * var(--s)); }
 
 .card__inner{
   background: var(--card-bg);
   display: grid;
   grid-template-columns: calc(530 * var(--s)) 1fr;
   gap: calc(72 * var(--s));
-  padding: calc(70 * var(--s)) calc(80 * var(--s)) calc(80 * var(--s));
+  padding: calc(40 * var(--s)) calc(64 * var(--s)) calc(56 * var(--s));
 }
 .card__title{
   margin: 0 0 calc(24 * var(--s));
@@ -369,9 +390,15 @@ a{ color: inherit; text-decoration: none; }
   line-height: .83;
   color: var(--olive);
 }
-/* a seta da ToolsOne aponta para a esquerda; espelhamos */
-.btn__arrow{ display: inline-block; transform: scaleX(-1); transition: transform .2s steps(3); }
-.btn:hover .btn__arrow{ transform: scaleX(-1) translateX(calc(-20 * var(--s))); }
+/* seta pixel.svg, exportada do Figma */
+.btn__arrow{
+  width: calc(46 * var(--s));
+  height: auto;
+  flex: none;
+  shape-rendering: crispEdges;
+  transition: transform .2s steps(3);
+}
+.btn:hover .btn__arrow{ transform: translateX(calc(20 * var(--s))); }
 
 /* ============================= ABOUT ============================= */
 .about{
@@ -400,7 +427,7 @@ a{ color: inherit; text-decoration: none; }
   line-height: .92;
   color: var(--paper);
 }
-.about__portrait-frame{ width: calc(463 * var(--s)); margin-left: auto; }
+.about__portrait-frame{ width: calc(463 * var(--s)); margin-left: auto; --card-bg: var(--paper); }
 .about__portrait-inner{ background: #6f6f6f; }
 .about__portrait-inner img{ width: 100%; height: auto; }
 .about__portrait-inner.is-missing{
@@ -413,6 +440,30 @@ a{ color: inherit; text-decoration: none; }
   font-family: var(--font-hand);
   font-size: calc(26 * var(--s));
 }
+
+/* ---------- letras: cada uma reage ao rato ---------- */
+.w{ display: inline-block; white-space: pre; }
+.ch{
+  display: inline-block;
+  transition: transform .18s cubic-bezier(.2,1.7,.4,1);
+}
+.ch:hover{
+  transform: translateY(-.07em);
+  -webkit-text-stroke: .035em currentColor;
+}
+/* Handjet tem eixo de peso: engrossa mesmo */
+.hero__name .ch, .card__title .ch, .contact__mail .ch{
+  transition: transform .18s cubic-bezier(.2,1.7,.4,1), font-variation-settings .18s linear;
+}
+.hero__name .ch:hover, .card__title .ch:hover, .contact__mail .ch:hover{
+  -webkit-text-stroke: 0;
+  font-variation-settings: "ELGR" 2, "ELSH" 2;
+  font-weight: 900;
+}
+
+/* o sol (glifo X) a passar por cima do texto do hero acende-o */
+.hero__hi .ch, .hero__name .ch{ transition: transform .18s cubic-bezier(.2,1.7,.4,1), color .22s linear, font-variation-settings .18s linear; }
+.ch.is-lit{ color: var(--paper); }
 
 .reveal{ opacity: 0; transform: translateY(calc(40 * var(--s))); transition: opacity .6s linear, transform .6s cubic-bezier(.2,.8,.2,1); }
 .reveal.is-in{ opacity: 1; transform: none; }

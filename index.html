@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Handjet:ELGR,ELSH,wght@1,2,100..900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v=202608300047">
+<link rel="stylesheet" href="css/style.css?v=202608300106">
 </head>
 <body>
 
@@ -58,14 +58,17 @@
     <div class="hero__hint" aria-hidden="true">scroll</div>
   </section>
 
-  <!-- ============ TRANSIÇÃO DE PIXÉIS ============ -->
+  <!-- ============ TRANSIÇÃO DE PIXÉIS (desligada) ============
+       Para voltar a ligar: descomentar a seccao abaixo e por
+       WIPE_ON = true no topo do js/main.js
   <section class="pxwipe" id="pxwipe" aria-hidden="true"></section>
+  ============================================================== -->
 
   <!-- ============ WORKS ============ -->
   <section class="works" id="works">
     <header class="works__head">
       <h2 class="works__title">WORKS</h2>
-      <span class="works__folder pix-font" aria-hidden="true">\</span>
+      <button class="works__folder pix-font" type="button" aria-label="Ir para os trabalhos">\</button>
     </header>
 
     <div class="stack" id="stack">
@@ -80,7 +83,7 @@
           <div class="card__col card__col--media">
             <div class="card__media"><span>1600 × 900</span></div>
             <a class="btn" href="#" target="_blank" rel="noopener">
-              CHECK WEBSITE <span class="btn__arrow pix-font" aria-hidden="true">~</span>
+              CHECK WEBSITE <svg class="btn__arrow" viewBox="0 0 98.59 70.42" fill="currentColor" aria-hidden="true"><rect x="56.34" y="56.34" width="14.08" height="14.08"/><polygon points="98.59 28.17 98.59 42.25 84.51 42.25 84.51 56.34 70.42 56.34 70.42 42.25 0 42.25 0 28.17 70.42 28.17 70.42 14.08 84.51 14.08 84.51 28.17 98.59 28.17"/><rect x="56.34" width="14.08" height="14.08"/></svg>
             </a>
           </div>
         </div>
@@ -96,7 +99,7 @@
           <div class="card__col card__col--media">
             <div class="card__media"><span>1600 × 900</span></div>
             <a class="btn" href="#" target="_blank" rel="noopener">
-              CHECK WEBSITE <span class="btn__arrow pix-font" aria-hidden="true">~</span>
+              CHECK WEBSITE <svg class="btn__arrow" viewBox="0 0 98.59 70.42" fill="currentColor" aria-hidden="true"><rect x="56.34" y="56.34" width="14.08" height="14.08"/><polygon points="98.59 28.17 98.59 42.25 84.51 42.25 84.51 56.34 70.42 56.34 70.42 42.25 0 42.25 0 28.17 70.42 28.17 70.42 14.08 84.51 14.08 84.51 28.17 98.59 28.17"/><rect x="56.34" width="14.08" height="14.08"/></svg>
             </a>
           </div>
         </div>
@@ -112,7 +115,7 @@
           <div class="card__col card__col--media">
             <div class="card__media"><span>1600 × 900</span></div>
             <a class="btn" href="#" target="_blank" rel="noopener">
-              CHECK WEBSITE <span class="btn__arrow pix-font" aria-hidden="true">~</span>
+              CHECK WEBSITE <svg class="btn__arrow" viewBox="0 0 98.59 70.42" fill="currentColor" aria-hidden="true"><rect x="56.34" y="56.34" width="14.08" height="14.08"/><polygon points="98.59 28.17 98.59 42.25 84.51 42.25 84.51 56.34 70.42 56.34 70.42 42.25 0 42.25 0 28.17 70.42 28.17 70.42 14.08 84.51 14.08 84.51 28.17 98.59 28.17"/><rect x="56.34" width="14.08" height="14.08"/></svg>
             </a>
           </div>
         </div>
@@ -163,7 +166,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
-<script src="js/linha-pixel.js?v=202608300047" defer></script>
-<script src="js/main.js?v=202608300047" defer></script>
+<script src="js/linha-pixel.js?v=202608300106" defer></script>
+<script src="js/main.js?v=202608300106" defer></script>
 </body>
 </html>

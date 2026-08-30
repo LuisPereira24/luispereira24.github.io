@@ -1,27 +1,35 @@
 /* =========================================================
    PORTFOLIO — LUIS PEREIRA
+
    1. escala global (--s)
-   2. cenário do hero: céu fixo, relvado fixo no fundo do ecrã
-      (só o topo aparece; cresce mesmo antes dos WORKS)
-   3. transição de pixéis entre o hero e os WORKS
-   4. pixéis aleatórios e reactivos no header
-   5. molduras xadrez sem quadrados cortados
-   6. Matter.js no sol e no smiley
+   2. cenario: ceu fixo + relvado preso ao fundo do ecra que
+      "aterra" quando o boneco chega ao PORTUGAL
+   3. letras individuais reactivas em todos os titulos
+   4. sol (glifo X) acende as letras do hero por onde passa
+   5. pixeis do header: aleatorios, com menos densidade,
+      a mudar de segundo a segundo enquanto o rato la esta
+   6. molduras xadrez de 2 quadrados, sem cortes
+   7. Matter.js no sol e no smiley; boneco arrastavel com mola
    ========================================================= */
 (function () {
   'use strict';
 
-  var DESIGN_W = 1920;
-  var MOBILE = function () { return window.matchMedia('(max-width: 860px)').matches; };
+  var WIPE_ON   = false;   // transicao de pixeis entre hero e works (desligada)
+  var DESIGN_W  = 1920;
+  var GRASS_VIS = 0.20;    // fraccao do ecra ocupada pelo relvado
+  var FEET_Y    = 1645;    // onde os pes do boneco param (unidades do Figma)
+  var COLS = 18, ROWS = 9, DISPERSAO = 0.35;
+
+  var MOBILE  = function () { return window.matchMedia('(max-width: 860px)').matches; };
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var root = document.documentElement;
   var scale = 1;
 
-  var hero = document.getElementById('home');
-  var sky = document.getElementById('sky');
-  var band = document.getElementById('grassband');
-  var wipeSection = document.getElementById('pxwipe');
+  var hero  = document.getElementById('home');
+  var sky   = document.getElementById('sky');
+  var band  = document.getElementById('grassband');
+  var rider = document.querySelector('.pix--rider');
 
   function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -33,18 +41,44 @@
   setScale();
 
   /* ---------------------------------------------------------
-     1. CENÁRIO: cor do texto do hero + relvado
+     1. LAYOUT DO HERO E DO RELVADO
+        O hero tem exactamente a altura que faz o boneco parar
+        sobre o PORTUGAL: heroH = (FEET_Y - 19) * s + visivel
      --------------------------------------------------------- */
-  var INK_A = [0x26, 0x26, 0x26];     // #262626
-  var INK_B = [0xf9, 0xff, 0xf9];     // #f9fff9
-  var lastInk = -1;
+  var L = { vh: 0, visible: 0, heroH: 0, bandH: 0, stop: 0 };
+
+  function layout() {
+    if (!band || !hero) return;
+    L.vh = window.innerHeight;
+    var bimg = band.querySelector('img');
+    L.bandH = (bimg && bimg.offsetHeight) || band.offsetHeight;
+    L.visible = Math.min(L.vh * GRASS_VIS, L.bandH);
+    root.style.setProperty('--grass-y', (L.bandH - L.visible).toFixed(1) + 'px');
+
+    if (MOBILE()) {
+      hero.style.height = '';
+      band.style.removeProperty('--grass-top');
+      band.classList.remove('is-landed');
+      L.heroH = hero.offsetHeight;
+      L.stop = Infinity;
+      return;
+    }
+    L.heroH = Math.round((FEET_Y - 19) * scale + L.visible);
+    hero.style.height = L.heroH + 'px';
+    band.style.setProperty('--grass-top', (L.heroH - L.bandH) + 'px');
+    L.stop = L.heroH - L.vh;
+  }
+
+  /* ---------------------------------------------------------
+     2. SCROLL: cor do texto + aterragem do relvado
+     --------------------------------------------------------- */
+  var INK_A = [0x26, 0x26, 0x26], INK_B = [0xf9, 0xff, 0xf9];
+  var lastInk = -1, landed = false;
 
   function scene() {
     var y = window.scrollY;
-    var vh = window.innerHeight;
 
-    /* letras do hero passam a branco com o scroll */
-    var t = clamp(y / (vh * 0.55), 0, 1);
+    var t = clamp(y / (L.vh * 0.55 || 500), 0, 1);
     var q = Math.round(t * 100);
     if (q !== lastInk) {
       lastInk = q;
@@ -54,194 +88,171 @@
         Math.round(lerp(INK_A[2], INK_B[2], t)) + ')');
     }
 
-    if (!band || !hero) return;
-
-    /* relvado: fixo no fundo, só o topo à vista. Como está preso ao ecrã
-       e o transform só muda no fim, não treme durante o scroll todo. */
-    var bandH = band.offsetHeight;
-    var minVisible = Math.min(vh * 0.20, bandH);
-    var heroH = hero.offsetHeight;
-    var growStart = heroH - vh * 1.15;
-    var growLen = vh * 0.95;
-    var g = clamp((y - growStart) / growLen, 0, 1);
-    var visible = lerp(minVisible, bandH, g);
-    root.style.setProperty('--grass-y', (bandH - visible).toFixed(1) + 'px');
+    if (!band) return;
+    var isLanded = y >= L.stop;
+    if (isLanded !== landed) { landed = isLanded; band.classList.toggle('is-landed', isLanded); }
   }
 
   /* ---------------------------------------------------------
-     2. TRANSIÇÃO DE PIXÉIS
-        18 x 9 quadrados. Cada um recebe uma pontuação que mistura
-        a diagonal (col+lin)/2 com um valor aleatório fixo; DISPERSAO
-        define o peso do aleatório. 0 = diagonal limpa, 1 = puro caos.
-        0 -> 50%: acendem por ordem crescente. 50 -> 100%: apagam-se
-        pela mesma ordem, revelando o painel que trocou a meio.
+     3. LETRAS INDIVIDUAIS
      --------------------------------------------------------- */
-  var COLS = 18, ROWS = 9, DISPERSAO = 0.35;
-  var wipe = { el: null, cells: [], order: [], state: [], live: false, key: '' };
+  var TITLES = '.hero__hi, .hero__name, .hero__iam, .hero__role, .hero__basedin,' +
+               '.hero__country, .works__title, .card__title, .about__title, .contact__mail';
 
-  // 18 x 9 no ecra largo (16:9 da quadrados praticamente certos). Em retrato
-  // recalcula-se para as celulas continuarem quadradas em vez de tiras altas.
-  function wipeGrid() {
-    var vw = root.clientWidth, vh = window.innerHeight;
-    if (vw >= 861) return { c: 18, r: 9 };
-    var c = 8;
-    return { c: c, r: Math.max(6, Math.min(30, Math.round(c * vh / vw))) };
+  function splitLetters() {
+    [].slice.call(document.querySelectorAll(TITLES)).forEach(function (el) {
+      if (el.dataset.split) return;
+      el.dataset.split = '1';
+      var text = el.textContent;
+      el.textContent = '';
+      text.split(/(\s+)/).forEach(function (part) {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { el.appendChild(document.createTextNode(part)); return; }
+        var w = document.createElement('span');
+        w.className = 'w';
+        part.split('').forEach(function (c) {
+          var sp = document.createElement('span');
+          sp.className = 'ch';
+          sp.textContent = c;
+          w.appendChild(sp);
+        });
+        el.appendChild(w);
+      });
+    });
   }
 
-  function buildWipe() {
-    var g = wipeGrid();
-    COLS = g.c; ROWS = g.r;
-    var key = COLS + 'x' + ROWS;
-    if (wipe.el && wipe.key === key) return;
-    if (wipe.el) wipe.el.remove();
-    wipe.cells = []; wipe.order = []; wipe.state = []; wipe.live = false; wipe.key = key;
+  /* ---------------------------------------------------------
+     4. O SOL ACENDE AS LETRAS DO HERO
+        Rectangulos das letras em coordenadas de pagina, em cache;
+        so o rectangulo do sol e lido a cada frame.
+     --------------------------------------------------------- */
+  var litCells = [], sunItem = null;
 
-    var el = document.createElement('div');
-    el.className = 'pxwipe-grid';
-    el.style.gridTemplateColumns = 'repeat(' + COLS + ',1fr)';
-    el.style.gridTemplateRows = 'repeat(' + ROWS + ',1fr)';
-
-    var scored = [];
-    for (var r = 0; r < ROWS; r++) {
-      for (var c = 0; c < COLS; c++) {
-        var i = document.createElement('i');
-        el.appendChild(i);
-        wipe.cells.push(i);
-        var diag = (c / (COLS - 1) + r / (ROWS - 1)) / 2;
-        scored.push({ k: wipe.cells.length - 1, s: diag * (1 - DISPERSAO) + Math.random() * DISPERSAO });
-      }
-    }
-    scored.sort(function (a, b) { return a.s - b.s; });
-    wipe.order = new Array(wipe.cells.length);
-    for (var n = 0; n < scored.length; n++) wipe.order[scored[n].k] = n / (scored.length - 1);
-    wipe.state = wipe.cells.map(function () { return false; });
-
-    document.body.appendChild(el);
-    wipe.el = el;
+  function cacheLit() {
+    litCells = [].slice.call(document.querySelectorAll('.hero__hi .ch, .hero__name .ch'))
+      .map(function (el) {
+        var r = el.getBoundingClientRect();
+        return { el: el, on: false,
+                 l: r.left, r: r.right,
+                 t: r.top + window.scrollY, b: r.bottom + window.scrollY };
+      });
   }
 
-  function updateWipe() {
-    if (!wipe.el || !wipeSection) return;
-    var vh = window.innerHeight;
-    var top = wipeSection.offsetTop;
-    var len = wipeSection.offsetHeight || vh;
-    var p = (window.scrollY - top) / len;
-
-    var live = p > -0.06 && p < 1.06;
-    if (live !== wipe.live) { wipe.live = live; wipe.el.classList.toggle('is-live', live); }
-
-    var covered = p >= 0.5;
-    if (sky) sky.classList.toggle('is-off', covered);
-    if (band) band.classList.toggle('is-off', covered);
-    if (!live) {
-      if (p >= 1) for (var z = 0; z < wipe.cells.length; z++) if (wipe.state[z]) { wipe.state[z] = false; wipe.cells[z].classList.remove('on'); }
-      return;
-    }
-
-    var a = p * 2, b = (p - 0.5) * 2;
-    for (var i = 0; i < wipe.cells.length; i++) {
-      var t = wipe.order[i];
-      var on = p < 0.5 ? (a >= t) : (b < t);
-      if (on !== wipe.state[i]) { wipe.state[i] = on; wipe.cells[i].classList.toggle('on', on); }
+  function litUpdate() {
+    if (!sunItem || !litCells.length) return;
+    var p = sunItem.body.position, hw = sunItem.w / 2, hh = sunItem.h / 2;
+    var l = p.x - hw, r = p.x + hw, t = p.y - hh, b = p.y + hh;   // ja em coords de pagina
+    for (var i = 0; i < litCells.length; i++) {
+      var c = litCells[i];
+      var hit = !(r < c.l || l > c.r || b < c.t || t > c.b);
+      if (hit !== c.on) { c.on = hit; c.el.classList.toggle('is-lit', hit); }
     }
   }
 
   /* ---------------------------------------------------------
-     3. PIXÉIS DO HEADER — aleatórios, e reagem ao rato
+     5. PIXEIS DO HEADER
+        Menos densidade, novo sorteio de segundo a segundo
+        enquanto o rato esta no header, com fade suave.
      --------------------------------------------------------- */
-  var navPix = [];
-  var navPixBound = false;
+  var navPix = [], navPixBound = false, navHover = false, navRAF = 0, lastShuffle = 0;
+  var FADE = 0.055;          // suavidade da passagem entre sorteios
+  var SHUFFLE_MS = 1000;
 
   function buildNavPix() {
     navPix.length = 0;
-    var canvases = [].slice.call(document.querySelectorAll('.nav__pix'));
-    canvases.forEach(function (cv) {
-      // celulas sempre quadradas: derivadas da caixa real do canvas
+    [].slice.call(document.querySelectorAll('.nav__pix')).forEach(function (cv) {
       var box = cv.getBoundingClientRect();
-      var cell = Math.max(6, (MOBILE() ? 11 : 17 * scale));
+      var cell = Math.max(6, MOBILE() ? 11 : 17 * scale);
       var cols = Math.max(4, Math.round(box.width / cell));
       var rows = Math.max(2, Math.round(box.height / cell));
-      cv.width = cols; cv.height = rows;          // 1 pixel do canvas = 1 quadrado
+      cv.width = cols; cv.height = rows;
       var ctx = cv.getContext('2d');
       var right = cv.dataset.side === 'right';
-      var state = new Array(cols * rows);
+      var n = cols * rows;
+      var cur = new Float32Array(n), tgt = new Float32Array(n);
 
       function density(c) {
-        var d = right ? (c + 1) / cols : 1 - c / cols;   // mais denso na ponta
-        return Math.pow(clamp(d, 0, 1), 1.9);
+        var d = right ? (c + 1) / cols : 1 - c / cols;
+        return Math.pow(clamp(d, 0, 1), 3.1) * 0.62;   // mais vazios
       }
-      function reset() {
+      function shuffle(boost) {
         for (var r = 0; r < rows; r++)
           for (var c = 0; c < cols; c++)
-            state[r * cols + c] = Math.random() < density(c) * 0.95;
+            tgt[r * cols + c] = Math.random() < density(c) * (boost || 1) ? 1 : 0;
       }
       function draw() {
         ctx.clearRect(0, 0, cols, rows);
-        ctx.fillStyle = '#262626';
-        for (var r = 0; r < rows; r++)
-          for (var c = 0; c < cols; c++)
-            if (state[r * cols + c]) ctx.fillRect(c, r, 1, 1);
+        for (var i = 0; i < n; i++) {
+          if (cur[i] < 0.02) continue;
+          ctx.fillStyle = 'rgba(38,38,38,' + cur[i].toFixed(3) + ')';
+          ctx.fillRect(i % cols, (i / cols) | 0, 1, 1);
+        }
       }
-      reset(); draw();
-      navPix.push({ cv: cv, cols: cols, rows: rows, state: state, density: density, draw: draw, reset: reset });
+      shuffle(); cur.set(tgt); draw();
+      navPix.push({ cv: cv, cols: cols, rows: rows, cur: cur, tgt: tgt, n: n, shuffle: shuffle, draw: draw });
     });
 
     var nav = document.getElementById('nav');
     if (!nav || navPixBound) return;
     navPixBound = true;
-    var queued = false, mx = 0, my = 0;
 
-    nav.addEventListener('pointermove', function (e) { mx = e.clientX; my = e.clientY; if (!queued) { queued = true; requestAnimationFrame(stir); } });
-    nav.addEventListener('pointerleave', function () { navPix.forEach(function (p) { p.reset(); p.draw(); }); });
+    nav.addEventListener('pointerenter', function () {
+      navHover = true;
+      lastShuffle = performance.now();
+      navPix.forEach(function (p) { p.shuffle(1.35); });   // sorteio imediato
+      if (!navRAF) navRAF = requestAnimationFrame(navTick);
+    });
+    nav.addEventListener('pointerleave', function () {
+      navHover = false;
+      navPix.forEach(function (p) { p.shuffle(); });        // volta ao repouso
+      if (!navRAF) navRAF = requestAnimationFrame(navTick);
+    });
+  }
 
-    function stir() {
-      queued = false;
-      navPix.forEach(function (p) {
-        var r = p.cv.getBoundingClientRect();
-        var cx = (mx - r.left) / r.width * p.cols;
-        var cy = (my - r.top) / r.height * p.rows;
-        var R = 4.5, touched = false;
-        for (var y = 0; y < p.rows; y++) {
-          for (var x = 0; x < p.cols; x++) {
-            var d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy);
-            if (d > R) continue;
-            touched = true;
-            var boost = 1 + (1 - d / R) * 1.6;
-            p.state[y * p.cols + x] = Math.random() < clamp(p.density(x) * boost, 0, 0.95);
-          }
-        }
-        if (touched) p.draw();
-      });
+  function navTick(now) {
+    navRAF = 0;
+    if (navHover && now - lastShuffle >= SHUFFLE_MS) {
+      lastShuffle = now;
+      navPix.forEach(function (p) { p.shuffle(1.35); });
     }
+    var moving = false;
+    navPix.forEach(function (p) {
+      var changed = false;
+      for (var i = 0; i < p.n; i++) {
+        var d = p.tgt[i] - p.cur[i];
+        if (Math.abs(d) > 0.004) { p.cur[i] += d * FADE * 6; changed = true; }
+        else if (p.cur[i] !== p.tgt[i]) { p.cur[i] = p.tgt[i]; changed = true; }
+      }
+      if (changed) { p.draw(); moving = true; }
+    });
+    if (navHover || moving) navRAF = requestAnimationFrame(navTick);
   }
 
   /* ---------------------------------------------------------
-     4. MOLDURAS XADREZ — nenhum quadrado cortado
-        O lado do quadrado passa a ser largura/N (N inteiro) e a altura
-        é arredondada para um múltiplo exacto desse lado.
+     6. MOLDURAS XADREZ (anel de 2 quadrados, sem cortes)
      --------------------------------------------------------- */
   function fitFrames() {
     [].slice.call(document.querySelectorAll('.pxframe')).forEach(function (el) {
-      var target = MOBILE() ? 9 : 14 * scale;
+      var target = MOBILE() ? 8 : 14 * scale;
       var w = el.offsetWidth;
       if (!w) return;
       var n = Math.max(8, Math.round(w / target));
+      if (n % 2) n++;                              // par: o xadrez fecha certo
       var sq = w / n;
       el.style.setProperty('--sq', sq + 'px');
-      el.style.padding = sq + 'px';
+      el.style.padding = (sq * 2) + 'px';
       for (var pass = 0; pass < 2; pass++) {
         var h = el.offsetHeight;
-        var extra = Math.ceil(h / sq) * sq - h;
-        el.style.paddingBottom = (sq + extra) + 'px';
+        var extra = Math.ceil(h / (sq * 2)) * (sq * 2) - h;
+        el.style.paddingBottom = (sq * 2 + extra) + 'px';
       }
     });
   }
 
   /* ---------------------------------------------------------
-     5. MATTER.JS — sol e smiley
+     7. MATTER.JS — sol e smiley
      --------------------------------------------------------- */
   var physics = { engine: null, items: [], world: null, active: false };
-
   function glyphs() { return [].slice.call(document.querySelectorAll('#physics .pix')); }
 
   function placeGlyphs() {
@@ -257,10 +268,8 @@
   function buildPhysics() {
     if (typeof Matter === 'undefined' || !hero || MOBILE()) return;
     var Engine = Matter.Engine, World = Matter.World, Bodies = Matter.Bodies;
-
     physics.engine = Engine.create();
-    physics.engine.gravity.x = 0;
-    physics.engine.gravity.y = 0;
+    physics.engine.gravity.x = 0; physics.engine.gravity.y = 0;
     physics.world = physics.engine.world;
 
     var W = hero.clientWidth, H = hero.clientHeight, t = 400;
@@ -271,6 +280,7 @@
       Bodies.rectangle(W + t / 2, H / 2, t, H + t * 2, { isStatic: true })
     ]);
 
+    sunItem = null;
     physics.items = glyphs().map(function (el) {
       var r = el.getBoundingClientRect();
       var w = r.width || parseFloat(el.dataset.w) * scale;
@@ -281,7 +291,9 @@
           angle: (parseFloat(el.dataset.rot) || 0) * Math.PI / 180 });
       World.add(physics.world, body);
       el.style.width = w + 'px'; el.style.height = h + 'px'; el.style.transformOrigin = 'center';
-      return { el: el, body: body, w: w, h: h };
+      var item = { el: el, body: body, w: w, h: h };
+      if (el.textContent.trim() === 'X') sunItem = item;
+      return item;
     });
 
     attachDrag();
@@ -290,6 +302,8 @@
 
   function attachDrag() {
     physics.items.forEach(function (it) {
+      if (it.el.dataset.drag) return;
+      it.el.dataset.drag = '1';
       var last = null, lastT = 0, vx = 0, vy = 0, offX = 0, offY = 0, dragging = false;
 
       it.el.addEventListener('pointerdown', function (e) {
@@ -303,7 +317,6 @@
         last = { x: e.clientX, y: e.clientY }; lastT = performance.now();
         Matter.Body.setStatic(it.body, true);
       });
-
       it.el.addEventListener('pointermove', function (e) {
         if (!dragging) return;
         var host = it.el.parentElement.getBoundingClientRect();
@@ -312,7 +325,6 @@
         last = { x: e.clientX, y: e.clientY }; lastT = now;
         Matter.Body.setPosition(it.body, { x: e.clientX - host.left + offX, y: e.clientY - host.top + offY });
       });
-
       function release(e) {
         if (!dragging) return;
         dragging = false;
@@ -332,6 +344,7 @@
       var it = physics.items[i], p = it.body.position;
       it.el.style.transform = 'translate3d(' + (p.x - it.w / 2) + 'px,' + (p.y - it.h / 2) + 'px,0) rotate(' + it.body.angle + 'rad)';
     }
+    litUpdate();
   }
 
   function destroyPhysics() {
@@ -339,17 +352,124 @@
     Matter.World.clear(physics.world, false);
     Matter.Engine.clear(physics.engine);
     physics.items.forEach(function (it) { it.el.style.transform = ''; });
-    physics.items = []; physics.active = false;
+    physics.items = []; physics.active = false; sunItem = null;
   }
 
   /* ---------------------------------------------------------
-     6. LOOP
+     8. BONECO — arrastavel, volta ao lugar com mola
+     --------------------------------------------------------- */
+  function riderDrag() {
+    if (!rider) return;
+    var dragging = false, sx = 0, sy = 0;
+    rider.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      dragging = true;
+      sx = e.clientX; sy = e.clientY;
+      rider.setPointerCapture(e.pointerId);
+      rider.classList.add('is-dragging');
+    });
+    rider.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      rider.style.setProperty('--rx', (e.clientX - sx) + 'px');
+      rider.style.setProperty('--ry', (e.clientY - sy) + 'px');
+    });
+    function back(e) {
+      if (!dragging) return;
+      dragging = false;
+      rider.classList.remove('is-dragging');
+      try { rider.releasePointerCapture(e.pointerId); } catch (err) {}
+      rider.style.setProperty('--rx', '0px');
+      rider.style.setProperty('--ry', '0px');
+    }
+    rider.addEventListener('pointerup', back);
+    rider.addEventListener('pointercancel', back);
+  }
+
+  /* ---------------------------------------------------------
+     9. PASTA DOS WORKS — abre e fecha ao passar o rato
+     --------------------------------------------------------- */
+  function folderToy() {
+    var f = document.querySelector('.works__folder');
+    if (!f) return;
+    var OPEN = '\\', SHUT = '[', timer = null, flip = false;
+    f.addEventListener('pointerenter', function () {
+      if (timer) return;
+      timer = setInterval(function () { flip = !flip; f.textContent = flip ? SHUT : OPEN; }, 240);
+    });
+    f.addEventListener('pointerleave', function () {
+      clearInterval(timer); timer = null; flip = false; f.textContent = OPEN;
+    });
+    f.addEventListener('click', function () {
+      var c = document.querySelector('.card');
+      if (c) window.scrollTo({ top: c.getBoundingClientRect().top + window.scrollY - L.vh * 0.12, behavior: 'smooth' });
+    });
+  }
+
+  /* ---------------------------------------------------------
+     10. TRANSICAO DE PIXEIS (desligada: WIPE_ON = false)
+     --------------------------------------------------------- */
+  var wipe = { el: null, cells: [], order: [], state: [], live: false, key: '' };
+  var wipeSection = document.getElementById('pxwipe');
+
+  function wipeGrid() {
+    var vw = root.clientWidth, vh = window.innerHeight;
+    if (vw >= 861) return { c: 18, r: 9 };
+    return { c: 8, r: Math.max(6, Math.min(30, Math.round(8 * vh / vw))) };
+  }
+  function buildWipe() {
+    if (!WIPE_ON || !wipeSection) return;
+    var g = wipeGrid(); COLS = g.c; ROWS = g.r;
+    var key = COLS + 'x' + ROWS;
+    if (wipe.el && wipe.key === key) return;
+    if (wipe.el) wipe.el.remove();
+    wipe.cells = []; wipe.order = []; wipe.state = []; wipe.live = false; wipe.key = key;
+    var el = document.createElement('div');
+    el.className = 'pxwipe-grid';
+    el.style.gridTemplateColumns = 'repeat(' + COLS + ',1fr)';
+    el.style.gridTemplateRows = 'repeat(' + ROWS + ',1fr)';
+    var scored = [];
+    for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) {
+      var i = document.createElement('i');
+      el.appendChild(i); wipe.cells.push(i);
+      var diag = (c / (COLS - 1) + r / (ROWS - 1)) / 2;
+      scored.push({ k: wipe.cells.length - 1, s: diag * (1 - DISPERSAO) + Math.random() * DISPERSAO });
+    }
+    scored.sort(function (a, b) { return a.s - b.s; });
+    wipe.order = new Array(wipe.cells.length);
+    for (var n = 0; n < scored.length; n++) wipe.order[scored[n].k] = n / (scored.length - 1);
+    wipe.state = wipe.cells.map(function () { return false; });
+    document.body.appendChild(el);
+    wipe.el = el;
+  }
+  function updateWipe() {
+    if (!WIPE_ON || !wipe.el || !wipeSection) return;
+    var top = wipeSection.offsetTop, len = wipeSection.offsetHeight || window.innerHeight;
+    var p = (window.scrollY - top) / len;
+    var live = p > -0.06 && p < 1.06;
+    if (live !== wipe.live) { wipe.live = live; wipe.el.classList.toggle('is-live', live); }
+    var covered = p >= 0.5;
+    if (sky) sky.classList.toggle('is-off', covered);
+    if (band) band.classList.toggle('is-off', covered);
+    if (!live) {
+      if (p >= 1) for (var z = 0; z < wipe.cells.length; z++)
+        if (wipe.state[z]) { wipe.state[z] = false; wipe.cells[z].classList.remove('on'); }
+      return;
+    }
+    var a = p * 2, b = (p - 0.5) * 2;
+    for (var i = 0; i < wipe.cells.length; i++) {
+      var t = wipe.order[i];
+      var on = p < 0.5 ? (a >= t) : (b < t);
+      if (on !== wipe.state[i]) { wipe.state[i] = on; wipe.cells[i].classList.toggle('on', on); }
+    }
+  }
+
+  /* ---------------------------------------------------------
+     11. LOOP
      --------------------------------------------------------- */
   var heroVisible = true;
   if ('IntersectionObserver' in window && hero) {
     new IntersectionObserver(function (e) { heroVisible = e[0].isIntersecting; }, { rootMargin: '100px' }).observe(hero);
   }
-
   function tick() {
     scene();
     updateWipe();
@@ -358,17 +478,16 @@
   }
 
   /* ---------------------------------------------------------
-     7. REVEALS + NAV
+     12. REVEALS + NAV
      --------------------------------------------------------- */
   function reveals() {
     var targets = [].slice.call(document.querySelectorAll('.card, .reveal'));
     if (!('IntersectionObserver' in window)) { targets.forEach(function (t) { t.classList.add('is-in'); }); return; }
     var io = new IntersectionObserver(function (en) {
       en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('is-in'); io.unobserve(x.target); } });
-    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
     targets.forEach(function (t) { io.observe(t); });
   }
-
   function navSpy() {
     var links = [].slice.call(document.querySelectorAll('.nav__links a'));
     var sections = links.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
@@ -383,15 +502,16 @@
   }
 
   /* ---------------------------------------------------------
-     8. ARRANQUE
+     13. ARRANQUE
      --------------------------------------------------------- */
   var resizeT;
   window.addEventListener('resize', function () {
     clearTimeout(resizeT);
     resizeT = setTimeout(function () {
-      setScale(); destroyPhysics(); placeGlyphs();
+      setScale(); layout();
+      destroyPhysics(); placeGlyphs();
       if (!REDUCED) buildPhysics();
-      buildWipe(); buildNavPix(); fitFrames(); scene(); updateWipe();
+      buildWipe(); buildNavPix(); fitFrames(); cacheLit(); scene(); updateWipe();
     }, 180);
   });
 
@@ -400,18 +520,23 @@
 
   function start() {
     setScale();
+    splitLetters();
+    layout();
     buildWipe();
     buildNavPix();
     reveals();
     navSpy();
+    folderToy();
+    riderDrag();
     fitFrames();
     placeGlyphs();
     if (!REDUCED) buildPhysics();
+    cacheLit();
     scene();
     updateWipe();
     requestAnimationFrame(tick);
-    window.addEventListener('load', fitFrames);
-    setTimeout(fitFrames, 400);
+    window.addEventListener('load', function () { layout(); fitFrames(); cacheLit(); });
+    setTimeout(function () { layout(); fitFrames(); cacheLit(); }, 500);
   }
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(start).catch(start);
