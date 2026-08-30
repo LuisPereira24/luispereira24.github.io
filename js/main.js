@@ -240,6 +240,42 @@
   }
 
   /* ---------------------------------------------------------
+     5b. PILHA DOS WORKS
+        O painel fica preso ao ecra durante (N-1) x SPC de scroll.
+        j = quantos cards ja chegaram (continuo). O card mais recente
+        fica centrado; os anteriores empilham-se GAP acima, saindo do
+        ecra por cima; os seguintes esperam por baixo da dobra.
+     --------------------------------------------------------- */
+  var stack = document.getElementById('stack');
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var SPC = 800, GAP = 240, stackTop = 0;
+
+  function stackLayout() {
+    if (!stack || !cards.length) return;
+    if (MOBILE()) { stack.style.height = ''; cards.forEach(function (c) { c.style.transform = ''; }); return; }
+    SPC = Math.round(window.innerHeight * 0.8);
+    stack.style.height = ((cards.length - 1) * SPC + window.innerHeight) + 'px';
+    stackTop = stack.getBoundingClientRect().top + window.scrollY;   // coords de pagina
+  }
+
+  function stackScroll() {
+    if (!stack || !cards.length || MOBILE()) return;
+    var vh = window.innerHeight;
+    var navH = 68 * scale;
+    var j = clamp((window.scrollY - stackTop) / SPC, 0, cards.length - 1);
+    var gap = GAP * scale;
+    for (var i = 0; i < cards.length; i++) {
+      var c = cards[i];
+      var h = c.offsetHeight;
+      var C = Math.max(navH * 0.4, navH + (vh - navH - h) / 2);
+      var d = j - i;
+      var enter = vh - C + 40;
+      var y = d >= 0 ? C - d * gap : C + (-d) * enter;
+      c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0) rotate(var(--tilt))';
+    }
+  }
+
+  /* ---------------------------------------------------------
      6. MOLDURAS XADREZ (anel de 2 quadrados, sem cortes)
      --------------------------------------------------------- */
   function fitFrames() {
@@ -483,6 +519,7 @@
   }
   function tick() {
     scene();
+    stackScroll();
     updateWipe();
     if (physics.active && heroVisible) { Matter.Engine.update(physics.engine, 1000 / 60); renderPhysics(); }
     requestAnimationFrame(tick);
@@ -492,7 +529,7 @@
      12. REVEALS + NAV
      --------------------------------------------------------- */
   function reveals() {
-    var targets = [].slice.call(document.querySelectorAll('.card, .reveal'));
+    var targets = [].slice.call(document.querySelectorAll('.reveal'));
     if (!('IntersectionObserver' in window)) { targets.forEach(function (t) { t.classList.add('is-in'); }); return; }
     var io = new IntersectionObserver(function (en) {
       en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('is-in'); io.unobserve(x.target); } });
@@ -522,7 +559,8 @@
       setScale(); layout();
       destroyPhysics(); placeGlyphs();
       if (!REDUCED) buildPhysics();
-      buildWipe(); buildNavPix(); fitFrames(); cacheLit(); scene(); updateWipe();
+      buildWipe(); buildNavPix(); fitFrames(); stackLayout(); stackScroll();
+      cacheLit(); scene(); updateWipe();
     }, 180);
   });
 
@@ -540,14 +578,16 @@
     folderToy();
     riderDrag();
     fitFrames();
+    stackLayout();
+    stackScroll();
     placeGlyphs();
     if (!REDUCED) buildPhysics();
     cacheLit();
     scene();
     updateWipe();
     requestAnimationFrame(tick);
-    window.addEventListener('load', function () { layout(); fitFrames(); cacheLit(); });
-    setTimeout(function () { layout(); fitFrames(); cacheLit(); }, 500);
+    window.addEventListener('load', function () { layout(); fitFrames(); stackLayout(); cacheLit(); });
+    setTimeout(function () { layout(); fitFrames(); stackLayout(); cacheLit(); }, 500);
   }
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(start).catch(start);

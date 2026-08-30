@@ -119,13 +119,22 @@ aleatório, mais denso junto às pontas. Ao passar o rato, os pixéis num raio d
 lado, por isso nunca fica meio quadrado nas extremidades. Corre no arranque,
 no `load` e em cada resize.
 
-**Animação do hero.** `js/linha-pixel.js` foi exportado a partir do teu
-`LinhaPIXEL.html` (WebGL: mosaico + posterize sobre um SVG animado). Se
-gerares uma versão nova, é só voltar a exportar por cima — o único ponto de
-ligação é o `<canvas id="linha-pixel">`.
+**Animações.** `js/pixel-anim.js` é o motor exportado dos teus ficheiros do
+gerador (`LinhaPIXEL.html` e `CirculoPIXEL.html`): WebGL com mosaico +
+posterize sobre um SVG animado. `PixelAnim(canvas, svg, cfg)` — os pontos de
+ligação são `<canvas id="linha-pixel">` e `<canvas id="circ-pixel">`. Ambas
+estão forçadas a `#FFE47B`.
 
-**Cards dos works.** `position: sticky` + `IntersectionObserver`. A inclinação
-de cada um está na variável `--tilt` no próprio HTML.
+**Cards dos works.** A pilha é uma cena presa ao ecrã: `.stack__pin` é
+`sticky` e os cards são posicionados por scroll em `stackScroll()`. `j` é
+quantos cards já chegaram (contínuo); o mais recente fica centrado e os
+anteriores empilham-se `GAP` (240 unidades) acima, saindo por cima do ecrã.
+`SPC` (0.8 de um ecrã) é quanto scroll custa cada card. A inclinação de cada
+um está na variável `--tilt` no próprio HTML.
+
+**Animação circular.** Vive dentro da mesma cena, atrás dos cards
+(`z-index: 0`), com o centro empurrado para baixo e para a direita para
+assomar no canto. Exportada do `CirculoPIXEL.html` para `js/pixel-anim.js`.
 
 ---
 

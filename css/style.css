@@ -340,20 +340,38 @@ a{ color: inherit; text-decoration: none; }
 .works__folder:hover{ transform: translateY(calc(-8 * var(--s))) rotate(-4deg); }
 .works__folder:active{ transform: translateY(calc(2 * var(--s))); }
 
-.stack{ margin-top: calc(80 * var(--s)); padding: 0 calc(160 * var(--s)); }
+/* Cena da pilha: o painel fica preso ao ecra e os cards sao posicionados
+   por scroll (stackScroll() no main.js). O card mais recente fica centrado
+   e os anteriores empilham-se 240u acima, saindo por cima do ecra. */
+.stack{ margin-top: calc(80 * var(--s)); padding: 0 calc(160 * var(--s)); position: relative; }
+.stack__pin{ position: sticky; top: 0; height: 100vh; }
 
 .card{
-  position: sticky;
-  top: calc(80 * var(--s));
-  margin-bottom: calc(230 * var(--s));
-  transform: rotate(var(--tilt)) translateY(calc(60 * var(--s)));
-  opacity: 0;
-  transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .5s linear;
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  transform: translate3d(0, 100vh, 0) rotate(var(--tilt));
+  will-change: transform;
 }
-.card.is-in{ opacity: 1; transform: rotate(var(--tilt)) translateY(0); }
-.card:nth-child(1){ z-index: 1; }
-.card:nth-child(2){ z-index: 2; top: calc(320 * var(--s)); }
-.card:nth-child(3){ z-index: 3; top: calc(560 * var(--s)); }
+.card:nth-of-type(1){ z-index: 1; }
+.card:nth-of-type(2){ z-index: 2; }
+.card:nth-of-type(3){ z-index: 3; }
+
+/* animacao circular: grande, encostada a direita, por tras dos cards */
+.circanim{
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 50%;
+  width: calc(2847 * var(--s));
+  height: calc(1601 * var(--s));
+  max-width: none;                        /* escapa ao max-width:100% global */
+  /* o circulo esta no centro do canvas: empurra-se o centro para baixo
+     e para a direita, de modo a passar por tras dos cards e assomar
+     no canto inferior direito */
+  transform: translate(calc(-50% + 620 * var(--s)), calc(-50% + 420 * var(--s)));
+  image-rendering: pixelated;
+  pointer-events: none;
+}
 
 .card__inner{
   background: var(--card-bg);
@@ -410,23 +428,6 @@ a{ color: inherit; text-decoration: none; }
   transition: transform .2s steps(3);
 }
 .btn:hover .btn__arrow{ transform: none; }
-
-/* animacao circular, entre os cards e o about, a sangrar pela direita */
-.circanim{
-  position: relative;
-  height: calc(790 * var(--s));
-  margin-top: calc(40 * var(--s));
-  overflow: hidden;
-  pointer-events: none;
-}
-.circanim canvas{
-  position: absolute;
-  right: calc(-120 * var(--s));
-  top: calc(15 * var(--s));
-  width: calc(760 * var(--s));
-  height: calc(760 * var(--s));
-  image-rendering: pixelated;
-}
 
 /* ============================= ABOUT ============================= */
 .about{
@@ -546,16 +547,17 @@ a{ color: inherit; text-decoration: none; }
   .works{ padding: 80px 0 60px; }
   .works__head{ padding: 0 6vw; }
   .works__title, .works__folder, .about__title{ font-size: clamp(34px, 10vw, 64px); }
-  .stack{ padding: 0 6vw; margin-top: 32px; }
-  .card{ position: static; margin-bottom: 40px; }
+  .stack{ padding: 0 6vw; margin-top: 32px; height: auto !important; }
+  .stack__pin{ position: static; height: auto; }
+  .card{ position: static; margin-bottom: 40px; transform: rotate(var(--tilt)) !important; }
+  .circanim{ position: relative; left: auto; top: auto; transform: none; max-width: none;
+             width: 150vw; height: 84vw; margin: 4px 0 20px -25vw; }
   .card__inner{ grid-template-columns: 1fr; gap: 24px; padding: 28px 24px 32px; }
   .card__title{ font-size: clamp(44px, 13vw, 90px); margin-bottom: 12px; }
   .card__text{ font-size: 17px; margin-bottom: 16px; }
   .btn{ font-size: clamp(28px, 8vw, 48px); gap: 16px; }
   .card__media{ font-size: 14px; }
 
-  .circanim{ height: 84vw; margin-top: 16px; }
-  .circanim canvas{ right: -14vw; top: 2vw; width: 80vw; height: 80vw; }
 
   .about{ padding: 60px 6vw 90px; }
   .about__grid{ grid-template-columns: 1fr; gap: 40px; }
@@ -571,7 +573,7 @@ a{ color: inherit; text-decoration: none; }
 }
 
 @media (prefers-reduced-motion: reduce){
-  .card, .reveal{ opacity: 1 !important; transform: rotate(var(--tilt, 0deg)) !important; transition: none !important; }
+  .reveal{ opacity: 1 !important; transform: none !important; transition: none !important; }
   .hero__hint{ animation: none; }
   .pxwipe-grid i{ transition: none; }
 }
