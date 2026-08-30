@@ -137,6 +137,21 @@ posterize sobre um SVG animado. `PixelAnim(canvas, svg, cfg)` — os pontos de
 ligação são `<canvas id="linha-pixel">` e `<canvas id="circ-pixel">`. Ambas
 estão forçadas a `#FFE47B`.
 
+**About e Toolkit.** O about passou a bloco claro (`#f9fff9`, texto `#262626`
+justificado a 45 unidades), como no Figma novo, com os dois glifos da Mister
+Pixel (a carinha por baixo do texto, a mão sobre a foto). O título `TOOLKIT`
+fica ainda dentro desse bloco, em verde; a folha de papel sobe 198 unidades
+com `margin-top` negativa para ficar meia no claro e meia no verde — o
+`display: flow-root` na secção é o que impede essa margem de colapsar e
+arrastar a secção inteira.
+
+**A folha.** O fundo quadriculado é feito com dois `repeating-linear-gradient`
+(quadrícula de 27 unidades) em vez do SVG do Figma, as franjas laterais usam o
+mesmo xadrez das molduras, e a folha está inclinada 0.72° enquanto os textos
+ficam a direito, tal como no ficheiro. Ao passar o rato, `paperTilt()` inclina
+o papel na direcção do cursor (até 5.5°/7°), levanta-o um pouco, aumenta a
+sombra e mete-o a baloiçar devagar; ao sair volta ao lugar com mola.
+
 **Cards dos works.** A pilha é uma cena presa ao ecrã: `.stack__pin` é
 `sticky` e os cards são posicionados por scroll em `stackScroll()`. `j` é
 quantos cards já chegaram (contínuo); o mais recente fica centrado e os

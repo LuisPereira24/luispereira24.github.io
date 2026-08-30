@@ -323,9 +323,10 @@ a{ color: inherit; text-decoration: none; }
 .pxframe{
   --sq: calc(14 * var(--s));
   --frame-bg: var(--card-bg, var(--paper));
+  --frame-void: var(--olive);            /* cor dos quadrados "vazios" */
   padding: calc(var(--sq) * 2);           /* anel de 2 quadrados, como no Figma */
   background-image: conic-gradient(from 90deg at 50% 50%,
-    var(--frame-bg) 25%, var(--olive) 0 50%, var(--frame-bg) 0 75%, var(--olive) 0);
+    var(--frame-bg) 25%, var(--frame-void) 0 50%, var(--frame-bg) 0 75%, var(--frame-void) 0);
   background-size: calc(var(--sq) * 2) calc(var(--sq) * 2);
   background-position: 0 0;
 }
@@ -453,31 +454,68 @@ a{ color: inherit; text-decoration: none; }
 /* ============================= ABOUT ============================= */
 .about{
   position: relative;
-  background: var(--olive);
-  padding: calc(120 * var(--s)) calc(160 * var(--s)) calc(200 * var(--s));
+  background: var(--paper);
+  color: var(--ink);
+  padding: calc(107 * var(--s)) calc(160 * var(--s)) calc(288 * var(--s));
 }
 .about__grid{
   display: grid;
   grid-template-columns: calc(1060 * var(--s)) 1fr;
-  gap: calc(120 * var(--s));
+  gap: calc(115 * var(--s));
   align-items: start;
 }
 .about__title{
-  margin: 0 0 calc(34 * var(--s));
+  margin: 0 0 calc(30 * var(--s));
   font-size: calc(96.175 * var(--s));
   line-height: .83;
-  color: var(--paper);
+  color: var(--ink);
 }
 .about__text{
-  margin: 0 0 calc(28 * var(--s));
+  margin: 0 0 calc(38 * var(--s));
   font-family: var(--font-hand);
   font-variation-settings: var(--hand-axes);
-  font-size: calc(30 * var(--s));
+  font-size: calc(45 * var(--s));
   line-height: .92;
-  color: var(--paper);
+  text-align: justify;
+  color: var(--ink);
 }
-.about__portrait-frame{ width: calc(463 * var(--s)); margin-left: auto; --card-bg: var(--paper); }
-.about__portrait-inner{ background: var(--olive); }
+.about__text:last-child{ margin-bottom: 0; }
+.about__portrait{ position: relative; }
+.about__portrait-frame{
+  width: calc(425 * var(--s));
+  margin-left: auto;
+  --card-bg: var(--ink);
+  --frame-void: var(--paper);
+}
+.about__portrait-inner{ background: #6f6f6f; }
+
+/* glifos da Mister Pixel: a carinha por baixo do texto e a mao sobre a foto */
+.about__face, .about__hand{
+  position: absolute;
+  font-size: calc(84 * var(--s));
+  line-height: .83;
+  transform: rotate(-15.92deg);
+  pointer-events: none;
+}
+.about__face{
+  left: calc(978 * var(--s));
+  top: calc(706 * var(--s));
+  color: var(--ink);
+}
+.about__hand{
+  right: calc(59 * var(--s));
+  top: calc(30 * var(--s));
+  color: var(--paper);
+  z-index: 5;
+}
+
+/* titulo da seccao seguinte, ainda dentro do bloco claro */
+.toolkit__title{
+  margin: calc(79 * var(--s)) 0 0;
+  font-size: calc(96.175 * var(--s));
+  line-height: .83;
+  color: var(--olive);
+}
 .about__portrait-inner img{ width: 100%; height: auto; }
 .about__portrait-inner.is-missing{
   aspect-ratio: 423 / 629;
@@ -516,6 +554,78 @@ a{ color: inherit; text-decoration: none; }
 
 .reveal{ opacity: 0; transform: translateY(calc(40 * var(--s))); transition: opacity .6s linear, transform .6s cubic-bezier(.2,.8,.2,1); }
 .reveal.is-in{ opacity: 1; transform: none; }
+
+/* ============================= TOOLKIT ============================= */
+/* A folha sobe 198 unidades para ficar meia no bloco claro e meia no verde,
+   como no Figma. O papel inteiro reage ao rato (paperTilt() no main.js). */
+.toolkit{
+  position: relative;
+  display: flow-root;                    /* impede o colapso da margem negativa */
+  background: var(--olive);
+  padding: 0 calc(157 * var(--s)) calc(234 * var(--s));
+}
+.paper{
+  position: relative;
+  width: calc(1606.56 * var(--s));
+  height: calc(628.17 * var(--s));
+  margin-top: calc(-198 * var(--s));
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+/* a folha (fundo, grelha e franjas) esta ligeiramente torta; os textos ficam
+   a direito por cima dela, tal como no Figma */
+.paper__sheet{
+  position: absolute;
+  inset: 0;
+  --sq: calc(27 * var(--s));
+  background-color: #fffff5;
+  background-image:
+    repeating-linear-gradient(0deg,  rgba(38,38,38,.10) 0 1px, transparent 1px var(--sq)),
+    repeating-linear-gradient(90deg, rgba(38,38,38,.10) 0 1px, transparent 1px var(--sq));
+  transform: rotate(.72deg);
+  box-shadow: 0 calc(6 * var(--s)) 0 rgba(0,0,0,.10);
+  transition: box-shadow .35s ease;
+}
+.paper.is-lifted .paper__sheet{ box-shadow: 0 calc(18 * var(--s)) calc(26 * var(--s)) rgba(0,0,0,.22); }
+.paper__strip{
+  position: absolute;
+  top: 0; bottom: 0;
+  width: calc(54 * var(--s));
+  background-image: conic-gradient(from 90deg at 50% 50%,
+    var(--olive) 25%, #fffff5 0 50%, var(--olive) 0 75%, #fffff5 0);
+  background-size: var(--sq) var(--sq);
+}
+.paper__strip--l{ left: calc(4 * var(--s)); }
+.paper__strip--r{ right: 0; }
+
+.paper__cat, .paper__tools{
+  position: absolute;
+  margin: 0;
+  top: calc(var(--y) * var(--s));
+  font-family: var(--font-hand);
+  font-variation-settings: var(--hand-axes);
+  font-weight: 400;
+  font-size: calc(79.95 * var(--s));
+  line-height: .83;
+  white-space: nowrap;
+}
+.paper__cat{ left: calc(204 * var(--s)); color: #fa5558; }
+.paper__tools{ left: calc(144 * var(--s)); color: #4e6ff5; }
+.paper__dot{
+  position: absolute;
+  left: calc(178 * var(--s));
+  top: calc(var(--y) * var(--s));
+  width: calc(6.18 * var(--s));
+  height: calc(14.07 * var(--s));
+  background: #fa5558;
+}
+.paper__ico{
+  position: absolute;
+  font-size: calc(84 * var(--s));
+  line-height: .83;
+}
+.paper__ico--bulb{ left: calc(927 * var(--s)); top: calc(203 * var(--s)); color: #4e6ff5; transform: rotate(15.81deg); }
+.paper__ico--glass{ left: calc(1273 * var(--s)); top: calc(404 * var(--s)); color: #fa5558; transform: rotate(-9.69deg); }
 
 /* ============================= CONTACT ============================= */
 .contact{
@@ -580,9 +690,21 @@ a{ color: inherit; text-decoration: none; }
   .card__media{ font-size: 14px; }
 
 
-  .about{ padding: 60px 6vw 90px; }
+  .about{ padding: 48px 6vw 70px; }
+  .about__face, .about__hand{ display: none; }
+  .toolkit__title{ margin-top: 34px; font-size: clamp(34px, 10vw, 64px); }
+
+  .toolkit{ padding: 0 5vw 60px; }
+  .paper{ width: 90vw; height: auto; margin: -34px auto 0; padding: 26px 0 30px; }
+  .paper__sheet{ --sq: 13px; transform: rotate(.72deg); }
+  .paper__strip{ width: 26px; }
+  .paper__cat, .paper__tools, .paper__dot, .paper__ico{ position: static; }
+  .paper__cat{ margin: 0 0 2px 44px; font-size: clamp(28px, 8vw, 46px); }
+  .paper__tools{ margin: 0 0 22px 38px; font-size: clamp(26px, 7.4vw, 42px); white-space: normal; }
+  .paper__dot{ display: none; }
+  .paper__ico{ display: none; }
   .about__grid{ grid-template-columns: 1fr; gap: 40px; }
-  .about__text{ font-size: 17px; }
+  .about__text{ font-size: clamp(17px, 4.6vw, 26px); text-align: left; }
   .about__portrait-frame{ width: 70vw; margin: 0 auto; }
   .about__portrait-inner.is-missing::after{ font-size: 13px; }
 
