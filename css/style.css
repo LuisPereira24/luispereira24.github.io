@@ -1,0 +1,485 @@
+/* =========================================================
+   PORTFOLIO — LUIS PEREIRA
+   Escala: layout desenhado a 1920px, escalado por --s (JS).
+   1 unidade do Figma = calc(1 * var(--s))
+
+   Camadas (z-index):
+     0  céu (fixo)          2  hero + textos
+     1  secções de conteúdo 5  relvado (fixo)
+    90  transição de pixéis 100 header
+   ========================================================= */
+
+:root{
+  --s: calc(100vw / 1920);
+
+  --ink:      #262626;
+  --paper:    #f9fff9;
+  --olive:    #27301d;
+  --brown:    #30291d;
+  --yellow:   #ffe202;
+  --yellow-2: #ffe57b;
+
+  --hero-ink: #262626;      /* passa a branco com o scroll */
+  --grass-y: 0px;           /* quanto o relvado está empurrado para baixo */
+
+  --font-dot: 'DotGothic16', 'Courier New', monospace;
+  --font-hand: 'Handjet', 'DotGothic16', monospace;
+  --hand-axes: "ELGR" 1, "ELSH" 2;
+}
+
+@font-face{
+  font-family: 'MisterPixel';
+  src: local('Mister Pixel 16 pt - ToolsOne'),
+       local('Mister Pixel 16 pt'),
+       url('../assets/fonts/MisterPixel.woff2') format('woff2');
+  font-display: swap;
+}
+
+*, *::before, *::after{ box-sizing: border-box; }
+
+html{ scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior: auto; } }
+
+body{
+  margin: 0;
+  background: var(--olive);
+  color: var(--ink);
+  font-family: var(--font-dot);
+  overflow-x: hidden;
+  -webkit-font-smoothing: none;
+}
+
+img, video, canvas{ display: block; max-width: 100%; }
+img[src$=".png"], img[src$=".gif"]{ image-rendering: pixelated; }
+a{ color: inherit; text-decoration: none; }
+.pix-font{ font-family: 'MisterPixel', var(--font-dot); }
+
+/* ============================= NAV ============================= */
+.nav{
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: calc(68 * var(--s));
+  background: var(--paper);
+  z-index: 100;
+  overflow: hidden;
+}
+.nav__pix{
+  position: absolute;
+  top: 0;
+  height: calc(68 * var(--s));
+  width: calc(260 * var(--s));
+  image-rendering: pixelated;
+}
+.nav__pix--left{ left: 0; }
+.nav__pix--right{ right: 0; }
+
+.nav__links{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(1066 * var(--s));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: calc(44 * var(--s));
+  line-height: .83;
+  color: var(--ink);
+}
+.nav__links a{ position: relative; }
+.nav__links a::after{
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  bottom: calc(-10 * var(--s));
+  height: calc(6 * var(--s));
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .18s steps(4);
+}
+.nav__links a:hover::after, .nav__links a.is-active::after{ transform: scaleX(1); }
+
+/* ============================= CÉU (fixo) ============================= */
+.sky{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.sky img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 72%;
+}
+.sky.is-off, .grassband.is-off{ visibility: hidden; }
+
+/* ============================= RELVADO (fixo) ============================= */
+.grassband{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 5;
+  pointer-events: none;
+  transform: translate3d(0, var(--grass-y), 0);
+  will-change: transform;
+}
+.grassband img{ width: 100%; height: auto; }
+.grassband .pix--rider{
+  position: absolute;
+  left: calc(1116 * var(--s));
+  top: calc(-78.5 * var(--s));
+  font-family: 'MisterPixel', var(--font-dot);
+  font-size: calc(var(--size) * var(--s));
+  line-height: .83;
+  color: var(--color);
+  transform: rotate(1.1deg);
+}
+
+/* ============================= HERO ============================= */
+.hero{
+  position: relative;
+  z-index: 2;
+  height: calc(2202 * var(--s));
+  overflow: hidden;
+}
+
+.hero__anim{
+  position: absolute;
+  left: calc(-413 * var(--s));
+  top: calc(570 * var(--s));
+  width: calc(1600 * var(--s));
+  height: calc(900 * var(--s));
+  transform: rotate(90deg);
+  z-index: 1;
+  pointer-events: none;
+  opacity: .9;
+}
+
+.hero__hi, .hero__name, .hero__iam, .hero__role, .hero__basedin, .hero__country{
+  position: absolute;
+  margin: 0;
+  z-index: 3;
+}
+
+.hero__hi{
+  left: 50%; transform: translateX(-50%);
+  top: calc(308.69 * var(--s));
+  font-size: calc(115.083 * var(--s));
+  line-height: .83;
+  color: var(--hero-ink);
+  white-space: nowrap;
+}
+.hero__name{
+  left: 50%; transform: translateX(-50%);
+  top: calc(424.69 * var(--s));
+  font-family: var(--font-hand);
+  font-variation-settings: var(--hand-axes);
+  font-weight: 600;
+  font-size: calc(282.745 * var(--s));
+  line-height: .83;
+  color: var(--hero-ink);
+  white-space: nowrap;
+}
+.hero__iam{
+  left: calc(160 * var(--s));
+  top: calc(1027 * var(--s));
+  font-size: calc(59.797 * var(--s));
+  line-height: .83;
+  color: var(--paper);
+}
+.hero__role{
+  left: calc(160 * var(--s));
+  top: calc(1097 * var(--s));
+  width: calc(1052 * var(--s));
+  font-size: calc(179.864 * var(--s));
+  line-height: .92;
+  color: var(--paper);
+}
+.hero__basedin{
+  left: calc(1520 * var(--s));
+  top: calc(1402 * var(--s));
+  width: calc(240 * var(--s));
+  text-align: center;
+  font-size: calc(59.797 * var(--s));
+  line-height: .83;
+  color: var(--paper);
+}
+.hero__country{
+  left: calc(1040 * var(--s));
+  top: calc(1472 * var(--s));
+  font-size: calc(179.864 * var(--s));
+  line-height: .92;
+  color: var(--paper);
+  white-space: nowrap;
+}
+
+.hero__hint{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(940 * var(--s));
+  z-index: 3;
+  font-size: calc(28 * var(--s));
+  letter-spacing: .3em;
+  color: var(--paper);
+  text-shadow: 0 calc(3 * var(--s)) 0 rgba(0,0,0,.35);
+  animation: blink 1.4s steps(2, jump-none) infinite;
+}
+@keyframes blink{ 50%{ opacity: .15; } }
+
+/* ---------- Matter.js ---------- */
+.physics{ position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.pix{
+  position: absolute;
+  left: 0; top: 0;
+  font-family: 'MisterPixel', var(--font-dot);
+  font-size: calc(var(--size) * var(--s));
+  line-height: .83;
+  color: var(--color);
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none; -webkit-user-select: none;
+  touch-action: none;
+  will-change: transform;
+}
+.pix.is-dragging{ cursor: grabbing; }
+
+/* ============================= TRANSIÇÃO DE PIXÉIS ============================= */
+.pxwipe{
+  position: relative;
+  z-index: 1;
+  height: 100vh;
+  background: var(--olive);
+}
+.pxwipe-grid{
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  display: grid;
+  visibility: hidden;
+}
+.pxwipe-grid.is-live{ visibility: visible; }
+.pxwipe-grid i{
+  background: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+  opacity: 0;
+  transition: opacity 90ms linear;
+}
+.pxwipe-grid i.on{ opacity: 1; }
+
+/* ============================= MOLDURA XADREZ ============================= */
+/* --sq e o padding são recalculados em JS para que nenhum quadrado
+   fique cortado nas extremidades (ver fitFrames() em main.js). */
+.pxframe{
+  --sq: calc(14 * var(--s));
+  padding: var(--sq);
+  background-image: conic-gradient(from 90deg at 50% 50%,
+    var(--ink) 25%, var(--paper) 0 50%, var(--ink) 0 75%, var(--paper) 0);
+  background-size: calc(var(--sq) * 2) calc(var(--sq) * 2);
+  background-position: 0 0;
+}
+
+/* ============================= WORKS ============================= */
+.works{
+  position: relative;
+  z-index: 1;
+  background: var(--olive);
+  padding: calc(145 * var(--s)) 0 calc(160 * var(--s));
+}
+.works__head{
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 calc(160 * var(--s));
+}
+.works__title{
+  margin: 0;
+  font-size: calc(96.175 * var(--s));
+  line-height: .83;
+  color: var(--paper);
+}
+.works__folder{ font-size: calc(96.175 * var(--s)); line-height: .83; color: var(--paper); }
+
+.stack{ margin-top: calc(80 * var(--s)); padding: 0 calc(160 * var(--s)); }
+
+.card{
+  position: sticky;
+  top: calc(140 * var(--s));
+  margin-bottom: calc(120 * var(--s));
+  transform: rotate(var(--tilt)) translateY(calc(60 * var(--s)));
+  opacity: 0;
+  transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .5s linear;
+}
+.card.is-in{ opacity: 1; transform: rotate(var(--tilt)) translateY(0); }
+.card:nth-child(1){ z-index: 1; }
+.card:nth-child(2){ z-index: 2; }
+.card:nth-child(3){ z-index: 3; }
+
+.card__inner{
+  background: var(--card-bg);
+  display: grid;
+  grid-template-columns: calc(530 * var(--s)) 1fr;
+  gap: calc(72 * var(--s));
+  padding: calc(70 * var(--s)) calc(80 * var(--s)) calc(80 * var(--s));
+}
+.card__title{
+  margin: 0 0 calc(24 * var(--s));
+  font-family: var(--font-hand);
+  font-variation-settings: var(--hand-axes);
+  font-weight: 500;
+  font-size: calc(161.957 * var(--s));
+  line-height: .92;
+  color: var(--ink);
+}
+.card__text{
+  margin: 0 0 calc(28 * var(--s));
+  font-family: var(--font-hand);
+  font-variation-settings: var(--hand-axes);
+  font-size: calc(30 * var(--s));
+  line-height: .92;
+  color: var(--ink);
+}
+.card__col--media{ display: flex; flex-direction: column; gap: calc(28 * var(--s)); }
+.card__media{
+  aspect-ratio: 708 / 382;
+  background: #949494;
+  display: grid; place-items: center;
+  font-family: var(--font-hand);
+  font-variation-settings: var(--hand-axes);
+  font-size: calc(28 * var(--s));
+  color: #f0f0f0;
+}
+.btn{
+  display: inline-flex; align-items: center; gap: calc(40 * var(--s));
+  font-family: var(--font-hand);
+  font-variation-settings: var(--hand-axes);
+  font-weight: 500;
+  font-size: calc(68.374 * var(--s));
+  line-height: .83;
+  color: var(--olive);
+}
+.btn__arrow{ transition: transform .2s steps(3); }
+.btn:hover .btn__arrow{ transform: translateX(calc(20 * var(--s))); }
+
+/* ============================= ABOUT ============================= */
+.about{
+  position: relative;
+  z-index: 1;
+  background: var(--olive);
+  padding: calc(120 * var(--s)) calc(160 * var(--s)) calc(200 * var(--s));
+}
+.about__grid{
+  display: grid;
+  grid-template-columns: calc(1060 * var(--s)) 1fr;
+  gap: calc(120 * var(--s));
+  align-items: start;
+}
+.about__title{
+  margin: 0 0 calc(34 * var(--s));
+  font-size: calc(96.175 * var(--s));
+  line-height: .83;
+  color: var(--paper);
+}
+.about__text{
+  margin: 0 0 calc(28 * var(--s));
+  font-family: var(--font-hand);
+  font-variation-settings: var(--hand-axes);
+  font-size: calc(30 * var(--s));
+  line-height: .92;
+  color: var(--paper);
+}
+.about__portrait-frame{ width: calc(463 * var(--s)); margin-left: auto; }
+.about__portrait-inner{ background: #6f6f6f; }
+.about__portrait-inner img{ width: 100%; height: auto; }
+.about__portrait-inner.is-missing{
+  aspect-ratio: 423 / 629;
+  display: grid; place-items: center;
+}
+.about__portrait-inner.is-missing::after{
+  content: "retrato.png";
+  color: #eee;
+  font-family: var(--font-hand);
+  font-size: calc(26 * var(--s));
+}
+
+.reveal{ opacity: 0; transform: translateY(calc(40 * var(--s))); transition: opacity .6s linear, transform .6s cubic-bezier(.2,.8,.2,1); }
+.reveal.is-in{ opacity: 1; transform: none; }
+
+/* ============================= CONTACT ============================= */
+.contact{
+  position: relative;
+  z-index: 1;
+  background: var(--brown);
+  padding: calc(160 * var(--s));
+  min-height: calc(721 * var(--s));
+  color: var(--paper);
+}
+.contact__label{ margin: 0 0 calc(24 * var(--s)); font-size: calc(59.797 * var(--s)); line-height: .83; color: var(--yellow-2); }
+.contact__mail{
+  display: inline-block;
+  font-family: var(--font-hand);
+  font-variation-settings: var(--hand-axes);
+  font-weight: 600;
+  font-size: calc(140 * var(--s));
+  line-height: .92;
+  color: var(--paper);
+}
+.contact__mail:hover{ color: var(--yellow); }
+.contact__social{ display: flex; gap: calc(60 * var(--s)); margin-top: calc(60 * var(--s)); font-size: calc(44 * var(--s)); }
+.contact__social a:hover{ color: var(--yellow); }
+.contact__copy{ margin: calc(80 * var(--s)) 0 0; font-size: calc(28 * var(--s)); opacity: .6; }
+
+/* ============================= MOBILE ============================= */
+@media (max-width: 860px){
+  .hero{ height: auto; min-height: 100svh; padding: 17vh 6vw 40vh; overflow: hidden; }
+  .hero__anim{ display: none; }
+
+  .hero__hi, .hero__name, .hero__iam, .hero__role, .hero__basedin, .hero__country{
+    position: relative; z-index: 3; left: auto; top: auto; transform: none;
+    width: auto; white-space: normal; text-align: left;
+  }
+  .hero__hi{ font-size: clamp(20px, 6vw, 40px); }
+  .hero__name{ font-size: clamp(42px, 13.5vw, 104px); margin-bottom: 14vh; }
+  .hero__iam, .hero__basedin{ font-size: clamp(14px, 4vw, 24px); }
+  .hero__role, .hero__country{ font-size: clamp(32px, 10.5vw, 88px); }
+  .hero__basedin{ margin-top: 6vh; }
+  .hero__hint, .physics{ display: none; }
+  .grassband .pix--rider{ left: 62vw; top: -11vw; font-size: 15vw; }
+
+  .pxwipe{ height: 60vh; }
+
+  .nav{ height: 52px; }
+  .nav__links{ width: 74vw; font-size: clamp(12px, 3.3vw, 20px); }
+  .nav__pix{ width: 40px; height: 52px; }
+
+  .works{ padding: 80px 0 60px; }
+  .works__head{ padding: 0 6vw; }
+  .works__title, .works__folder, .about__title{ font-size: clamp(34px, 10vw, 64px); }
+  .stack{ padding: 0 6vw; margin-top: 32px; }
+  .card{ position: static; margin-bottom: 40px; }
+  .card__inner{ grid-template-columns: 1fr; gap: 24px; padding: 28px 24px 32px; }
+  .card__title{ font-size: clamp(44px, 13vw, 90px); margin-bottom: 12px; }
+  .card__text{ font-size: 17px; margin-bottom: 16px; }
+  .btn{ font-size: clamp(28px, 8vw, 48px); gap: 16px; }
+  .card__media{ font-size: 14px; }
+
+  .about{ padding: 60px 6vw 90px; }
+  .about__grid{ grid-template-columns: 1fr; gap: 40px; }
+  .about__text{ font-size: 17px; }
+  .about__portrait-frame{ width: 70vw; margin: 0 auto; }
+  .about__portrait-inner.is-missing::after{ font-size: 13px; }
+
+  .contact{ padding: 70px 6vw 90px; min-height: 0; }
+  .contact__label{ font-size: 18px; }
+  .contact__mail{ font-size: clamp(32px, 9.5vw, 72px); word-break: break-word; }
+  .contact__social{ font-size: 18px; gap: 22px; flex-wrap: wrap; margin-top: 32px; }
+  .contact__copy{ font-size: 13px; margin-top: 46px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .card, .reveal{ opacity: 1 !important; transform: rotate(var(--tilt, 0deg)) !important; transition: none !important; }
+  .hero__hint{ animation: none; }
+  .pxwipe-grid i{ transition: none; }
+}

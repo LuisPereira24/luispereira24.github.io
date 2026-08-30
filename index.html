@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luis Pereira — Web &amp; Brand Designer</title>
+<meta name="description" content="Luis Pereira — Web &amp; Brand Designer based in Portugal.">
+<meta name="theme-color" content="#27301d">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Handjet:ELGR,ELSH,wght@1,2,100..900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <canvas class="nav__pix nav__pix--left" data-side="left" aria-hidden="true"></canvas>
+  <canvas class="nav__pix nav__pix--right" data-side="right" aria-hidden="true"></canvas>
+  <nav class="nav__links" aria-label="Main">
+    <a href="#home">home</a>
+    <a href="#works">works</a>
+    <a href="#about">about</a>
+    <a href="#contact">contact</a>
+  </nav>
+</header>
+
+<!-- ============ CENÁRIO FIXO (céu por trás, relvado por cima) ============ -->
+<div class="sky" id="sky" aria-hidden="true">
+  <img src="assets/img/ceu.png" alt="">
+</div>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="home">
+    <canvas class="hero__anim" id="linha-pixel" width="1600" height="900" aria-hidden="true"></canvas>
+
+    <p class="hero__hi">hi, my name is</p>
+    <h1 class="hero__name">LUIS PEREIRA</h1>
+
+    <p class="hero__iam">i am</p>
+    <p class="hero__role">WEB &amp; BRAND DESIGNER</p>
+
+    <p class="hero__basedin">based in</p>
+    <p class="hero__country">PORTUGAL</p>
+
+    <!-- Matter.js: sol e smiley ficam soltos e podem ser atirados -->
+    <div class="physics" id="physics" aria-hidden="true">
+      <span class="pix" data-x="1720.5" data-y="308.7" data-w="142.9" data-h="123.4" data-rot="-14.28"
+            style="--size:115.083; --color:#ffe202">X</span>
+      <span class="pix" data-x="223.3" data-y="851.2" data-w="138.7" data-h="117.1" data-rot="10.68"
+            style="--size:115.083; --color:#ffe57b">D</span>
+    </div>
+
+    <div class="hero__hint" aria-hidden="true">scroll</div>
+  </section>
+
+  <!-- ============ TRANSIÇÃO DE PIXÉIS ============ -->
+  <section class="pxwipe" id="pxwipe" aria-hidden="true"></section>
+
+  <!-- ============ WORKS ============ -->
+  <section class="works" id="works">
+    <header class="works__head">
+      <h2 class="works__title">WORKS</h2>
+      <span class="works__folder pix-font" aria-hidden="true">\</span>
+    </header>
+
+    <div class="stack" id="stack">
+
+      <article class="card pxframe" style="--card-bg:#f9fff9; --tilt:0deg">
+        <div class="card__inner">
+          <div class="card__col">
+            <h3 class="card__title">LOOP CLUB</h3>
+            <p class="card__text">Lorem ipsum dolor sit amet consectetur. Sit aliquet cras porta neque dolor. Tellus turpis pellentesque parturient ultricies magna sed bibendum in. Massa ullamcorper consectetur pretium volutpat placerat enim mauris</p>
+            <p class="card__text">Tristique quisque dolor nulla aliquam leo in ultrices. Mauris felis velit habitant platea lectus. Risus est sed id posuere egestas leo. Ut sapien porta at odio magna fusce integer. Tempor eu adipiscing fermentum habitasse.</p>
+          </div>
+          <div class="card__col card__col--media">
+            <div class="card__media"><span>1600 × 900</span></div>
+            <a class="btn" href="#" target="_blank" rel="noopener">
+              CHECK WEBSITE <span class="btn__arrow pix-font" aria-hidden="true">&gt;</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card pxframe" style="--card-bg:#f5edcc; --tilt:-1.4deg">
+        <div class="card__inner">
+          <div class="card__col">
+            <h3 class="card__title">ASPECT</h3>
+            <p class="card__text">Lorem ipsum dolor sit amet consectetur. Sit aliquet cras porta neque dolor. Tellus turpis pellentesque parturient ultricies magna sed bibendum in. Massa ullamcorper consectetur pretium volutpat placerat enim mauris</p>
+            <p class="card__text">Tristique quisque dolor nulla aliquam leo in ultrices. Mauris felis velit habitant platea lectus. Risus est sed id posuere egestas leo. Ut sapien porta at odio magna fusce integer. Tempor eu adipiscing fermentum habitasse.</p>
+          </div>
+          <div class="card__col card__col--media">
+            <div class="card__media"><span>1600 × 900</span></div>
+            <a class="btn" href="#" target="_blank" rel="noopener">
+              CHECK WEBSITE <span class="btn__arrow pix-font" aria-hidden="true">&gt;</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card pxframe" style="--card-bg:#cce5f5; --tilt:0.6deg">
+        <div class="card__inner">
+          <div class="card__col">
+            <h3 class="card__title">ALPHAHIKE</h3>
+            <p class="card__text">Lorem ipsum dolor sit amet consectetur. Sit aliquet cras porta neque dolor. Tellus turpis pellentesque parturient ultricies magna sed bibendum in. Massa ullamcorper consectetur pretium volutpat placerat enim mauris</p>
+            <p class="card__text">Tristique quisque dolor nulla aliquam leo in ultrices. Mauris felis velit habitant platea lectus. Risus est sed id posuere egestas leo. Ut sapien porta at odio magna fusce integer. Tempor eu adipiscing fermentum habitasse.</p>
+          </div>
+          <div class="card__col card__col--media">
+            <div class="card__media"><span>1600 × 900</span></div>
+            <a class="btn" href="#" target="_blank" rel="noopener">
+              CHECK WEBSITE <span class="btn__arrow pix-font" aria-hidden="true">&gt;</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="about" id="about">
+    <div class="about__grid">
+      <div class="about__col reveal">
+        <h2 class="about__title">ABOUT ME</h2>
+        <p class="about__text">Lorem ipsum dolor sit amet consectetur. Sit aliquet cras porta neque dolor. Tellus turpis pellentesque parturient ultricies magna sed bibendum in. Massa ullamcorper consectetur pretium volutpat placerat enim mauris. Etiam at gravida sed phasellus a augue sed facilisi id. Vitae quisque odio venenatis semper pellentesque diam bibendum dignissim tortor.</p>
+        <p class="about__text">Tristique quisque dolor nulla aliquam leo in ultrices. Mauris felis velit habitant platea lectus. Risus est sed id posuere egestas leo. Ut sapien porta at odio magna fusce integer. Tempor eu adipiscing fermentum habitasse.</p>
+      </div>
+      <div class="about__portrait reveal">
+        <div class="about__portrait-frame pxframe">
+          <div class="about__portrait-inner">
+            <img src="assets/img/retrato.png" alt="Luis Pereira" onerror="this.closest('.about__portrait-inner').classList.add('is-missing');this.remove()">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <footer class="contact" id="contact">
+    <div class="contact__inner">
+      <p class="contact__label">say hi</p>
+      <a class="contact__mail" href="mailto:hello@luispereira.pt">HELLO@LUISPEREIRA.PT</a>
+      <nav class="contact__social" aria-label="Social">
+        <a href="#" target="_blank" rel="noopener">instagram</a>
+        <a href="#" target="_blank" rel="noopener">behance</a>
+        <a href="#" target="_blank" rel="noopener">linkedin</a>
+      </nav>
+      <p class="contact__copy">© <span id="year"></span> Luis Pereira — web &amp; brand designer</p>
+    </div>
+  </footer>
+
+</main>
+
+<!-- relvado fixo no fundo do ecrã: só o topo aparece, e desce com o utilizador
+     sem se mover, até crescer mesmo antes da secção WORKS -->
+<div class="grassband" id="grassband" aria-hidden="true">
+  <img src="assets/img/relvado.png" alt="">
+  <span class="pix pix--rider" style="--size:115.083; --color:#ffe57b">L</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
+<script src="js/linha-pixel.js" defer></script>
+<script src="js/main.js" defer></script>
+</body>
+</html>
