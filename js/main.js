@@ -50,14 +50,14 @@
   function layout() {
     if (!band || !hero) return;
     L.vh = window.innerHeight;
-    var bimg = band.querySelector('img');
-    L.bandH = (bimg && bimg.offsetHeight) || band.offsetHeight;
-    L.visible = Math.min(L.vh * GRASS_VIS, L.bandH);
-    root.style.setProperty('--grass-y', (L.bandH - L.visible).toFixed(1) + 'px');
+    L.bandH = root.clientWidth * 526 / 1920;          // altura natural do relvado.png
+    L.visible = Math.round(Math.min(L.vh * GRASS_VIS, L.bandH));
+    band.style.setProperty('--grass-h', L.visible + 'px');
 
     if (MOBILE()) {
       hero.style.height = '';
       band.style.removeProperty('--grass-top');
+      band.style.setProperty('--grass-ease', '0px');
       band.classList.remove('is-landed');
       L.heroH = hero.offsetHeight;
       L.stop = Infinity;
@@ -65,7 +65,7 @@
     }
     L.heroH = Math.round((FEET_Y - 19) * scale + L.visible);
     hero.style.height = L.heroH + 'px';
-    band.style.setProperty('--grass-top', (L.heroH - L.bandH) + 'px');
+    band.style.setProperty('--grass-top', (L.heroH - L.visible) + 'px');
     L.stop = L.heroH - L.vh;
   }
 
@@ -73,7 +73,7 @@
      2. SCROLL: cor do texto + aterragem do relvado
      --------------------------------------------------------- */
   var INK_A = [0x26, 0x26, 0x26], INK_B = [0xf9, 0xff, 0xf9];
-  var lastInk = -1, landed = false;
+  var lastInk = -1, landed = false, lastEase = -1;
 
   function scene() {
     var y = window.scrollY;
@@ -91,6 +91,17 @@
     if (!band) return;
     var isLanded = y >= L.stop;
     if (isLanded !== landed) { landed = isLanded; band.classList.toggle('is-landed', isLanded); }
+
+    /* travagem amortecida: na ultima meia-tela antes de aterrar o relvado
+       abranda progressivamente ate ficar parado na pagina, em vez de passar
+       de "colado ao ecra" para "parado" de um golpe.
+       ease = k * N * u^2 * (1-u)  ->  velocidade relativa passa de 1 a 1-k */
+    var ez = 0;
+    if (!landed && L.stop !== Infinity) {
+      var N = L.vh * 0.5, u = clamp((y - (L.stop - N)) / N, 0, 1);
+      ez = 0.85 * N * u * u * (1 - u);
+    }
+    if (ez !== lastEase) { lastEase = ez; band.style.setProperty('--grass-ease', ez.toFixed(1) + 'px'); }
   }
 
   /* ---------------------------------------------------------

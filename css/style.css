@@ -59,6 +59,10 @@ body{
 }
 
 img, video, canvas{ display: block; max-width: 100%; }
+
+/* o site nao e para ler-e-copiar: fora o cursor de texto */
+body{ cursor: default; user-select: none; -webkit-user-select: none; }
+a, button, .btn, .works__folder, .pix, .pix--rider{ cursor: pointer; }
 img[src$=".png"], img[src$=".gif"]{ image-rendering: pixelated; }
 a{ color: inherit; text-decoration: none; }
 .pix-font{ font-family: 'MisterPixel', var(--font-dot); }
@@ -130,15 +134,19 @@ a{ color: inherit; text-decoration: none; }
   left: 0;
   bottom: 0;
   width: 100%;
+  height: var(--grass-h, 20vh);
   z-index: 5;
   pointer-events: none;
-  transform: translate3d(0, var(--grass-y), 0);
+  transform: translate3d(0, var(--grass-ease, 0px), 0);
   will-change: transform;
 }
-/* quando o boneco chega a altura do PORTUGAL, o relvado deixa de estar
-   preso ao ecra e passa a acompanhar a pagina (aterra no fim do hero) */
+/* quando o boneco chega a altura do PORTUGAL o relvado deixa de estar preso
+   ao ecra e passa a acompanhar a pagina. A travagem e amortecida em scene(). */
 .grassband.is-landed{ position: absolute; bottom: auto; top: var(--grass-top, 0px); }
-.grassband img{ width: 100%; height: auto; }
+/* so a faixa de topo do relvado aparece — tambem depois de aterrar,
+   para nao tapar o titulo da seccao WORKS */
+.grassband__clip{ position: absolute; inset: 0; overflow: hidden; }
+.grassband__clip img{ position: absolute; left: 0; top: 0; width: 100%; height: auto; }
 .grassband .pix--rider{
   position: absolute;
   left: calc(1116 * var(--s));
@@ -175,7 +183,7 @@ a{ color: inherit; text-decoration: none; }
   transform: rotate(90deg);
   z-index: 1;
   pointer-events: none;
-  opacity: .9;
+  image-rendering: pixelated;
 }
 
 .hero__hi, .hero__name, .hero__iam, .hero__role, .hero__basedin, .hero__country{
@@ -299,7 +307,7 @@ a{ color: inherit; text-decoration: none; }
   --frame-bg: var(--card-bg, var(--paper));
   padding: calc(var(--sq) * 2);           /* anel de 2 quadrados, como no Figma */
   background-image: conic-gradient(from 90deg at 50% 50%,
-    var(--frame-bg) 25%, transparent 0 50%, var(--frame-bg) 0 75%, transparent 0);
+    var(--frame-bg) 25%, var(--olive) 0 50%, var(--frame-bg) 0 75%, var(--olive) 0);
   background-size: calc(var(--sq) * 2) calc(var(--sq) * 2);
   background-position: 0 0;
 }
@@ -336,8 +344,8 @@ a{ color: inherit; text-decoration: none; }
 
 .card{
   position: sticky;
-  top: calc(90 * var(--s));
-  margin-bottom: calc(220 * var(--s));
+  top: calc(80 * var(--s));
+  margin-bottom: calc(230 * var(--s));
   transform: rotate(var(--tilt)) translateY(calc(60 * var(--s)));
   opacity: 0;
   transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .5s linear;
@@ -345,14 +353,14 @@ a{ color: inherit; text-decoration: none; }
 .card.is-in{ opacity: 1; transform: rotate(var(--tilt)) translateY(0); }
 .card:nth-child(1){ z-index: 1; }
 .card:nth-child(2){ z-index: 2; top: calc(320 * var(--s)); }
-.card:nth-child(3){ z-index: 3; top: calc(550 * var(--s)); }
+.card:nth-child(3){ z-index: 3; top: calc(560 * var(--s)); }
 
 .card__inner{
   background: var(--card-bg);
   display: grid;
   grid-template-columns: calc(530 * var(--s)) 1fr;
   gap: calc(72 * var(--s));
-  padding: calc(40 * var(--s)) calc(64 * var(--s)) calc(56 * var(--s));
+  padding: calc(32 * var(--s)) calc(64 * var(--s)) calc(56 * var(--s));
 }
 .card__title{
   margin: 0 0 calc(24 * var(--s));
@@ -382,7 +390,7 @@ a{ color: inherit; text-decoration: none; }
   color: #f0f0f0;
 }
 .btn{
-  display: inline-flex; align-items: center; gap: calc(40 * var(--s));
+  display: flex; align-items: center; width: 100%;
   font-family: var(--font-hand);
   font-variation-settings: var(--hand-axes);
   font-weight: 500;
@@ -390,6 +398,9 @@ a{ color: inherit; text-decoration: none; }
   line-height: .83;
   color: var(--olive);
 }
+.btn__gap{ flex: 0 0 calc(40 * var(--s)); transition: flex-basis .45s cubic-bezier(.22,.9,.25,1); }
+.btn:hover .btn__gap{ flex: 1 1 auto; }
+
 /* seta pixel.svg, exportada do Figma */
 .btn__arrow{
   width: calc(46 * var(--s));
@@ -398,7 +409,24 @@ a{ color: inherit; text-decoration: none; }
   shape-rendering: crispEdges;
   transition: transform .2s steps(3);
 }
-.btn:hover .btn__arrow{ transform: translateX(calc(20 * var(--s))); }
+.btn:hover .btn__arrow{ transform: none; }
+
+/* animacao circular, entre os cards e o about, a sangrar pela direita */
+.circanim{
+  position: relative;
+  height: calc(790 * var(--s));
+  margin-top: calc(40 * var(--s));
+  overflow: hidden;
+  pointer-events: none;
+}
+.circanim canvas{
+  position: absolute;
+  right: calc(-120 * var(--s));
+  top: calc(15 * var(--s));
+  width: calc(760 * var(--s));
+  height: calc(760 * var(--s));
+  image-rendering: pixelated;
+}
 
 /* ============================= ABOUT ============================= */
 .about{
@@ -428,7 +456,7 @@ a{ color: inherit; text-decoration: none; }
   color: var(--paper);
 }
 .about__portrait-frame{ width: calc(463 * var(--s)); margin-left: auto; --card-bg: var(--paper); }
-.about__portrait-inner{ background: #6f6f6f; }
+.about__portrait-inner{ background: var(--olive); }
 .about__portrait-inner img{ width: 100%; height: auto; }
 .about__portrait-inner.is-missing{
   aspect-ratio: 423 / 629;
@@ -525,6 +553,9 @@ a{ color: inherit; text-decoration: none; }
   .card__text{ font-size: 17px; margin-bottom: 16px; }
   .btn{ font-size: clamp(28px, 8vw, 48px); gap: 16px; }
   .card__media{ font-size: 14px; }
+
+  .circanim{ height: 84vw; margin-top: 16px; }
+  .circanim canvas{ right: -14vw; top: 2vw; width: 80vw; height: 80vw; }
 
   .about{ padding: 60px 6vw 90px; }
   .about__grid{ grid-template-columns: 1fr; gap: 40px; }
