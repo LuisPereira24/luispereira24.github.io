@@ -150,6 +150,20 @@ a{ color: inherit; text-decoration: none; }
    para nao tapar o titulo da seccao WORKS */
 .grassband__clip{ position: absolute; inset: 0; overflow: hidden; }
 .grassband__clip img{ position: absolute; left: 0; top: 0; width: 100%; height: auto; }
+
+/* Faixa de dither entre o relvado e o fundo dos WORKS
+   (portado do pixel_dither_band_hover_square_cells.html).
+   Fica colada a aresta de baixo da imagem, por isso enquanto o relvado esta
+   preso ao ecra o recorte esconde-a; quando aterra, aparece a desfazer a
+   fotografia em quadrados da cor da seccao. Reage ao cursor. */
+.grassdither{
+  position: absolute;
+  left: 0;
+  display: grid;
+  pointer-events: none;
+  z-index: 2;
+}
+.grassdither i{ display: block; background: var(--olive); opacity: 0; }
 .grassband .pix--rider{
   position: absolute;
   left: calc(1116 * var(--s));

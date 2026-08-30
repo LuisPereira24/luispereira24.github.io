@@ -98,6 +98,17 @@ ecrã antes dos WORKS, não treme durante o scroll. Os valores estão em
 `growLen` (quando e em quanto tempo cresce). O boneco pixel vive dentro desta
 banda, por isso desce sempre com o relvado.
 
+**Faixa de dither.** Entre a aresta de baixo do relvado e o fundo dos WORKS
+há uma grelha de quadrados da cor da secção (`buildDither()`/`stepDither()`
+no `main.js`), portada do teu `pixel_dither_band_hover_square_cells.html`.
+A probabilidade de cada quadrado estar aceso cresce para baixo, contra um
+limiar de ruído fixo mais uma ondulação lenta — é isso que desfaz a
+fotografia em vez de a cortar a direito. O cursor por perto acende mais
+quadrados. Os quatro números que controlam tudo estão juntos no topo:
+`D_ROWS` (filas), `D_CELL` (lado do quadrado), `D_RADIUS` e `D_FORCE`.
+Como a faixa está colada à aresta de baixo da **imagem**, enquanto o relvado
+está preso ao ecrã o recorte esconde-a; só aparece quando ele aterra.
+
 **Letras do hero.** `--hero-ink` interpola de `#262626` para `#f9fff9` ao
 longo dos primeiros 55% de um ecrã de scroll (`scene()`).
 

@@ -111,6 +111,80 @@
   }
 
   /* ---------------------------------------------------------
+     2b. FAIXA DE DITHER ENTRE O RELVADO E OS WORKS
+        Portado do pixel_dither_band_hover_square_cells.html: uma grelha de
+        quadrados da cor da seccao, colada a aresta de baixo da imagem. A
+        probabilidade de cada quadrado estar aceso cresce para baixo
+        (base) contra um limiar de ruido fixo mais uma ondulacao lenta
+        (thr), o que desfaz a fotografia em pixeis em vez de a cortar a
+        direito. O cursor por perto acende mais quadrados.
+     --------------------------------------------------------- */
+  var D_ROWS = 10, D_CELL = 14, D_RADIUS = 6, D_FORCE = 0.35;
+  var dith = { el: null, cells: [], noise: [], cols: 0, rows: 0, size: 0,
+               t: 0, amp: 0, tgt: 0, mx: -999, my: -999 };
+
+  function buildDither() {
+    var clip = band && band.querySelector('.grassband__clip');
+    if (!clip) return;
+    if (MOBILE()) { if (dith.el) { dith.el.remove(); dith.el = null; dith.cells = []; } return; }
+    if (!dith.el) {
+      dith.el = document.createElement('div');
+      dith.el.className = 'grassdither';
+      clip.appendChild(dith.el);
+    }
+    var size = Math.max(6, Math.round(D_CELL * scale));
+    var cols = Math.ceil(root.clientWidth / size);
+    dith.size = size; dith.cols = cols; dith.rows = D_ROWS;
+    dith.el.style.top = Math.round(L.bandH - D_ROWS * size) + 'px';
+    dith.el.style.gridTemplateColumns = 'repeat(' + cols + ',' + size + 'px)';
+    dith.el.style.gridAutoRows = size + 'px';
+    dith.el.style.width = (cols * size) + 'px';
+    dith.el.style.height = (D_ROWS * size) + 'px';
+    dith.el.innerHTML = '';
+    dith.cells = []; dith.noise = [];
+    var frag = document.createDocumentFragment();
+    for (var r = 0; r < D_ROWS; r++) for (var c = 0; c < cols; c++) {
+      var i = document.createElement('i');
+      frag.appendChild(i);
+      dith.cells.push({ el: i, c: c, r: r, on: false });
+      dith.noise.push(Math.random());
+    }
+    dith.el.appendChild(frag);
+  }
+
+  function stepDither() {
+    if (!dith.el || !dith.cells.length) return;
+    var b = dith.el.getBoundingClientRect();
+    if (b.bottom < -120 || b.top > window.innerHeight + 120) return;   // fora de vista
+    dith.t += 0.008;
+    dith.amp += (dith.tgt - dith.amp) * 0.045;
+    var rows = dith.rows, R = D_RADIUS, S = D_FORCE;
+    for (var i = 0; i < dith.cells.length; i++) {
+      var o = dith.cells[i], c = o.c, r = o.r;
+      var base = (r + 1) / (rows + 1);
+      var wob = Math.sin(dith.t + c * 0.22 + r * 0.45) * 0.5 + 0.5;
+      var thr = dith.noise[i] * 0.78 + wob * 0.22;
+      if (dith.amp > 0.01) {
+        var dx = c - dith.mx, dy = r - dith.my;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var infl = Math.max(0, 1 - dist / R); infl *= infl;
+        base += infl * dith.amp * S * 0.45;
+        thr -= infl * dith.amp * S * Math.sin(dith.t * 1.1 - dist * 0.32) * 0.18;
+      }
+      var on = base > thr;
+      if (on !== o.on) { o.on = on; o.el.style.opacity = on ? '1' : '0'; }
+    }
+  }
+
+  window.addEventListener('pointermove', function (e) {
+    if (!dith.el || !dith.size) return;
+    var g = dith.el.getBoundingClientRect();
+    dith.mx = (e.clientX - g.left) / dith.size;
+    dith.my = (e.clientY - g.top) / dith.size;
+    dith.tgt = (e.clientY > g.top - 140 && e.clientY < g.bottom + 140) ? 1 : 0;
+  }, { passive: true });
+
+  /* ---------------------------------------------------------
      3. LETRAS INDIVIDUAIS
      --------------------------------------------------------- */
   var TITLES = '.hero__hi, .hero__name, .hero__iam, .hero__role, .hero__basedin,' +
@@ -531,6 +605,7 @@
   }
   function tick() {
     scene();
+    stepDither();
     stackScroll();
     updateWipe();
     if (scenes.length) stepPhysics();
@@ -601,7 +676,7 @@
       setScale(); layout();
       destroyPhysics(); placeGlyphs();
       if (!REDUCED) buildPhysics();
-      buildWipe(); buildNavPix(); fitFrames(); stackLayout(); stackScroll();
+      buildWipe(); buildNavPix(); buildDither(); fitFrames(); stackLayout(); stackScroll();
       navSpyMeasure(); cacheLit(); scene(); updateWipe();
     }, 180);
   });
@@ -615,6 +690,7 @@
     layout();
     buildWipe();
     buildNavPix();
+    buildDither();
     reveals();
     navSpyBuild();
     animHover();
@@ -628,8 +704,8 @@
     scene();
     updateWipe();
     requestAnimationFrame(tick);
-    window.addEventListener('load', function () { layout(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); });
-    setTimeout(function () { layout(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); }, 500);
+    window.addEventListener('load', function () { layout(); buildDither(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); });
+    setTimeout(function () { layout(); buildDither(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); }, 500);
   }
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(start).catch(start);
