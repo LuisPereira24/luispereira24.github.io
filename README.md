@@ -148,6 +148,11 @@ o texto e a seta passam a claro, o botão levanta-se e a seta faz um salto
 descendente em `steps(4)`. O ficheiro que descarrega é `assets/cv.pdf` — falta
 lá pôr o PDF.
 
+**Rodapé.** O fundo é o resto do relvado de cima, com o enquadramento do
+Figma (caixa de 1185 unidades a começar 541 acima do topo da secção, imagem
+esticada a 2400 e puxada 1153 para cima). A animação é a `LinhaPIXEL2`,
+espelhada e rodada 175.9° como no ficheiro, a sangrar pela direita.
+
 **Ícones pixel.** Todos passam pelo mesmo motor: `buildPhysics()` varre os
 elementos `.physics` e cria uma cena de Matter.js por cada um. São quatro —
 o hero (sol e smiley), o cabeçalho dos works (pasta), a faixa verde acima do

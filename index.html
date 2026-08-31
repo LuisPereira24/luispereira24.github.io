@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Handjet:ELGR,ELSH,wght@1,2,100..900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v=202608311236">
+<link rel="stylesheet" href="css/style.css?v=202608311835">
 </head>
 <body>
 
@@ -175,16 +175,26 @@
 
   <!-- ============ CONTACT ============ -->
   <footer class="contact" id="contact">
-    <div class="contact__inner">
-      <p class="contact__label">say hi</p>
-      <a class="contact__mail" href="mailto:hello@luispereira.pt">HELLO@LUISPEREIRA.PT</a>
-      <nav class="contact__social" aria-label="Social">
-        <a href="#" target="_blank" rel="noopener">instagram</a>
-        <a href="#" target="_blank" rel="noopener">behance</a>
-        <a href="#" target="_blank" rel="noopener">linkedin</a>
-      </nav>
-      <p class="contact__copy">© <span id="year"></span> Luis Pereira — web &amp; brand designer</p>
+    <div class="contact__bg" aria-hidden="true"><img src="assets/img/relvado.png" alt=""></div>
+
+    <div class="contact__anim" aria-hidden="true">
+      <canvas id="linha-pixel2" width="1600" height="900"></canvas>
     </div>
+
+    <h2 class="contact__title">CONTACT ME</h2>
+
+    <div class="physics physics--contact" id="physics-contact" aria-hidden="true">
+      <span class="pix" data-x="696" data-y="95" data-w="135" data-h="130" data-rot="12.06"
+            style="--size:107.331; --color:#f7dd6d">D</span>
+    </div>
+
+    <a class="contact__mail" href="mailto:luispereira242005@gmail.com">luispereira242005@gmail.com</a>
+
+    <nav class="contact__social" aria-label="Social">
+      <a class="contact__link contact__link--be" href="#" target="_blank" rel="noopener">BEHANCE</a>
+      <i class="contact__dot" aria-hidden="true"></i>
+      <a class="contact__link contact__link--in" href="#" target="_blank" rel="noopener">LINKEDIN</a>
+    </nav>
   </footer>
 
 </main>
@@ -197,7 +207,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
-<script src="js/pixel-anim.js?v=202608311236" defer></script>
-<script src="js/main.js?v=202608311236" defer></script>
+<script src="js/pixel-anim.js?v=202608311835" defer></script>
+<script src="js/main.js?v=202608311835" defer></script>
 </body>
 </html>

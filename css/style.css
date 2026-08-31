@@ -335,8 +335,13 @@ a{ color: inherit; text-decoration: none; }
 .works{
   position: relative;
   background: var(--olive);
+  /* grelha fina por cima do verde, como no Figma */
+  --grid: calc(48 * var(--s));
+  background-image:
+    repeating-linear-gradient(0deg,  rgba(249,255,249,.055) 0 1px, transparent 1px var(--grid)),
+    repeating-linear-gradient(90deg, rgba(249,255,249,.055) 0 1px, transparent 1px var(--grid));
   /* --grass-drop e o que o relvado cresce ao aterrar: empurra tudo para baixo */
-  padding: calc(var(--grass-drop, 0px) + 145 * var(--s)) 0 calc(160 * var(--s));
+  padding: calc(var(--grass-drop, 0px) + 145 * var(--s)) 0 0;
 }
 .works__head{
   position: relative;
@@ -458,7 +463,7 @@ a{ color: inherit; text-decoration: none; }
 .about{
   position: relative;
   background: var(--olive);
-  padding: calc(232 * var(--s)) 0 calc(697 * var(--s));
+  padding: calc(232 * var(--s)) 0 0;
 }
 /* o bloco claro esta "de lado": trapezio, mais alto a esquerda,
    com uma franja de 2 quadrados em cima e em baixo */
@@ -607,27 +612,102 @@ a{ color: inherit; text-decoration: none; }
 .reveal.is-in{ opacity: 1; transform: none; }
 
 /* ============================= CONTACT ============================= */
+/* Fundo: o resto do relvado de cima, com o mesmo enquadramento do Figma
+   (caixa de 1185 unidades a comecar 541 acima do topo da seccao, com a
+   imagem esticada a 2400 e puxada para cima 1153). */
 .contact{
   position: relative;
-  background: var(--brown);
-  padding: calc(160 * var(--s));
-  min-height: calc(721 * var(--s));
+  height: calc(644 * var(--s));
+  background: #3d2d17;
+  overflow: hidden;
   color: var(--paper);
 }
-.contact__label{ margin: 0 0 calc(24 * var(--s)); font-size: calc(59.797 * var(--s)); line-height: .83; color: var(--yellow-2); }
+.contact__bg{
+  position: absolute;
+  left: 0;
+  top: calc(-541 * var(--s));
+  width: 100%;
+  height: calc(1185 * var(--s));
+  overflow: hidden;
+  pointer-events: none;
+}
+.contact__bg img{
+  position: absolute;
+  left: 0;
+  top: calc(-1153 * var(--s));
+  width: 100%;
+  height: calc(2400 * var(--s));
+  max-width: none;
+}
+
+/* animacao LinhaPIXEL2, espelhada e a sangrar pela direita */
+.contact__anim{
+  position: absolute;
+  left: calc(355 * var(--s));
+  top: calc(134 * var(--s));
+  width: calc(1764.46 * var(--s));
+  height: calc(802.87 * var(--s));
+  transform: rotate(175.9deg) scaleY(-1);
+  overflow: hidden;
+  pointer-events: none;
+}
+.contact__anim canvas{
+  position: absolute;
+  left: 9.55%;
+  top: 0;
+  width: 80.89%;
+  height: 100%;
+  max-width: none;
+  image-rendering: pixelated;
+}
+
+.contact__title{
+  position: absolute;
+  left: calc(161 * var(--s));
+  top: calc(59 * var(--s));
+  margin: 0;
+  font-family: var(--font-dot);
+  font-size: calc(86.944 * var(--s));
+  line-height: normal;
+  color: #f7dd6d;
+}
 .contact__mail{
-  display: inline-block;
+  position: absolute;
+  left: calc(161 * var(--s));
+  top: calc(198 * var(--s));
   font-family: var(--font-hand);
   font-variation-settings: var(--hand-axes);
-  font-weight: 600;
-  font-size: calc(140 * var(--s));
-  line-height: .92;
+  font-weight: 500;
+  font-size: calc(157.806 * var(--s));
+  line-height: normal;
   color: var(--paper);
+  white-space: nowrap;
 }
-.contact__mail:hover{ color: var(--yellow); }
-.contact__social{ display: flex; gap: calc(60 * var(--s)); margin-top: calc(60 * var(--s)); font-size: calc(44 * var(--s)); }
-.contact__social a:hover{ color: var(--yellow); }
-.contact__copy{ margin: calc(80 * var(--s)) 0 0; font-size: calc(28 * var(--s)); opacity: .6; }
+.contact__mail:hover{ color: #f7dd6d; }
+.contact__social{ position: absolute; left: 0; top: calc(362 * var(--s)); width: 100%; }
+.contact__link{
+  position: absolute;
+  font-family: var(--font-hand);
+  font-variation-settings: var(--hand-axes);
+  font-weight: 500;
+  font-size: calc(91.716 * var(--s));
+  line-height: normal;
+  text-transform: lowercase;
+  color: var(--paper);
+  white-space: nowrap;
+}
+.contact__link--be{ left: calc(161 * var(--s)); }
+.contact__link--in{ left: calc(530.06 * var(--s)); }
+.contact__link:hover{ color: #f7dd6d; }
+.contact__dot{
+  position: absolute;
+  left: calc(465 * var(--s));
+  top: calc(43.66 * var(--s));
+  width: calc(15.056 * var(--s));
+  height: calc(15.056 * var(--s));
+  background: #f7dd6d;
+}
+.physics--contact{ position: absolute; inset: 0; z-index: 5; }
 
 /* ============================= MOBILE ============================= */
 @media (max-width: 860px){
@@ -689,11 +769,17 @@ a{ color: inherit; text-decoration: none; }
   .about__portrait-frame{ width: 70vw; margin: 0 auto; }
   .about__portrait-inner.is-missing::after{ font-size: 13px; }
 
-  .contact{ padding: 70px 6vw 90px; min-height: 0; }
-  .contact__label{ font-size: 18px; }
-  .contact__mail{ font-size: clamp(32px, 9.5vw, 72px); word-break: break-word; }
-  .contact__social{ font-size: 18px; gap: 22px; flex-wrap: wrap; margin-top: 32px; }
-  .contact__copy{ font-size: 13px; margin-top: 46px; }
+  .contact{ height: auto; padding: 44px 6vw 54px; }
+  .contact__bg{ top: 0; height: 100%; }
+  .contact__bg img{ top: 0; height: 100%; object-fit: cover; }
+  .contact__anim{ left: -30vw; top: 10%; width: 150vw; height: 68vw; }
+  .contact__title{ position: static; font-size: clamp(26px, 7vw, 44px); }
+  .contact__mail{ position: static; display: block; margin-top: 14px;
+                  font-size: clamp(30px, 8.6vw, 64px); white-space: normal; word-break: break-word; }
+  .contact__social{ position: static; margin-top: 18px; display: flex; align-items: center; gap: 14px; }
+  .contact__link{ position: static; font-size: clamp(22px, 6vw, 40px); }
+  .contact__dot{ position: static; width: 10px; height: 10px; flex: none; }
+  .physics--contact{ display: none; }
 }
 
 @media (prefers-reduced-motion: reduce){
