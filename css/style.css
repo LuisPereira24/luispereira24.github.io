@@ -277,7 +277,7 @@ a{ color: inherit; text-decoration: none; }
 
 /* ---------- Matter.js ---------- */
 .physics{ position: absolute; inset: 0; z-index: 4; pointer-events: none; }
-.physics--works{ z-index: 5; }
+.physics--works{ z-index: 5; inset: 0 0 calc(-90 * var(--s)) 0; }
 .pix{
   position: absolute;
   left: 0; top: 0;
@@ -365,10 +365,13 @@ a{ color: inherit; text-decoration: none; }
    por scroll (stackScroll() no main.js). O card mais recente fica centrado
    e os anteriores empilham-se 240u acima, saindo por cima do ecra. */
 .stack{ padding: 0 calc(160 * var(--s)); position: relative; }
-.stack__pin{ position: sticky; top: 0; height: 100vh; z-index: 6; }
+/* o painel cobre o ecra todo desde o inicio (tem margem negativa), por isso
+   nao pode apanhar cliques — senao tapa a pasta dos works */
+.stack__pin{ position: sticky; top: 0; height: 100vh; z-index: 6; pointer-events: none; }
 
 .card{
   position: absolute;
+  pointer-events: auto;
   left: 0; right: 0; top: 0;
   transform: translate3d(0, 100vh, 0) rotate(var(--tilt));
   will-change: transform;
@@ -386,7 +389,7 @@ a{ color: inherit; text-decoration: none; }
      a direita, a subir por tras dos cards e a cruzar a foto do about. O
      diametro esta limitado a ~830 unidades porque acima de ~2800px de
      largura o Chromium deixa de rasterizar o canvas ampliado por inteiro. */
-  right: calc(-860 * var(--s));
+  right: calc(-1252 * var(--s));
   top: calc(-828 * var(--s));
   width: calc(2800 * var(--s));
   height: calc(1575 * var(--s));
@@ -573,6 +576,32 @@ a{ color: inherit; text-decoration: none; }
 /* zonas de fisica: o glifo solto no verde e a mao sobre o bloco */
 .physics--gap{ position: absolute; left: 0; right: 0; top: 0; height: calc(232 * var(--s)); z-index: 5; }
 .physics--about{ position: absolute; inset: 0; z-index: 5; }
+
+/* ---------- letras: cada uma reage ao rato ---------- */
+.w{ display: inline-block; white-space: pre; }
+.ch{
+  display: inline-block;
+  transition: transform .18s cubic-bezier(.2,1.7,.4,1);
+}
+.ch:hover{
+  transform: translateY(-.07em);
+  -webkit-text-stroke: .035em currentColor;
+}
+/* Handjet tem eixo de peso: engrossa mesmo */
+.hero__name .ch, .card__title .ch, .contact__mail .ch{
+  transition: transform .18s cubic-bezier(.2,1.7,.4,1), font-variation-settings .18s linear;
+}
+.hero__name .ch:hover, .card__title .ch:hover, .contact__mail .ch:hover{
+  -webkit-text-stroke: 0;
+  font-variation-settings: "ELGR" 2, "ELSH" 2;
+  font-weight: 900;
+}
+
+/* o sol (glifo X) a passar por cima do texto do hero acende-o */
+.hero__hi .ch, .hero__name .ch{
+  transition: transform .18s cubic-bezier(.2,1.7,.4,1), color .22s linear, font-variation-settings .18s linear;
+}
+.ch.is-lit{ color: var(--paper); }
 
 .reveal{ opacity: 0; transform: translateY(calc(40 * var(--s))); transition: opacity .6s linear, transform .6s cubic-bezier(.2,.8,.2,1); }
 .reveal.is-in{ opacity: 1; transform: none; }
