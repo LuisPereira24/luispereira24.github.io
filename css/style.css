@@ -11,6 +11,7 @@
 
 :root{
   --s: calc(100vw / 1920);
+  --grid: calc(48 * var(--s));     /* quadricula do verde */
 
   --ink:      #262626;
   --paper:    #f9fff9;
@@ -42,6 +43,16 @@
   src: url('../assets/fonts/MisterPixelRegular.woff2') format('woff2'),
        local('Mister Pixel 16 pt - Regular');
   font-display: swap;
+}
+
+/* A quadricula acompanha todo o verde. A primeira camada e um degrade da
+   propria cor do fundo: opaco no topo, transparente mais abaixo — e o que
+   faz a grelha entrar suavemente em vez de comecar a direito. */
+.gridbg{
+  background-image:
+    linear-gradient(180deg, var(--olive) 0, rgba(39,48,29,0) var(--grid-fade, calc(340 * var(--s)))),
+    repeating-linear-gradient(0deg,  rgba(249,255,249,.055) 0 1px, transparent 1px var(--grid)),
+    repeating-linear-gradient(90deg, rgba(249,255,249,.055) 0 1px, transparent 1px var(--grid));
 }
 
 *, *::before, *::after{ box-sizing: border-box; }
@@ -334,12 +345,7 @@ a{ color: inherit; text-decoration: none; }
 /* ============================= WORKS ============================= */
 .works{
   position: relative;
-  background: var(--olive);
-  /* grelha fina por cima do verde, como no Figma */
-  --grid: calc(48 * var(--s));
-  background-image:
-    repeating-linear-gradient(0deg,  rgba(249,255,249,.055) 0 1px, transparent 1px var(--grid)),
-    repeating-linear-gradient(90deg, rgba(249,255,249,.055) 0 1px, transparent 1px var(--grid));
+  background-color: var(--olive);
   /* --grass-drop e o que o relvado cresce ao aterrar: empurra tudo para baixo */
   padding: calc(var(--grass-drop, 0px) + 145 * var(--s)) 0 0;
 }
@@ -462,7 +468,7 @@ a{ color: inherit; text-decoration: none; }
 /* ============================= ABOUT ============================= */
 .about{
   position: relative;
-  background: var(--olive);
+  background-color: var(--olive);
   padding: calc(232 * var(--s)) 0 0;
 }
 /* o bloco claro esta "de lado": trapezio, mais alto a esquerda,
@@ -474,18 +480,31 @@ a{ color: inherit; text-decoration: none; }
   color: var(--ink);
   clip-path: polygon(0 0, 100% calc(20 * var(--s)), 100% calc(100% - 22 * var(--s)), 0 100%);
 }
+/* As franjas vivem FORA do bloco: sao quadrados da cor do papel sobre
+   transparente, portanto o "verde" e mesmo buraco — deixa passar a grelha
+   em cima e a relva em baixo, e nao sobra nenhuma risca clara. */
 .about__edge{
   position: absolute;
   left: 0;
   width: 100%;
-  height: calc(57 * var(--s));         /* 2 quadrados */
-  --sq: calc(28.5 * var(--s));
+  z-index: 2;
+  --sq: calc(14 * var(--s));           /* mesmo tamanho dos cards */
+  height: calc(var(--sq) * 2);         /* exactamente 2 quadrados */
   background-image: conic-gradient(from 90deg at 50% 50%,
-    var(--olive) 25%, var(--paper) 0 50%, var(--olive) 0 75%, var(--paper) 0);
-  background-size: var(--sq) var(--sq);
+    var(--paper) 25%, transparent 0 50%, var(--paper) 0 75%, transparent 0);
+  background-size: calc(var(--sq) * 2) calc(var(--sq) * 2);
+  pointer-events: none;
 }
-.about__edge--top{ top: 0; transform-origin: 0 0; transform: rotate(.597deg); }
-.about__edge--bottom{ bottom: 0; transform-origin: 0 100%; transform: rotate(-.656deg); }
+.about__edge--top{
+  top: calc(232 * var(--s) - var(--sq) * 2);
+  transform-origin: 0 100%;
+  transform: rotate(.597deg);
+}
+.about__edge--bottom{
+  top: calc(1269 * var(--s));
+  transform-origin: 0 0;
+  transform: rotate(-.656deg);
+}
 
 .about__grid{
   position: absolute;
@@ -608,6 +627,27 @@ a{ color: inherit; text-decoration: none; }
 }
 .ch.is-lit{ color: var(--paper); }
 
+/* veu de pixeis sobre a foto do about, ao passar o rato */
+.portdither{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  pointer-events: none;
+  z-index: 2;
+  mix-blend-mode: screen;
+}
+.portdither i{
+  display: block;
+  background: var(--paper);
+  opacity: 0;
+  transition: opacity .28s linear;
+  transition-delay: 0ms;
+}
+.about__portrait-inner{ position: relative; overflow: hidden; }
+.about__portrait-inner img{ transition: filter .35s linear, transform .35s cubic-bezier(.2,.9,.3,1); }
+.about__portrait-frame:hover .about__portrait-inner img{ filter: contrast(1.55) saturate(.15); transform: scale(1.03); }
+.about__portrait-frame:hover .portdither i{ opacity: .55; transition-delay: calc(var(--d) * 1ms); }
+
 .reveal{ opacity: 0; transform: translateY(calc(40 * var(--s))); transition: opacity .6s linear, transform .6s cubic-bezier(.2,.8,.2,1); }
 .reveal.is-in{ opacity: 1; transform: none; }
 
@@ -622,21 +662,12 @@ a{ color: inherit; text-decoration: none; }
   overflow: hidden;
   color: var(--paper);
 }
-.contact__bg{
-  position: absolute;
-  left: 0;
-  top: calc(-541 * var(--s));
-  width: 100%;
-  height: calc(1185 * var(--s));
-  overflow: hidden;
-  pointer-events: none;
-}
+.contact__bg{ position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .contact__bg img{
-  position: absolute;
-  left: 0;
-  top: calc(-1153 * var(--s));
   width: 100%;
-  height: calc(2400 * var(--s));
+  height: 100%;
+  object-fit: cover;                 /* sem esticar: continua o relvado de cima */
+  object-position: center 38%;
   max-width: none;
 }
 
@@ -708,6 +739,23 @@ a{ color: inherit; text-decoration: none; }
   background: #f7dd6d;
 }
 .physics--contact{ position: absolute; inset: 0; z-index: 5; }
+.contact__copied{
+  position: absolute;
+  left: calc(161 * var(--s));
+  top: calc(150 * var(--s));
+  padding: calc(8 * var(--s)) calc(18 * var(--s));
+  background: #f7dd6d;
+  color: var(--olive);
+  font-family: var(--font-dot);
+  font-size: calc(34 * var(--s));
+  line-height: 1;
+  letter-spacing: .08em;
+  opacity: 0;
+  transform: translateY(calc(10 * var(--s)));
+  pointer-events: none;
+  transition: opacity .18s linear, transform .18s steps(3);
+}
+.contact__copied.is-on{ opacity: 1; transform: translateY(0); }
 
 /* ============================= MOBILE ============================= */
 @media (max-width: 860px){

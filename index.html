@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Handjet:ELGR,ELSH,wght@1,2,100..900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v=202608311835">
+<link rel="stylesheet" href="css/style.css?v=202608312334">
 </head>
 <body>
 
@@ -64,7 +64,7 @@
   ============================================================== -->
 
   <!-- ============ WORKS ============ -->
-  <section class="works" id="works">
+  <section class="works gridbg" id="works">
     <header class="works__head">
       <h2 class="works__title">WORKS</h2>
       <div class="physics physics--works" id="physics-works" aria-hidden="true">
@@ -128,7 +128,7 @@
   </section>
 
   <!-- ============ ABOUT ============ -->
-  <section class="about" id="about">
+  <section class="about gridbg" id="about">
     <canvas class="circanim" id="circ-pixel" width="1600" height="900" aria-hidden="true"></canvas>
 
     <!-- glifo solto na faixa verde, por cima do bloco claro -->
@@ -137,9 +137,10 @@
             style="--size:84; --color:#f9fff9">E</span>
     </div>
 
+    <span class="about__edge about__edge--top" aria-hidden="true"></span>
+    <span class="about__edge about__edge--bottom" aria-hidden="true"></span>
+
     <div class="about__band">
-      <span class="about__edge about__edge--top" aria-hidden="true"></span>
-      <span class="about__edge about__edge--bottom" aria-hidden="true"></span>
 
       <div class="about__grid">
         <div class="about__col reveal">
@@ -175,7 +176,7 @@
 
   <!-- ============ CONTACT ============ -->
   <footer class="contact" id="contact">
-    <div class="contact__bg" aria-hidden="true"><img src="assets/img/relvado.png" alt=""></div>
+    <div class="contact__bg" aria-hidden="true"><img src="assets/img/relvadofooter.png" alt=""></div>
 
     <div class="contact__anim" aria-hidden="true">
       <canvas id="linha-pixel2" width="1600" height="900"></canvas>
@@ -188,7 +189,8 @@
             style="--size:107.331; --color:#f7dd6d">D</span>
     </div>
 
-    <a class="contact__mail" href="mailto:luispereira242005@gmail.com">luispereira242005@gmail.com</a>
+    <a class="contact__mail" id="mail" href="mailto:luispereira242005@gmail.com" data-mail="luispereira242005@gmail.com">luispereira242005@gmail.com</a>
+    <span class="contact__copied" id="copied" role="status" aria-live="polite">copiado</span>
 
     <nav class="contact__social" aria-label="Social">
       <a class="contact__link contact__link--be" href="#" target="_blank" rel="noopener">BEHANCE</a>
@@ -207,7 +209,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
-<script src="js/pixel-anim.js?v=202608311835" defer></script>
-<script src="js/main.js?v=202608311835" defer></script>
+<script src="js/pixel-anim.js?v=202608312334" defer></script>
+<script src="js/main.js?v=202608312334" defer></script>
 </body>
 </html>

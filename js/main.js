@@ -362,6 +362,83 @@
   }
 
   /* ---------------------------------------------------------
+     5d. FOTO DO ABOUT — veu de pixeis ao passar o rato
+        Grelha de quadrados sobre a fotografia, cada um com um atraso
+        aleatorio, para o veu entrar e sair de forma dispersa.
+     --------------------------------------------------------- */
+  function buildPortraitDither() {
+    var host = document.querySelector('.about__portrait-inner');
+    if (!host) return;
+    var old = host.querySelector('.portdither');
+    if (old) old.remove();
+    var w = host.offsetWidth, h = host.offsetHeight;
+    if (!w || !h) return;
+    var size = Math.max(8, Math.round(21 * scale));
+    var cols = Math.max(4, Math.round(w / size));
+    var rows = Math.max(4, Math.round(h / size));
+    var el = document.createElement('div');
+    el.className = 'portdither';
+    el.style.gridTemplateColumns = 'repeat(' + cols + ',1fr)';
+    el.style.gridTemplateRows = 'repeat(' + rows + ',1fr)';
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < cols * rows; i++) {
+      var c = document.createElement('i');
+      c.style.setProperty('--d', Math.round(Math.random() * 260));
+      frag.appendChild(c);
+    }
+    el.appendChild(frag);
+    host.appendChild(el);
+  }
+
+  /* ---------------------------------------------------------
+     5e. EMAIL — copia para a area de transferencia
+     --------------------------------------------------------- */
+  /* rato sobre o email: a animacao do rodape passa de amarela a branca */
+  var A_YEL = [1, 0.89411765, 0.48235294], A_WHT = [1, 1, 1];
+  var foot = { c: A_YEL.slice(), t: A_YEL };
+  function mailHue() {
+    var a = document.getElementById('mail');
+    if (!a) return;
+    a.addEventListener('mouseenter', function () { foot.t = A_WHT; });
+    a.addEventListener('mouseleave', function () { foot.t = A_YEL; });
+  }
+  function stepFootColor() {
+    var cv = document.getElementById('linha-pixel2');
+    if (!cv || !cv.setAnimColor) return;
+    var d = 0;
+    for (var i = 0; i < 3; i++) { d += Math.abs(foot.t[i] - foot.c[i]); foot.c[i] += (foot.t[i] - foot.c[i]) * 0.11; }
+    if (d < 0.004) return;
+    cv.setAnimColor(foot.c[0], foot.c[1], foot.c[2]);
+  }
+
+  function mailCopy() {
+    var a = document.getElementById('mail'), tip = document.getElementById('copied');
+    if (!a) return;
+    var timer = null;
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      var txt = a.dataset.mail || a.textContent.trim();
+      var done = function () {
+        if (!tip) return;
+        tip.classList.add('is-on');
+        clearTimeout(timer);
+        timer = setTimeout(function () { tip.classList.remove('is-on'); }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(done, fallback);
+      } else fallback();
+      function fallback() {
+        var t = document.createElement('textarea');
+        t.value = txt; t.setAttribute('readonly', '');
+        t.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+        document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); done(); } catch (err) {}
+        document.body.removeChild(t);
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------
      6. MOLDURAS XADREZ (anel de 2 quadrados, sem cortes)
      --------------------------------------------------------- */
   function fitFrames() {
@@ -605,6 +682,7 @@
   }
   function tick() {
     scene();
+    stepFootColor();
     stepDither();
     stackScroll();
     updateWipe();
@@ -676,7 +754,7 @@
       setScale(); layout();
       destroyPhysics(); placeGlyphs();
       if (!REDUCED) buildPhysics();
-      buildWipe(); buildNavPix(); buildDither(); fitFrames(); stackLayout(); stackScroll();
+      buildWipe(); buildNavPix(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); stackScroll();
       navSpyMeasure(); cacheLit(); scene(); updateWipe();
     }, 180);
   });
@@ -696,6 +774,9 @@
     animHover();
     riderDrag();
     fitFrames();
+    buildPortraitDither();
+    mailCopy();
+    mailHue();
     stackLayout();
     stackScroll();
     placeGlyphs();
@@ -704,8 +785,8 @@
     scene();
     updateWipe();
     requestAnimationFrame(tick);
-    window.addEventListener('load', function () { layout(); buildDither(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); });
-    setTimeout(function () { layout(); buildDither(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); }, 500);
+    window.addEventListener('load', function () { layout(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); navSpyMeasure(); cacheLit(); });
+    setTimeout(function () { layout(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); navSpyMeasure(); cacheLit(); }, 500);
   }
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(start).catch(start);
