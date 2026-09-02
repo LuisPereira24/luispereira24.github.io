@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Handjet:ELGR,ELSH,wght@1,2,100..900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v=202608312334">
+<link rel="stylesheet" href="css/style.css?v=202609021724">
 </head>
 <body>
 
@@ -34,6 +34,9 @@
 
 <main>
 
+  <!-- faixa verde continua por tras dos works e do about -->
+  <div class="greenbg gridbg" id="greenbg" aria-hidden="true"></div>
+
   <!-- ============ HERO ============ -->
   <section class="hero" id="home">
     <canvas class="hero__anim" id="linha-pixel" width="1600" height="900" aria-hidden="true"></canvas>
@@ -47,13 +50,6 @@
     <p class="hero__basedin">based in</p>
     <p class="hero__country">PORTUGAL</p>
 
-    <!-- Matter.js: sol e smiley ficam soltos e podem ser atirados -->
-    <div class="physics" id="physics" aria-hidden="true">
-      <span class="pix" data-x="1720.5" data-y="308.7" data-w="142.9" data-h="123.4" data-rot="-14.28"
-            style="--size:115.083; --color:#ffe202">X</span>
-      <span class="pix" data-x="223.3" data-y="851.2" data-w="138.7" data-h="117.1" data-rot="10.68"
-            style="--size:115.083; --color:#ffe57b">D</span>
-    </div>
 
   </section>
 
@@ -67,10 +63,6 @@
   <section class="works gridbg" id="works">
     <header class="works__head">
       <h2 class="works__title">WORKS</h2>
-      <div class="physics physics--works" id="physics-works" aria-hidden="true">
-        <span class="pix" data-x="1700" data-y="120" data-w="96" data-h="96" data-rot="0"
-              style="--size:96.175; --color:#f9fff9">\</span>
-      </div>
     </header>
 
     <div class="stack" id="stack">
@@ -131,11 +123,6 @@
   <section class="about gridbg" id="about">
     <canvas class="circanim" id="circ-pixel" width="1600" height="900" aria-hidden="true"></canvas>
 
-    <!-- glifo solto na faixa verde, por cima do bloco claro -->
-    <div class="physics physics--gap" id="physics-gap" aria-hidden="true">
-      <span class="pix" data-x="268" data-y="71" data-w="106" data-h="92"
-            style="--size:84; --color:#f9fff9">E</span>
-    </div>
 
     <span class="about__edge about__edge--top" aria-hidden="true"></span>
     <span class="about__edge about__edge--bottom" aria-hidden="true"></span>
@@ -167,10 +154,6 @@
         <svg class="cvbtn__arrow" viewBox="0 0 98.59 70.42" fill="currentColor" aria-hidden="true"><rect x="56.34" y="56.34" width="14.08" height="14.08"/><polygon points="98.59 28.17 98.59 42.25 84.51 42.25 84.51 56.34 70.42 56.34 70.42 42.25 0 42.25 0 28.17 70.42 28.17 70.42 14.08 84.51 14.08 84.51 28.17 98.59 28.17"/><rect x="56.34" width="14.08" height="14.08"/></svg>
       </a>
 
-      <div class="physics physics--about" id="physics-about" aria-hidden="true">
-        <span class="pix" data-x="1308" data-y="209" data-w="102" data-h="79"
-              style="--size:84; --color:#262626">&#8220;</span>
-      </div>
     </div>
   </section>
 
@@ -184,13 +167,8 @@
 
     <h2 class="contact__title">CONTACT ME</h2>
 
-    <div class="physics physics--contact" id="physics-contact" aria-hidden="true">
-      <span class="pix" data-x="696" data-y="95" data-w="135" data-h="130" data-rot="12.06"
-            style="--size:107.331; --color:#f7dd6d">D</span>
-    </div>
 
     <a class="contact__mail" id="mail" href="mailto:luispereira242005@gmail.com" data-mail="luispereira242005@gmail.com">luispereira242005@gmail.com</a>
-    <span class="contact__copied" id="copied" role="status" aria-live="polite">copiado</span>
 
     <nav class="contact__social" aria-label="Social">
       <a class="contact__link contact__link--be" href="#" target="_blank" rel="noopener">BEHANCE</a>
@@ -199,7 +177,27 @@
     </nav>
   </footer>
 
+
+<!-- Um so mundo de fisica, do tamanho da pagina: os glifos podem ser
+     atirados de uma seccao para a outra. data-anchor diz onde arrancam. -->
+<div class="physics" id="physics" aria-hidden="true">
+  <span class="pix" data-anchor="#home" data-x="1720.5" data-y="308.7" data-w="142.9" data-h="123.4" data-rot="-14.28"
+        style="--size:115.083; --color:#ffe202">X</span>
+  <span class="pix" data-anchor="#home" data-x="223.3" data-y="851.2" data-w="138.7" data-h="117.1" data-rot="10.68"
+        style="--size:115.083; --color:#ffe57b">D</span>
+  <span class="pix" data-anchor=".works__head" data-x="1700" data-y="120" data-w="96" data-h="96" data-rot="0"
+        style="--size:96.175; --color:#f9fff9">\</span>
+  <span class="pix" data-anchor="#about" data-x="268" data-y="71" data-w="106" data-h="92" data-rot="0"
+        style="--size:84; --color:#f9fff9">E</span>
+  <span class="pix" data-anchor=".about__band" data-x="625" data-y="190" data-w="102" data-h="79" data-rot="0"
+        style="--size:84; --color:#262626">&#8220;</span>
+  <span class="pix" data-anchor="#contact" data-x="696" data-y="95" data-w="135" data-h="130" data-rot="12.06"
+        style="--size:107.331; --color:#f7dd6d">D</span>
+</div>
+
 </main>
+
+<span class="copied" id="copied" role="status" aria-live="polite">copiado</span>
 
 <!-- relvado fixo no fundo do ecrã: só o topo aparece, e desce com o utilizador
      sem se mover, até crescer mesmo antes da secção WORKS -->
@@ -209,7 +207,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
-<script src="js/pixel-anim.js?v=202608312334" defer></script>
-<script src="js/main.js?v=202608312334" defer></script>
+<script src="js/pixel-anim.js?v=202609021724" defer></script>
+<script src="js/main.js?v=202609021724" defer></script>
 </body>
 </html>

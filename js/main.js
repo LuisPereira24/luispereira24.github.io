@@ -418,8 +418,11 @@
     a.addEventListener('click', function (e) {
       e.preventDefault();
       var txt = a.dataset.mail || a.textContent.trim();
+      var cx = e.clientX, cy = e.clientY;
       var done = function () {
         if (!tip) return;
+        tip.style.left = cx + 'px';
+        tip.style.top = cy + 'px';
         tip.classList.add('is-on');
         clearTimeout(timer);
         timer = setTimeout(function () { tip.classList.remove('is-on'); }, 1600);
@@ -436,6 +439,19 @@
         document.body.removeChild(t);
       }
     });
+  }
+
+  /* ---------------------------------------------------------
+     5f. CHAPA VERDE — uma so, dos works ate ao rodape
+     --------------------------------------------------------- */
+  function layoutGreen() {
+    var bg = document.getElementById('greenbg');
+    var w = document.getElementById('works'), c = document.getElementById('contact');
+    if (!bg || !w || !c) return;
+    var top = w.getBoundingClientRect().top + window.scrollY;
+    var bot = c.getBoundingClientRect().top + window.scrollY;
+    bg.style.top = Math.round(top) + 'px';
+    bg.style.height = Math.round(bot - top) + 'px';
   }
 
   /* ---------------------------------------------------------
@@ -472,12 +488,24 @@
   var scenes = [];
   function glyphs() { return [].slice.call(document.querySelectorAll('.physics .pix')); }
 
+  /* Cada glifo arranca numa ancora (uma seccao) mais um deslocamento em
+     unidades do Figma; o resultado e uma coordenada de pagina, porque o
+     mundo da fisica cobre a pagina inteira. */
+  function glyphHome(el) {
+    var a = document.querySelector(el.dataset.anchor || '#home');
+    var r = a ? a.getBoundingClientRect() : { left: 0, top: 0 };
+    return { x: r.left + parseFloat(el.dataset.x) * scale,
+             y: r.top + window.scrollY + parseFloat(el.dataset.y) * scale };
+  }
+
   function placeGlyphs() {
+    var host = document.getElementById('physics');
+    if (host) host.style.height = Math.max(document.body.scrollHeight, window.innerHeight) + 'px';
     glyphs().forEach(function (el) {
       var w = parseFloat(el.dataset.w) * scale, h = parseFloat(el.dataset.h) * scale;
-      var x = parseFloat(el.dataset.x) * scale, y = parseFloat(el.dataset.y) * scale;
+      var p = glyphHome(el);
       el.style.transformOrigin = 'center';
-      el.style.transform = 'translate3d(' + (x - w / 2) + 'px,' + (y - h / 2) + 'px,0) rotate(' +
+      el.style.transform = 'translate3d(' + (p.x - w / 2) + 'px,' + (p.y - h / 2) + 'px,0) rotate(' +
         (parseFloat(el.dataset.rot) || 0) + 'deg)';
     });
   }
@@ -489,8 +517,8 @@
     scenes = [];
 
     [].slice.call(document.querySelectorAll('.physics')).forEach(function (host) {
-      var box = host.getBoundingClientRect();
-      var W = box.width, H = box.height;
+      var W = root.clientWidth, H = Math.max(document.body.scrollHeight, window.innerHeight);
+      host.style.height = H + 'px';
       if (!W || !H) return;
 
       var engine = Engine.create();
@@ -507,8 +535,9 @@
         var r = el.getBoundingClientRect();
         var w = r.width || parseFloat(el.dataset.w) * scale;
         var h = r.height || parseFloat(el.dataset.h) * scale;
+        var home = glyphHome(el);
         var body = Bodies.rectangle(
-          parseFloat(el.dataset.x) * scale, parseFloat(el.dataset.y) * scale, w, h,
+          home.x, home.y, w, h,
           { restitution: 0.62, frictionAir: 0.035, friction: 0.05, density: 0.0015,
             angle: (parseFloat(el.dataset.rot) || 0) * Math.PI / 180 });
         World.add(world, body);
@@ -565,8 +594,6 @@
   function stepPhysics() {
     for (var s = 0; s < scenes.length; s++) {
       var sc = scenes[s];
-      var b = sc.host.getBoundingClientRect();
-      if (b.bottom < -200 || b.top > window.innerHeight + 200) continue;   // fora de vista
       Matter.Engine.update(sc.engine, 1000 / 60);
       for (var i = 0; i < sc.items.length; i++) {
         var it = sc.items[i], p = it.body.position;
@@ -755,6 +782,7 @@
       destroyPhysics(); placeGlyphs();
       if (!REDUCED) buildPhysics();
       buildWipe(); buildNavPix(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); stackScroll();
+      layoutGreen();
       navSpyMeasure(); cacheLit(); scene(); updateWipe();
     }, 180);
   });
@@ -784,9 +812,10 @@
     cacheLit();
     scene();
     updateWipe();
+    layoutGreen();
     requestAnimationFrame(tick);
-    window.addEventListener('load', function () { layout(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); navSpyMeasure(); cacheLit(); });
-    setTimeout(function () { layout(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); navSpyMeasure(); cacheLit(); }, 500);
+    window.addEventListener('load', function () { layout(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); navSpyMeasure(); cacheLit(); layoutGreen(); destroyPhysics(); placeGlyphs(); if (!REDUCED) buildPhysics(); });
+    setTimeout(function () { layout(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); navSpyMeasure(); cacheLit(); layoutGreen(); }, 500);
   }
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(start).catch(start);
