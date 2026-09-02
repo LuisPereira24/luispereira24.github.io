@@ -277,6 +277,7 @@ a{ color: inherit; text-decoration: none; }
   z-index: 30;
   pointer-events: none;
 }
+.physics--sky{ z-index: 3; }
 .pix{
   position: absolute;
   left: 0; top: 0;
@@ -589,25 +590,9 @@ a{ color: inherit; text-decoration: none; }
 }
 .ch.is-lit{ color: var(--paper); }
 
-.portdither{
-  position: absolute;
-  inset: 0;
-  display: grid;
-  pointer-events: none;
-  z-index: 2;
-  mix-blend-mode: screen;
-}
-.portdither i{
-  display: block;
-  background: var(--paper);
-  opacity: 0;
-  transition: opacity .28s linear;
-  transition-delay: 0ms;
-}
 .about__portrait-inner{ position: relative; overflow: hidden; }
-.about__portrait-inner img{ transition: filter .35s linear, transform .35s cubic-bezier(.2,.9,.3,1); }
-.about__portrait-frame:hover .about__portrait-inner img{ filter: contrast(1.55) saturate(.15); transform: scale(1.03); }
-.about__portrait-frame:hover .portdither i{ opacity: .55; transition-delay: calc(var(--d) * 1ms); }
+.about__portrait-frame{ transition: transform .22s cubic-bezier(.2,.9,.3,1); }
+.about__portrait-frame:hover{ --frame-void: var(--yellow-2); transform: translateY(calc(-6 * var(--s))); }
 
 .reveal{ opacity: 0; transform: translateY(calc(40 * var(--s))); transition: opacity .6s linear, transform .6s cubic-bezier(.2,.8,.2,1); }
 .reveal.is-in{ opacity: 1; transform: none; }

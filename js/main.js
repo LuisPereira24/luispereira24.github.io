@@ -276,12 +276,12 @@
 
   var stack = document.getElementById('stack');
   var cards = [].slice.call(document.querySelectorAll('.card'));
-  var SPC = 800, GAP = 240, stackTop = 0, cardH = [];
+  var SPC = 800, GAP = 240, HOLD = 0.42, stackTop = 0, cardH = [];
 
   function stackLayout() {
     if (!stack || !cards.length) return;
     if (MOBILE()) { stack.style.height = ''; stack.style.marginTop = ''; cards.forEach(function (c) { c.style.transform = ''; c.style.width = ''; }); return; }
-    SPC = Math.round(window.innerHeight * 0.8);
+    SPC = Math.round(window.innerHeight * 1.2);
     stack.style.height = ((cards.length - 1) * SPC + window.innerHeight) + 'px';
     var vh0 = window.innerHeight, navH0 = 68 * scale, h0 = cardH[0] || cards[0].offsetHeight;
     var C0 = Math.max(navH0 * 0.4, navH0 + (vh0 - navH0 - h0) / 2);
@@ -294,7 +294,10 @@
     if (!stack || !cards.length || MOBILE()) return;
     var vh = window.innerHeight;
     var navH = 68 * scale;
-    var j = clamp((window.scrollY - stackTop) / SPC, 0, cards.length - 1);
+    var u = clamp((window.scrollY - stackTop) / SPC, 0, cards.length - 1);
+    var k = Math.floor(u), f = u - k;
+    f = f <= HOLD ? 0 : (f - HOLD) / (1 - HOLD);
+    var j = k + f * f * (3 - 2 * f);
     var gap = GAP * scale;
     for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
@@ -303,33 +306,11 @@
       var d = j - i;
       var enter = vh - C + 40;
       var y = d >= 0 ? C - d * gap : C + (-d) * enter;
-      c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0) rotate(var(--tilt))';
+      var z = d < 0 ? 0.93 + 0.07 * clamp(1 + d, 0, 1) : 1;
+      c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0) rotate(var(--tilt)) scale(' + z.toFixed(3) + ')';
     }
   }
 
-  function buildPortraitDither() {
-    var host = document.querySelector('.about__portrait-inner');
-    if (!host) return;
-    var old = host.querySelector('.portdither');
-    if (old) old.remove();
-    var w = host.offsetWidth, h = host.offsetHeight;
-    if (!w || !h) return;
-    var size = Math.max(8, Math.round(21 * scale));
-    var cols = Math.max(4, Math.round(w / size));
-    var rows = Math.max(4, Math.round(h / size));
-    var el = document.createElement('div');
-    el.className = 'portdither';
-    el.style.gridTemplateColumns = 'repeat(' + cols + ',1fr)';
-    el.style.gridTemplateRows = 'repeat(' + rows + ',1fr)';
-    var frag = document.createDocumentFragment();
-    for (var i = 0; i < cols * rows; i++) {
-      var c = document.createElement('i');
-      c.style.setProperty('--d', Math.round(Math.random() * 260));
-      frag.appendChild(c);
-    }
-    el.appendChild(frag);
-    host.appendChild(el);
-  }
 
   var A_YEL = [1, 0.89411765, 0.48235294], A_WHT = [1, 1, 1];
   var foot = { c: A_YEL.slice(), t: A_YEL };
@@ -421,9 +402,19 @@
              y: r.top + window.scrollY + parseFloat(el.dataset.y) * scale };
   }
 
+  function hostHeight(host) {
+    if (host.dataset.bound === 'sky') {
+      var w = document.getElementById('works');
+      var top = w ? w.getBoundingClientRect().top + window.scrollY : window.innerHeight;
+      return Math.max(Math.round(top), window.innerHeight);
+    }
+    return Math.max(document.body.scrollHeight, window.innerHeight);
+  }
+
   function placeGlyphs() {
-    var host = document.getElementById('physics');
-    if (host) host.style.height = Math.max(document.body.scrollHeight, window.innerHeight) + 'px';
+    [].slice.call(document.querySelectorAll('.physics')).forEach(function (host) {
+      host.style.height = hostHeight(host) + 'px';
+    });
     glyphs().forEach(function (el) {
       var w = parseFloat(el.dataset.w) * scale, h = parseFloat(el.dataset.h) * scale;
       var p = glyphHome(el);
@@ -440,7 +431,7 @@
     scenes = [];
 
     [].slice.call(document.querySelectorAll('.physics')).forEach(function (host) {
-      var W = root.clientWidth, H = Math.max(document.body.scrollHeight, window.innerHeight);
+      var W = root.clientWidth, H = hostHeight(host);
       host.style.height = H + 'px';
       if (!W || !H) return;
 
@@ -686,7 +677,7 @@
       setScale(); layout();
       destroyPhysics(); placeGlyphs();
       if (!REDUCED) buildPhysics();
-      buildWipe(); buildNavPix(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); stackScroll();
+      buildWipe(); buildNavPix(); buildDither(); fitFrames(); stackLayout(); stackScroll();
       layoutGreen();
       navSpyMeasure(); cacheLit(); scene(); updateWipe();
     }, 180);
@@ -707,7 +698,6 @@
     animHover();
     riderDrag();
     fitFrames();
-    buildPortraitDither();
     mailCopy();
     mailHue();
     stackLayout();
@@ -719,8 +709,8 @@
     updateWipe();
     layoutGreen();
     requestAnimationFrame(tick);
-    window.addEventListener('load', function () { layout(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); navSpyMeasure(); cacheLit(); layoutGreen(); destroyPhysics(); placeGlyphs(); if (!REDUCED) buildPhysics(); });
-    setTimeout(function () { layout(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); navSpyMeasure(); cacheLit(); layoutGreen(); }, 500);
+    window.addEventListener('load', function () { layout(); buildDither(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); layoutGreen(); destroyPhysics(); placeGlyphs(); if (!REDUCED) buildPhysics(); });
+    setTimeout(function () { layout(); buildDither(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); layoutGreen(); }, 500);
   }
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(start).catch(start);

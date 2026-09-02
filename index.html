@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Handjet:ELGR,ELSH,wght@1,2,100..900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v=202609021740">
+<link rel="stylesheet" href="css/style.css?v=202609021806">
 </head>
 <body>
 
@@ -180,11 +180,14 @@
 
 <!-- Um so mundo de fisica, do tamanho da pagina: os glifos podem ser
      atirados de uma seccao para a outra. data-anchor diz onde arrancam. -->
-<div class="physics" id="physics" aria-hidden="true">
+<div class="physics physics--sky" id="physics-sky" data-bound="sky" aria-hidden="true">
   <span class="pix" data-anchor="#home" data-x="1720.5" data-y="308.7" data-w="142.9" data-h="123.4" data-rot="-14.28"
         style="--size:115.083; --color:#ffe202">X</span>
   <span class="pix" data-anchor="#home" data-x="223.3" data-y="851.2" data-w="138.7" data-h="117.1" data-rot="10.68"
         style="--size:115.083; --color:#ffe57b">D</span>
+</div>
+
+<div class="physics" id="physics" aria-hidden="true">
   <span class="pix" data-anchor=".works__head" data-x="1700" data-y="120" data-w="96" data-h="96" data-rot="0"
         style="--size:96.175; --color:#f9fff9">\</span>
   <span class="pix" data-anchor="#about" data-x="268" data-y="71" data-w="106" data-h="92" data-rot="0"
@@ -207,7 +210,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
-<script src="js/pixel-anim.js?v=202609021740" defer></script>
-<script src="js/main.js?v=202609021740" defer></script>
+<script src="js/pixel-anim.js?v=202609021806" defer></script>
+<script src="js/main.js?v=202609021806" defer></script>
 </body>
 </html>
