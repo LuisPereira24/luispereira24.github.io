@@ -1,23 +1,10 @@
-/* =========================================================
-   PORTFOLIO — LUIS PEREIRA
-
-   1. escala global (--s)
-   2. cenario: ceu fixo + relvado preso ao fundo do ecra que
-      "aterra" quando o boneco chega ao PORTUGAL
-   3. letras individuais reactivas em todos os titulos
-   4. sol (glifo X) acende as letras do hero por onde passa
-   5. pixeis do header: aleatorios, com menos densidade,
-      a mudar de segundo a segundo enquanto o rato la esta
-   6. molduras xadrez de 2 quadrados, sem cortes
-   7. Matter.js no sol e no smiley; boneco arrastavel com mola
-   ========================================================= */
 (function () {
   'use strict';
 
-  var WIPE_ON   = false;   // transicao de pixeis entre hero e works (desligada)
+  var WIPE_ON   = false;
   var DESIGN_W  = 1920;
-  var GRASS_VIS = 0.20;    // fraccao do ecra ocupada pelo relvado
-  var FEET_Y    = 1645;    // onde os pes do boneco param (unidades do Figma)
+  var GRASS_VIS = 0.20;
+  var FEET_Y    = 1645;
   var COLS = 18, ROWS = 9, DISPERSAO = 0.35;
 
   var MOBILE  = function () { return window.matchMedia('(max-width: 860px)').matches; };
@@ -40,11 +27,6 @@
   }
   setScale();
 
-  /* ---------------------------------------------------------
-     1. LAYOUT DO HERO E DO RELVADO
-        O hero tem exactamente a altura que faz o boneco parar
-        sobre o PORTUGAL: heroH = (FEET_Y - 19) * s + visivel
-     --------------------------------------------------------- */
   var L = { vh: 0, visible: 0, heroH: 0, bandH: 0, stop: 0 };
 
   function layout() {
@@ -69,15 +51,10 @@
     hero.style.height = L.heroH + 'px';
     band.style.setProperty('--grass-top', (L.heroH - L.visible) + 'px');
     band.style.setProperty('--grass-full', Math.round(L.bandH) + 'px');
-    // ao aterrar o relvado revela a imagem toda; a diferenca empurra
-    // a seccao dos works (e as seguintes) para baixo
     root.style.setProperty('--grass-drop', Math.round(L.bandH - L.visible) + 'px');
     L.stop = L.heroH - L.vh;
   }
 
-  /* ---------------------------------------------------------
-     2. SCROLL: cor do texto + aterragem do relvado
-     --------------------------------------------------------- */
   var INK_A = [0x26, 0x26, 0x26], INK_B = [0xf9, 0xff, 0xf9];
   var lastInk = -1, landed = false, lastEase = -1;
 
@@ -98,10 +75,6 @@
     var isLanded = y >= L.stop;
     if (isLanded !== landed) { landed = isLanded; band.classList.toggle('is-landed', isLanded); }
 
-    /* travagem amortecida: na ultima meia-tela antes de aterrar o relvado
-       abranda progressivamente ate ficar parado na pagina, em vez de passar
-       de "colado ao ecra" para "parado" de um golpe.
-       ease = k * N * u^2 * (1-u)  ->  velocidade relativa passa de 1 a 1-k */
     var ez = 0;
     if (!landed && L.stop !== Infinity) {
       var N = L.vh * 0.5, u = clamp((y - (L.stop - N)) / N, 0, 1);
@@ -110,15 +83,6 @@
     if (ez !== lastEase) { lastEase = ez; band.style.setProperty('--grass-ease', ez.toFixed(1) + 'px'); }
   }
 
-  /* ---------------------------------------------------------
-     2b. FAIXA DE DITHER ENTRE O RELVADO E OS WORKS
-        Portado do pixel_dither_band_hover_square_cells.html: uma grelha de
-        quadrados da cor da seccao, colada a aresta de baixo da imagem. A
-        probabilidade de cada quadrado estar aceso cresce para baixo
-        (base) contra um limiar de ruido fixo mais uma ondulacao lenta
-        (thr), o que desfaz a fotografia em pixeis em vez de a cortar a
-        direito. O cursor por perto acende mais quadrados.
-     --------------------------------------------------------- */
   var D_ROWS = 10, D_CELL = 14, D_RADIUS = 6, D_FORCE = 0.35;
   var dith = { el: null, cells: [], noise: [], cols: 0, rows: 0, size: 0,
                t: 0, amp: 0, tgt: 0, mx: -999, my: -999 };
@@ -152,10 +116,14 @@
     dith.el.appendChild(frag);
   }
 
+  var dithLast = 0;
   function stepDither() {
     if (!dith.el || !dith.cells.length) return;
+    var now = performance.now();
+    if (now - dithLast < 40) return;
+    dithLast = now;
     var b = dith.el.getBoundingClientRect();
-    if (b.bottom < -120 || b.top > window.innerHeight + 120) return;   // fora de vista
+    if (b.bottom < -120 || b.top > window.innerHeight + 120) return;
     dith.t += 0.008;
     dith.amp += (dith.tgt - dith.amp) * 0.045;
     var rows = dith.rows, R = D_RADIUS, S = D_FORCE;
@@ -184,9 +152,6 @@
     dith.tgt = (e.clientY > g.top - 140 && e.clientY < g.bottom + 140) ? 1 : 0;
   }, { passive: true });
 
-  /* ---------------------------------------------------------
-     3. LETRAS INDIVIDUAIS
-     --------------------------------------------------------- */
   var TITLES = '.hero__hi, .hero__name, .hero__iam, .hero__role, .hero__basedin,' +
                '.hero__country, .works__title, .card__title, .about__title, .contact__mail';
 
@@ -212,11 +177,6 @@
     });
   }
 
-  /* ---------------------------------------------------------
-     4. O SOL ACENDE AS LETRAS DO HERO
-        Rectangulos das letras em coordenadas de pagina, em cache;
-        so o rectangulo do sol e lido a cada frame.
-     --------------------------------------------------------- */
   var litCells = [], sunItem = null;
 
   function cacheLit() {
@@ -232,7 +192,7 @@
   function litUpdate() {
     if (!sunItem || !litCells.length) return;
     var p = sunItem.body.position, hw = sunItem.w / 2, hh = sunItem.h / 2;
-    var l = p.x - hw, r = p.x + hw, t = p.y - hh, b = p.y + hh;   // ja em coords de pagina
+    var l = p.x - hw, r = p.x + hw, t = p.y - hh, b = p.y + hh;
     for (var i = 0; i < litCells.length; i++) {
       var c = litCells[i];
       var hit = !(r < c.l || l > c.r || b < c.t || t > c.b);
@@ -240,13 +200,8 @@
     }
   }
 
-  /* ---------------------------------------------------------
-     5. PIXEIS DO HEADER
-        Menos densidade, novo sorteio de segundo a segundo
-        enquanto o rato esta no header, com fade suave.
-     --------------------------------------------------------- */
   var navPix = [], navPixBound = false, navHover = false, navRAF = 0, lastShuffle = 0;
-  var FADE = 0.055;          // suavidade da passagem entre sorteios
+  var FADE = 0.055;
   var SHUFFLE_MS = 1000;
 
   function buildNavPix() {
@@ -264,7 +219,7 @@
 
       function density(c) {
         var d = right ? (c + 1) / cols : 1 - c / cols;
-        return Math.pow(clamp(d, 0, 1), 3.1) * 0.62;   // mais vazios
+        return Math.pow(clamp(d, 0, 1), 3.1) * 0.62;
       }
       function shuffle(boost) {
         for (var r = 0; r < rows; r++)
@@ -290,12 +245,12 @@
     nav.addEventListener('pointerenter', function () {
       navHover = true;
       lastShuffle = performance.now();
-      navPix.forEach(function (p) { p.shuffle(1.35); });   // sorteio imediato
+      navPix.forEach(function (p) { p.shuffle(1.35); });
       if (!navRAF) navRAF = requestAnimationFrame(navTick);
     });
     nav.addEventListener('pointerleave', function () {
       navHover = false;
-      navPix.forEach(function (p) { p.shuffle(); });        // volta ao repouso
+      navPix.forEach(function (p) { p.shuffle(); });
       if (!navRAF) navRAF = requestAnimationFrame(navTick);
     });
   }
@@ -319,29 +274,20 @@
     if (navHover || moving) navRAF = requestAnimationFrame(navTick);
   }
 
-  /* ---------------------------------------------------------
-     5b. PILHA DOS WORKS
-        O painel fica preso ao ecra durante (N-1) x SPC de scroll.
-        j = quantos cards ja chegaram (continuo). O card mais recente
-        fica centrado; os anteriores empilham-se GAP acima, saindo do
-        ecra por cima; os seguintes esperam por baixo da dobra.
-     --------------------------------------------------------- */
   var stack = document.getElementById('stack');
   var cards = [].slice.call(document.querySelectorAll('.card'));
-  var SPC = 800, GAP = 240, stackTop = 0;
+  var SPC = 800, GAP = 240, stackTop = 0, cardH = [];
 
   function stackLayout() {
     if (!stack || !cards.length) return;
     if (MOBILE()) { stack.style.height = ''; stack.style.marginTop = ''; cards.forEach(function (c) { c.style.transform = ''; c.style.width = ''; }); return; }
     SPC = Math.round(window.innerHeight * 0.8);
     stack.style.height = ((cards.length - 1) * SPC + window.innerHeight) + 'px';
-    // O primeiro card fica logo abaixo do titulo WORKS, com o mesmo respiro
-    // que o ABOUT ME da ao seu texto (34 unidades). Como dentro do painel o
-    // card esta centrado (C), puxa-se a pilha para cima nessa diferenca.
-    var vh0 = window.innerHeight, navH0 = 68 * scale, h0 = cards[0].offsetHeight;
+    var vh0 = window.innerHeight, navH0 = 68 * scale, h0 = cardH[0] || cards[0].offsetHeight;
     var C0 = Math.max(navH0 * 0.4, navH0 + (vh0 - navH0 - h0) / 2);
     stack.style.marginTop = Math.round(34 * scale - C0) + 'px';
-    stackTop = stack.getBoundingClientRect().top + window.scrollY;   // coords de pagina
+    cardH = cards.map(function (c) { return c.offsetHeight; });
+    stackTop = stack.getBoundingClientRect().top + window.scrollY;
   }
 
   function stackScroll() {
@@ -352,7 +298,7 @@
     var gap = GAP * scale;
     for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
-      var h = c.offsetHeight;
+      var h = cardH[i] || c.offsetHeight;
       var C = Math.max(navH * 0.4, navH + (vh - navH - h) / 2);
       var d = j - i;
       var enter = vh - C + 40;
@@ -361,11 +307,6 @@
     }
   }
 
-  /* ---------------------------------------------------------
-     5d. FOTO DO ABOUT — veu de pixeis ao passar o rato
-        Grelha de quadrados sobre a fotografia, cada um com um atraso
-        aleatorio, para o veu entrar e sair de forma dispersa.
-     --------------------------------------------------------- */
   function buildPortraitDither() {
     var host = document.querySelector('.about__portrait-inner');
     if (!host) return;
@@ -390,10 +331,6 @@
     host.appendChild(el);
   }
 
-  /* ---------------------------------------------------------
-     5e. EMAIL — copia para a area de transferencia
-     --------------------------------------------------------- */
-  /* rato sobre o email: a animacao do rodape passa de amarela a branca */
   var A_YEL = [1, 0.89411765, 0.48235294], A_WHT = [1, 1, 1];
   var foot = { c: A_YEL.slice(), t: A_YEL };
   function mailHue() {
@@ -441,9 +378,6 @@
     });
   }
 
-  /* ---------------------------------------------------------
-     5f. CHAPA VERDE — uma so, dos works ate ao rodape
-     --------------------------------------------------------- */
   function layoutGreen() {
     var bg = document.getElementById('greenbg');
     var w = document.getElementById('works'), c = document.getElementById('contact');
@@ -454,22 +388,17 @@
     bg.style.height = Math.round(bot - top) + 'px';
   }
 
-  /* ---------------------------------------------------------
-     6. MOLDURAS XADREZ (anel de 2 quadrados, sem cortes)
-     --------------------------------------------------------- */
   function fitFrames() {
     [].slice.call(document.querySelectorAll('.pxframe')).forEach(function (el) {
       var target = MOBILE() ? 8 : 14 * scale;
       var w = el.offsetWidth;
       if (!w) return;
       var n = Math.max(8, Math.round(w / target));
-      if (n % 2) n++;                              // par: o xadrez fecha certo
+      if (n % 2) n++;
       var sq = Math.max(2, Math.round(w / n));   // pixeis inteiros: sem falhas nas arestas
       el.style.width = (n * sq) + 'px';           // largura multipla exacta do quadrado
       el.style.setProperty('--sq', sq + 'px');
       el.style.padding = (sq * 2) + 'px';       // anel de 2 quadrados, igual dos 4 lados
-      // o resto para a altura fechar num numero inteiro de quadrados vai
-      // para o conteudo, nao para a moldura
       var inner = el.firstElementChild;
       if (!inner) return;
       inner.style.paddingBottom = '';
@@ -482,15 +411,9 @@
     });
   }
 
-  /* ---------------------------------------------------------
-     7. MATTER.JS — sol e smiley
-     --------------------------------------------------------- */
   var scenes = [];
   function glyphs() { return [].slice.call(document.querySelectorAll('.physics .pix')); }
 
-  /* Cada glifo arranca numa ancora (uma seccao) mais um deslocamento em
-     unidades do Figma; o resultado e uma coordenada de pagina, porque o
-     mundo da fisica cobre a pagina inteira. */
   function glyphHome(el) {
     var a = document.querySelector(el.dataset.anchor || '#home');
     var r = a ? a.getBoundingClientRect() : { left: 0, top: 0 };
@@ -522,7 +445,8 @@
       if (!W || !H) return;
 
       var engine = Engine.create();
-      engine.gravity.x = 0; engine.gravity.y = 0;   // ficam parados ate lhes tocarem
+      engine.enableSleeping = true;
+      engine.gravity.x = 0; engine.gravity.y = 0;
       var world = engine.world, t = 400;
       World.add(world, [
         Bodies.rectangle(W / 2, -t / 2, W + t * 2, t, { isStatic: true }),
@@ -612,9 +536,6 @@
     scenes = []; sunItem = null;
   }
 
-  /* ---------------------------------------------------------
-     8. BONECO — arrastavel, volta ao lugar com mola
-     --------------------------------------------------------- */
   function riderDrag() {
     if (!rider) return;
     var dragging = false, sx = 0, sy = 0;
@@ -642,9 +563,6 @@
     rider.addEventListener('pointercancel', back);
   }
 
-  /* ---------------------------------------------------------
-     10. TRANSICAO DE PIXEIS (desligada: WIPE_ON = false)
-     --------------------------------------------------------- */
   var wipe = { el: null, cells: [], order: [], state: [], live: false, key: '' };
   var wipeSection = document.getElementById('pxwipe');
 
@@ -700,28 +618,23 @@
     }
   }
 
-  /* ---------------------------------------------------------
-     11. LOOP
-     --------------------------------------------------------- */
   var heroVisible = true;
   if ('IntersectionObserver' in window && hero) {
     new IntersectionObserver(function (e) { heroVisible = e[0].isIntersecting; }, { rootMargin: '100px' }).observe(hero);
   }
   function tick() {
+    requestAnimationFrame(tick);
+    if (document.hidden) return;
     scene();
     stepFootColor();
     stepDither();
     stackScroll();
-    updateWipe();
+    if (WIPE_ON) updateWipe();
     if (scenes.length) stepPhysics();
     navSpyUpdate();
     animSpeed();
-    requestAnimationFrame(tick);
   }
 
-  /* ---------------------------------------------------------
-     12. REVEALS + NAV
-     --------------------------------------------------------- */
   function reveals() {
     var targets = [].slice.call(document.querySelectorAll('.reveal'));
     if (!('IntersectionObserver' in window)) { targets.forEach(function (t) { t.classList.add('is-in'); }); return; }
@@ -730,9 +643,7 @@
     }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
     targets.forEach(function (t) { io.observe(t); });
   }
-  /* O IntersectionObserver nao servia: a seccao dos works tem varias telas
-     de altura e nunca chega a 40% visivel, por isso a linha ficava presa no
-     "home". Passa a ser pela posicao do scroll. */
+
   var spy = [], spyLast = null;
   function navSpyBuild() {
     spy = [].slice.call(document.querySelectorAll('.nav__links a')).map(function (a) {
@@ -753,9 +664,6 @@
     spy.forEach(function (x) { x.a.classList.toggle('is-active', x === best); });
   }
 
-  /* ---------------------------------------------------------
-     ANIMACAO DO HERO — abranda com o rato por cima
-     --------------------------------------------------------- */
   var animCanvas = document.getElementById('linha-pixel');
   var animTarget = 1, animNow = 1, ANIM_FAST = 3;
   function animHover() {
@@ -771,9 +679,6 @@
     animCanvas.setAnimSpeed(animNow);
   }
 
-  /* ---------------------------------------------------------
-     13. ARRANQUE
-     --------------------------------------------------------- */
   var resizeT;
   window.addEventListener('resize', function () {
     clearTimeout(resizeT);

@@ -1,17 +1,6 @@
-/* =========================================================
-   PORTFOLIO — LUIS PEREIRA
-   Escala: layout desenhado a 1920px, escalado por --s (JS).
-   1 unidade do Figma = calc(1 * var(--s))
-
-   Camadas (z-index):
-     0  céu (fixo)          2  hero + textos
-     1  secções de conteúdo 5  relvado (fixo)
-    90  transição de pixéis 100 header
-   ========================================================= */
-
 :root{
   --s: calc(100vw / 1920);
-  --grid: calc(48 * var(--s));     /* quadricula do verde */
+  --grid: calc(48 * var(--s));
 
   --ink:      #262626;
   --paper:    #f9fff9;
@@ -20,24 +9,21 @@
   --yellow:   #ffe202;
   --yellow-2: #ffe57b;
 
-  --hero-ink: #262626;      /* passa a branco com o scroll */
-  --grass-y: 0px;           /* quanto o relvado está empurrado para baixo */
+  --hero-ink: #262626;
+  --grass-y: 0px;
 
   --font-dot: 'DotGothic16', 'Courier New', monospace;
   --font-hand: 'Handjet', 'DotGothic16', monospace;
   --hand-axes: "ELGR" 1, "ELSH" 2;
 }
 
-/* Mister Pixel 16 pt — ToolsOne: os pictogramas.
-   X = sol · D = smiley · L = boneco · \\ = pasta · ~ = seta (espelhada no CSS)
-   _ = visto · [ = pasta fechada · V = coração · Y = caixote */
 @font-face{
   font-family: 'MisterPixel';
   src: url('../assets/fonts/MisterPixel.woff2') format('woff2'),
        local('Mister Pixel 16 pt - ToolsOne');
   font-display: swap;
 }
-/* Mister Pixel 16 pt — Regular: o alfabeto, caso venhas a precisar */
+
 @font-face{
   font-family: 'MisterPixelText';
   src: url('../assets/fonts/MisterPixelRegular.woff2') format('woff2'),
@@ -45,10 +31,6 @@
   font-display: swap;
 }
 
-/* Uma unica chapa verde por tras dos works e do about, para a quadricula
-   correr sem emendas. A primeira camada e um degrade da propria cor: fica
-   opaco enquanto o relvado ainda cobre (--fade-from) e so depois abre, para
-   a grelha entrar suavemente logo a seguir a transicao de pixeis. */
 .greenbg{
   position: absolute;
   left: 0;
@@ -83,15 +65,14 @@ body{
 }
 
 img, video, canvas{ display: block; max-width: 100%; }
+picture{ display: contents; }
 
-/* o site nao e para ler-e-copiar: fora o cursor de texto */
 body{ cursor: default; user-select: none; -webkit-user-select: none; }
 a, button, .btn, .works__folder, .pix, .pix--rider{ cursor: pointer; }
 img[src$=".png"], img[src$=".gif"]{ image-rendering: pixelated; }
 a{ color: inherit; text-decoration: none; }
 .pix-font{ font-family: 'MisterPixel', var(--font-dot); }
 
-/* ============================= NAV ============================= */
 .nav{
   position: fixed;
   inset: 0 0 auto 0;
@@ -137,7 +118,6 @@ a{ color: inherit; text-decoration: none; }
 }
 .nav__links a:hover::after, .nav__links a.is-active::after{ transform: scaleX(1); }
 
-/* ============================= CÉU (fixo) ============================= */
 .sky{
   position: fixed;
   inset: 0;
@@ -152,7 +132,6 @@ a{ color: inherit; text-decoration: none; }
 }
 .sky.is-off, .grassband.is-off{ visibility: hidden; }
 
-/* ============================= RELVADO (fixo) ============================= */
 .grassband{
   position: fixed;
   left: 0;
@@ -164,22 +143,15 @@ a{ color: inherit; text-decoration: none; }
   transform: translate3d(0, var(--grass-ease, 0px), 0);
   will-change: transform;
 }
-/* quando o boneco chega a altura do PORTUGAL o relvado deixa de estar preso
-   ao ecra e passa a acompanhar a pagina. A travagem e amortecida em scene(). */
+
 .grassband.is-landed{
   position: absolute; bottom: auto; top: var(--grass-top, 0px);
-  height: var(--grass-full, var(--grass-h));     /* ao aterrar revela a imagem toda */
+  height: var(--grass-full, var(--grass-h));
 }
-/* so a faixa de topo do relvado aparece — tambem depois de aterrar,
-   para nao tapar o titulo da seccao WORKS */
+
 .grassband__clip{ position: absolute; inset: 0; overflow: hidden; }
 .grassband__clip img{ position: absolute; left: 0; top: 0; width: 100%; height: auto; }
 
-/* Faixa de dither entre o relvado e o fundo dos WORKS
-   (portado do pixel_dither_band_hover_square_cells.html).
-   Fica colada a aresta de baixo da imagem, por isso enquanto o relvado esta
-   preso ao ecra o recorte esconde-a; quando aterra, aparece a desfazer a
-   fotografia em quadrados da cor da seccao. Reage ao cursor. */
 .grassdither{
   position: absolute;
   left: 0;
@@ -207,7 +179,6 @@ a{ color: inherit; text-decoration: none; }
 .grassband .pix--rider:hover{ filter: brightness(1.15); }
 .grassband .pix--rider.is-dragging{ cursor: grabbing; transition: none; }
 
-/* ============================= HERO ============================= */
 .hero{
   position: relative;
   z-index: 2;
@@ -299,9 +270,6 @@ a{ color: inherit; text-decoration: none; }
 }
 @keyframes blink{ 50%{ opacity: .15; } }
 
-/* ---------- Matter.js ---------- */
-/* mundo unico: cobre a pagina toda, para os glifos poderem viajar entre
-   seccoes. Fica acima do conteudo mas abaixo do header. */
 .physics{
   position: absolute;
   left: 0; top: 0;
@@ -324,7 +292,6 @@ a{ color: inherit; text-decoration: none; }
 }
 .pix.is-dragging{ cursor: grabbing; }
 
-/* ============================= TRANSIÇÃO DE PIXÉIS ============================= */
 .pxwipe{
   position: relative;
   z-index: 1;
@@ -348,25 +315,21 @@ a{ color: inherit; text-decoration: none; }
 }
 .pxwipe-grid i.on{ opacity: 1; }
 
-/* ============================= MOLDURA XADREZ ============================= */
-/* --sq e o padding são recalculados em JS para que nenhum quadrado
-   fique cortado nas extremidades (ver fitFrames() em main.js). */
 .pxframe{
   --sq: calc(14 * var(--s));
   --frame-bg: var(--card-bg, var(--paper));
-  --frame-void: var(--olive);            /* cor dos quadrados "vazios" */
-  padding: calc(var(--sq) * 2);           /* anel de 2 quadrados, como no Figma */
+  --frame-void: var(--olive);
+  padding: calc(var(--sq) * 2);
   background-image: conic-gradient(from 90deg at 50% 50%,
     var(--frame-bg) 25%, var(--frame-void) 0 50%, var(--frame-bg) 0 75%, var(--frame-void) 0);
   background-size: calc(var(--sq) * 2) calc(var(--sq) * 2);
   background-position: 0 0;
 }
 
-/* ============================= WORKS ============================= */
 .works{
   position: relative;
   background: transparent;
-  /* --grass-drop e o que o relvado cresce ao aterrar: empurra tudo para baixo */
+
   padding: calc(var(--grass-drop, 0px) + 145 * var(--s)) 0 0;
 }
 .works__head{
@@ -392,12 +355,8 @@ a{ color: inherit; text-decoration: none; }
 .works__folder:hover{ transform: translateY(calc(-8 * var(--s))) rotate(-4deg); }
 .works__folder:active{ transform: translateY(calc(2 * var(--s))); }
 
-/* Cena da pilha: o painel fica preso ao ecra e os cards sao posicionados
-   por scroll (stackScroll() no main.js). O card mais recente fica centrado
-   e os anteriores empilham-se 240u acima, saindo por cima do ecra. */
 .stack{ padding: 0 calc(160 * var(--s)); position: relative; }
-/* o painel cobre o ecra todo desde o inicio (tem margem negativa), por isso
-   nao pode apanhar cliques — senao tapa a pasta dos works */
+
 .stack__pin{ position: sticky; top: 0; height: 100vh; z-index: 6; pointer-events: none; }
 
 .card{
@@ -411,20 +370,15 @@ a{ color: inherit; text-decoration: none; }
 .card:nth-of-type(2){ z-index: 2; }
 .card:nth-of-type(3){ z-index: 3; }
 
-/* animacao circular: sobe pela seccao dos works (por tras dos cards, z 6-8)
-   e desce o suficiente para roçar a foto do about (z 4 > conteudo do about) */
 .circanim{
   position: absolute;
   z-index: 4;
-  /* Composicao do Figma (no 64:175 "CIRCanimPIXEL 1"): anel grande, encostado
-     a direita, a subir por tras dos cards e a cruzar a foto do about. O
-     diametro esta limitado a ~830 unidades porque acima de ~2800px de
-     largura o Chromium deixa de rasterizar o canvas ampliado por inteiro. */
+
   right: calc(-1252 * var(--s));
   top: calc(-828 * var(--s));
   width: calc(2800 * var(--s));
   height: calc(1575 * var(--s));
-  max-width: none;                        /* escapa ao max-width:100% global */
+  max-width: none;
   image-rendering: pixelated;
   pointer-events: none;
 }
@@ -475,7 +429,6 @@ a{ color: inherit; text-decoration: none; }
 .btn__gap{ flex: 0 0 calc(40 * var(--s)); transition: flex-basis .45s cubic-bezier(.22,.9,.25,1); }
 .btn:hover .btn__gap{ flex: 1 1 auto; }
 
-/* seta pixel.svg, exportada do Figma */
 .btn__arrow{
   width: calc(46 * var(--s));
   height: auto;
@@ -485,14 +438,12 @@ a{ color: inherit; text-decoration: none; }
 }
 .btn:hover .btn__arrow{ transform: none; }
 
-/* ============================= ABOUT ============================= */
 .about{
   position: relative;
   background: transparent;
   padding: calc(232 * var(--s)) 0 0;
 }
-/* o bloco claro esta "de lado": trapezio, mais alto a esquerda,
-   com uma franja de 2 quadrados em cima e em baixo */
+
 .about__band{
   position: relative;
   height: calc(1037 * var(--s));
@@ -500,16 +451,14 @@ a{ color: inherit; text-decoration: none; }
   color: var(--ink);
   clip-path: polygon(0 0, 100% calc(20 * var(--s)), 100% calc(100% - 22 * var(--s)), 0 100%);
 }
-/* As franjas vivem FORA do bloco: sao quadrados da cor do papel sobre
-   transparente, portanto o "verde" e mesmo buraco — deixa passar a grelha
-   em cima e a relva em baixo, e nao sobra nenhuma risca clara. */
+
 .about__edge{
   position: absolute;
   left: 0;
   width: 100%;
   z-index: 2;
-  --sq: calc(14 * var(--s));           /* mesmo tamanho dos cards */
-  height: calc(var(--sq) * 2);         /* exactamente 2 quadrados */
+  --sq: calc(14 * var(--s));
+  height: calc(var(--sq) * 2);
   background-image: conic-gradient(from 90deg at 50% 50%,
     var(--paper) 25%, transparent 0 50%, var(--paper) 0 75%, transparent 0);
   background-size: calc(var(--sq) * 2) calc(var(--sq) * 2);
@@ -560,7 +509,6 @@ a{ color: inherit; text-decoration: none; }
 }
 .about__portrait-inner{ background: #6f6f6f; }
 
-/* ---------- botao DOWNLOAD CV ---------- */
 .cvbtn{
   position: absolute;
   left: calc(722 * var(--s));
@@ -617,9 +565,6 @@ a{ color: inherit; text-decoration: none; }
   100% { transform: rotate(89.23deg) translateX(0); }
 }
 
-/* zonas de fisica: o glifo solto no verde e a mao sobre o bloco */
-
-/* ---------- letras: cada uma reage ao rato ---------- */
 .w{ display: inline-block; white-space: pre; }
 .ch{
   display: inline-block;
@@ -629,7 +574,7 @@ a{ color: inherit; text-decoration: none; }
   transform: translateY(-.07em);
   -webkit-text-stroke: .035em currentColor;
 }
-/* Handjet tem eixo de peso: engrossa mesmo */
+
 .hero__name .ch, .card__title .ch, .contact__mail .ch{
   transition: transform .18s cubic-bezier(.2,1.7,.4,1), font-variation-settings .18s linear;
 }
@@ -639,13 +584,11 @@ a{ color: inherit; text-decoration: none; }
   font-weight: 900;
 }
 
-/* o sol (glifo X) a passar por cima do texto do hero acende-o */
 .hero__hi .ch, .hero__name .ch{
   transition: transform .18s cubic-bezier(.2,1.7,.4,1), color .22s linear, font-variation-settings .18s linear;
 }
 .ch.is-lit{ color: var(--paper); }
 
-/* veu de pixeis sobre a foto do about, ao passar o rato */
 .portdither{
   position: absolute;
   inset: 0;
@@ -669,10 +612,6 @@ a{ color: inherit; text-decoration: none; }
 .reveal{ opacity: 0; transform: translateY(calc(40 * var(--s))); transition: opacity .6s linear, transform .6s cubic-bezier(.2,.8,.2,1); }
 .reveal.is-in{ opacity: 1; transform: none; }
 
-/* ============================= CONTACT ============================= */
-/* Fundo: o resto do relvado de cima, com o mesmo enquadramento do Figma
-   (caixa de 1185 unidades a comecar 541 acima do topo da seccao, com a
-   imagem esticada a 2400 e puxada para cima 1153). */
 .contact{
   position: relative;
   height: calc(644 * var(--s));
@@ -684,12 +623,11 @@ a{ color: inherit; text-decoration: none; }
 .contact__bg img{
   width: 100%;
   height: 100%;
-  object-fit: cover;                 /* sem esticar: continua o relvado de cima */
+  object-fit: cover;
   object-position: center 38%;
   max-width: none;
 }
 
-/* animacao LinhaPIXEL2, espelhada e a sangrar pela direita */
 .contact__anim{
   position: absolute;
   left: calc(355 * var(--s));
@@ -773,7 +711,6 @@ a{ color: inherit; text-decoration: none; }
 }
 .copied.is-on{ opacity: 1; }
 
-/* ============================= MOBILE ============================= */
 @media (max-width: 860px){
   .hero{ height: auto; min-height: 100svh; padding: 17vh 6vw 40vh; overflow: hidden; }
   .hero__anim{ display: none; }
@@ -810,7 +747,6 @@ a{ color: inherit; text-decoration: none; }
   .card__text{ font-size: 17px; margin-bottom: 16px; }
   .btn{ font-size: clamp(28px, 8vw, 48px); gap: 16px; }
   .card__media{ font-size: 14px; }
-
 
   .about{ padding: 26px 0 40px; }
   .about__band{ height: auto; clip-path: none; padding: 34px 6vw 40px; }

@@ -172,7 +172,31 @@ assomar no canto. Exportada do `CirculoPIXEL.html` para `js/pixel-anim.js`.
 
 ---
 
-## 4. Ainda por decidir
+## 4. Desempenho
+
+O código já não leva comentários — as explicações vivem todas neste ficheiro.
+
+**Animações de píxeis.** Eram o custo dominante: cada uma re-serializa e
+rasteriza um SVG inteiro por frame, e as três corriam sempre, mesmo fora do
+ecrã. Agora cada `<canvas>` tem um `IntersectionObserver`: só anima o que está
+visível, pára com o separador em segundo plano, e o relógio está preso à
+grelha de keyframes que a própria animação declara (`timeline.frameStep`), por
+isso não se redesenha duas vezes o mesmo frame. A textura só é enviada para a
+GPU quando há imagem nova; o desenho em si continua a 60 fps, que é barato.
+
+**Loop principal.** Não corre com o separador escondido. As alturas dos cards
+ficam em cache em vez de serem lidas a cada frame (cada leitura forçava um
+reflow), a faixa de dither actualiza a 25 fps em vez de 60, e os corpos do
+Matter.js adormecem quando param.
+
+**Imagens.** WebP com PNG de recurso via `<picture>`: 7,3 MB → 611 KB, sem
+perda visível. O céu passou de 2,4 MB para 24 KB. O retrato e o relvado do
+rodapé carregam em `lazy`, já que estão abaixo da dobra. Os PNG originais
+ficam na pasta — se substituíres algum, gera o `.webp` ao lado com o mesmo nome.
+
+---
+
+## 5. Ainda por decidir
 
 - A secção **contact** está vazia no Figma. O que está aqui é uma proposta na
   mesma linguagem (email grande + links).

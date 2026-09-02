@@ -1,8 +1,3 @@
-/* Motor de pixelizacao exportado dos ficheiros do gerador
-   (LinhaPIXEL.html, CirculoPIXEL.html e LinhaPIXEL2.html).
-   PixelAnim(canvas, svgSource, cfg) desenha um SVG animado num <canvas>
-   com mosaico + posterize via WebGL.
-   Nao editar a mao: geras uma animacao nova no gerador, voltas a exportar. */
 (function () {
   'use strict';
 
@@ -151,22 +146,28 @@ const tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tex);
  .forEach(([k,v])=>gl.texParameteri(gl.TEXTURE_2D,k,v));
 const U=n=>gl.getUniformLocation(prog,n);
 const img=new Image(); let pending=false,url=null,clock=0,last=performance.now();
+let visible=true, frameIdx=-1, texDirty=true;
+const STEP = timeline.frameStep > 0.001 ? timeline.frameStep : 1/30;
+if ('IntersectionObserver' in window)
+  new IntersectionObserver(e=>{ visible = e[0].isIntersecting; }, {rootMargin:'240px'}).observe(OUT);
 function loop(now){
   requestAnimationFrame(loop);
+  if(!visible || document.hidden){ last=now; return; }
   const dt=Math.min((now-last)/1000,.1); last=now;
   clock=(clock+dt*CFG.speed)%timeline.duration;
-  if(!pending){ pending=true;
-    const blob=new Blob([bakeSVG(liveSVG,timeline,clock,CFG.tint,CFG.base)],
+  const idx=Math.floor(clock/STEP);
+  if(idx!==frameIdx && !pending){ frameIdx=idx; pending=true;
+    const blob=new Blob([bakeSVG(liveSVG,timeline,idx*STEP,CFG.tint,CFG.base)],
       {type:'image/svg+xml;charset=utf-8'});
     const next=URL.createObjectURL(blob);
     img.onload=()=>{ sctx.clearRect(0,0,src.width,src.height);
       if(CFG.bg){sctx.fillStyle=CFG.bg;sctx.fillRect(0,0,src.width,src.height);}
       sctx.drawImage(img,0,0,src.width,src.height);
-      if(url)URL.revokeObjectURL(url); url=next; pending=false; };
+      if(url)URL.revokeObjectURL(url); url=next; pending=false; texDirty=true; };
     img.onerror=()=>{URL.revokeObjectURL(next);pending=false;};
     img.src=next; }
   gl.bindTexture(gl.TEXTURE_2D,tex);
-  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,src);
+  if(texDirty){ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,src); texDirty=false; }
   gl.uniform2f(U('blocks'),CFG.hb,CFG.vb); gl.uniform1f(U('levels'),CFG.lv);
   gl.uniform2f(U('texel'),1/OUT.width,1/OUT.height);
   gl.uniform1f(U('sharp'),CFG.sharp?1:0);
