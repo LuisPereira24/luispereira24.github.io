@@ -7,7 +7,7 @@
   var FEET_Y    = 1645;
   var COLS = 18, ROWS = 9, DISPERSAO = 0.35;
 
-  var MOBILE  = function () { return window.matchMedia('(max-width: 860px)').matches; };
+  var MOBILE  = function () { return window.matchMedia('(max-width: 900px)').matches; };
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var root = document.documentElement;
@@ -282,7 +282,7 @@
     if (!stack || !cards.length) return;
     if (MOBILE()) { stack.style.height = ''; stack.style.marginTop = ''; cards.forEach(function (c) { c.style.transform = ''; c.style.width = ''; }); return; }
     SPC = Math.round(window.innerHeight * 1.2);
-    stack.style.height = ((cards.length - 1) * SPC + window.innerHeight) + 'px';
+    stack.style.height = ((cards.length - 1 + HOLD) * SPC + window.innerHeight) + 'px';
     var vh0 = window.innerHeight, navH0 = 68 * scale, h0 = cardH[0] || cards[0].offsetHeight;
     var C0 = Math.max(navH0 * 0.4, navH0 + (vh0 - navH0 - h0) / 2);
     stack.style.marginTop = Math.round(34 * scale - C0) + 'px';
@@ -311,6 +311,30 @@
     }
   }
 
+
+  function buildPortraitDither() {
+    var host = document.querySelector('.about__portrait-inner');
+    if (!host) return;
+    var old = host.querySelector('.portdither');
+    if (old) old.remove();
+    var w = host.offsetWidth, h = host.offsetHeight;
+    if (!w || !h) return;
+    var size = Math.max(8, Math.round(21 * scale));
+    var cols = Math.max(4, Math.round(w / size));
+    var rows = Math.max(4, Math.round(h / size));
+    var el = document.createElement('div');
+    el.className = 'portdither';
+    el.style.gridTemplateColumns = 'repeat(' + cols + ',1fr)';
+    el.style.gridTemplateRows = 'repeat(' + rows + ',1fr)';
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < cols * rows; i++) {
+      var c = document.createElement('i');
+      c.style.setProperty('--d', Math.round(Math.random() * 260));
+      frag.appendChild(c);
+    }
+    el.appendChild(frag);
+    host.appendChild(el);
+  }
 
   var A_YEL = [1, 0.89411765, 0.48235294], A_WHT = [1, 1, 1];
   var foot = { c: A_YEL.slice(), t: A_YEL };
@@ -397,7 +421,11 @@
 
   function glyphHome(el) {
     var a = document.querySelector(el.dataset.anchor || '#home');
-    var r = a ? a.getBoundingClientRect() : { left: 0, top: 0 };
+    var r = a ? a.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0 };
+    if (MOBILE() && el.dataset.mx) {
+      return { x: r.left + r.width * parseFloat(el.dataset.mx),
+               y: r.top + window.scrollY + r.height * parseFloat(el.dataset.my) };
+    }
     return { x: r.left + parseFloat(el.dataset.x) * scale,
              y: r.top + window.scrollY + parseFloat(el.dataset.y) * scale };
   }
@@ -425,18 +453,19 @@
   }
 
   function buildPhysics() {
-    if (typeof Matter === 'undefined' || MOBILE()) return;
+    if (typeof Matter === 'undefined') return;
     var Engine = Matter.Engine, World = Matter.World, Bodies = Matter.Bodies;
     sunItem = null;
     scenes = [];
 
     [].slice.call(document.querySelectorAll('.physics')).forEach(function (host) {
+      if (MOBILE() && host.dataset.bound !== 'sky') return;
       var W = root.clientWidth, H = hostHeight(host);
       host.style.height = H + 'px';
       if (!W || !H) return;
 
       var engine = Engine.create();
-      engine.enableSleeping = true;
+      engine.enableSleeping = false;
       engine.gravity.x = 0; engine.gravity.y = 0;
       var world = engine.world, t = 400;
       World.add(world, [
@@ -677,7 +706,7 @@
       setScale(); layout();
       destroyPhysics(); placeGlyphs();
       if (!REDUCED) buildPhysics();
-      buildWipe(); buildNavPix(); buildDither(); fitFrames(); stackLayout(); stackScroll();
+      buildWipe(); buildNavPix(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); stackScroll();
       layoutGreen();
       navSpyMeasure(); cacheLit(); scene(); updateWipe();
     }, 180);
@@ -685,6 +714,30 @@
 
   var y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
+
+  function navMenu() {
+    var b = document.getElementById('burger'), panel = document.getElementById('navlinks');
+    if (!b || !panel) return;
+    function close() { b.classList.remove('is-open'); panel.classList.remove('is-open'); b.setAttribute('aria-expanded', 'false'); }
+    b.addEventListener('click', function () {
+      var open = !b.classList.contains('is-open');
+      b.classList.toggle('is-open', open);
+      panel.classList.toggle('is-open', open);
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    panel.addEventListener('click', function (e) { if (e.target.tagName === 'A') close(); });
+    window.addEventListener('resize', function () { if (!MOBILE()) close(); });
+  }
+
+  function touchPortrait() {
+    if (window.matchMedia('(hover: none)').matches === false) return;
+    var f = document.querySelector('.about__portrait-frame');
+    if (!f) return;
+    f.addEventListener('pointerdown', function () {
+      f.classList.add('is-touched');
+      setTimeout(function () { f.classList.remove('is-touched'); }, 1400);
+    });
+  }
 
   function start() {
     setScale();
@@ -698,8 +751,11 @@
     animHover();
     riderDrag();
     fitFrames();
+    buildPortraitDither();
     mailCopy();
     mailHue();
+    navMenu();
+    touchPortrait();
     stackLayout();
     stackScroll();
     placeGlyphs();
@@ -709,8 +765,8 @@
     updateWipe();
     layoutGreen();
     requestAnimationFrame(tick);
-    window.addEventListener('load', function () { layout(); buildDither(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); layoutGreen(); destroyPhysics(); placeGlyphs(); if (!REDUCED) buildPhysics(); });
-    setTimeout(function () { layout(); buildDither(); fitFrames(); stackLayout(); navSpyMeasure(); cacheLit(); layoutGreen(); }, 500);
+    window.addEventListener('load', function () { layout(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); navSpyMeasure(); cacheLit(); layoutGreen(); destroyPhysics(); placeGlyphs(); if (!REDUCED) buildPhysics(); });
+    setTimeout(function () { layout(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); navSpyMeasure(); cacheLit(); layoutGreen(); }, 500);
   }
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(start).catch(start);

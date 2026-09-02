@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Handjet:ELGR,ELSH,wght@1,2,100..900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v=202609021809">
+<link rel="stylesheet" href="css/style.css?v=202609021828">
 </head>
 <body>
 
@@ -19,7 +19,10 @@
 <header class="nav" id="nav">
   <canvas class="nav__pix nav__pix--left" data-side="left" aria-hidden="true"></canvas>
   <canvas class="nav__pix nav__pix--right" data-side="right" aria-hidden="true"></canvas>
-  <nav class="nav__links" aria-label="Main">
+  <button class="nav__burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navlinks">
+    <i></i><i></i><i></i>
+  </button>
+  <nav class="nav__links" id="navlinks" aria-label="Main">
     <a href="#home">home</a>
     <a href="#works">works</a>
     <a href="#about">about</a>
@@ -181,9 +184,9 @@
 <!-- Um so mundo de fisica, do tamanho da pagina: os glifos podem ser
      atirados de uma seccao para a outra. data-anchor diz onde arrancam. -->
 <div class="physics physics--sky" id="physics-sky" data-bound="sky" aria-hidden="true">
-  <span class="pix" data-anchor="#home" data-x="1720.5" data-y="308.7" data-w="142.9" data-h="123.4" data-rot="-14.28"
+  <span class="pix" data-anchor="#home" data-mx="0.80" data-my="0.26" data-x="1720.5" data-y="308.7" data-w="142.9" data-h="123.4" data-rot="-14.28"
         style="--size:115.083; --color:#ffe202">X</span>
-  <span class="pix" data-anchor="#home" data-x="223.3" data-y="851.2" data-w="138.7" data-h="117.1" data-rot="10.68"
+  <span class="pix" data-anchor="#home" data-mx="0.15" data-my="0.60" data-x="223.3" data-y="851.2" data-w="138.7" data-h="117.1" data-rot="10.68"
         style="--size:115.083; --color:#ffe57b">D</span>
 </div>
 
@@ -210,7 +213,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
-<script src="js/pixel-anim.js?v=202609021809" defer></script>
-<script src="js/main.js?v=202609021809" defer></script>
+<script src="js/pixel-anim.js?v=202609021828" defer></script>
+<script src="js/main.js?v=202609021828" defer></script>
 </body>
 </html>
