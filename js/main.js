@@ -8,6 +8,7 @@
   var COLS = 18, ROWS = 9, DISPERSAO = 0.35;
 
   var MOBILE  = function () { return window.matchMedia('(max-width: 900px)').matches; };
+  var FLOW    = function () { return window.matchMedia('(max-width: 900px) and (max-height: 620px)').matches; };
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var root = document.documentElement;
@@ -32,23 +33,24 @@
   function layout() {
     if (!band || !hero) return;
     L.vh = window.innerHeight;
-    L.bandH = root.clientWidth * 526 / 1920;          // altura natural do relvado.png
+
+    if (MOBILE()) {
+      L.bandH = Math.round(L.vh * 0.5);
+      band.style.setProperty('--grass-img-w', Math.round(L.bandH * 1920 / 526) + 'px');
+    } else {
+      L.bandH = root.clientWidth * 526 / 1920;
+      band.style.setProperty('--grass-img-w', '100%');
+    }
     L.visible = Math.round(Math.min(L.vh * GRASS_VIS, L.bandH));
     band.style.setProperty('--grass-h', L.visible + 'px');
 
     if (MOBILE()) {
       hero.style.height = '';
-      band.style.removeProperty('--grass-top');
-      band.style.removeProperty('--grass-full');
-      root.style.setProperty('--grass-drop', '0px');
-      band.style.setProperty('--grass-ease', '0px');
-      band.classList.remove('is-landed');
       L.heroH = hero.offsetHeight;
-      L.stop = Infinity;
-      return;
+    } else {
+      L.heroH = Math.round((FEET_Y - 19) * scale + L.visible);
+      hero.style.height = L.heroH + 'px';
     }
-    L.heroH = Math.round((FEET_Y - 19) * scale + L.visible);
-    hero.style.height = L.heroH + 'px';
     band.style.setProperty('--grass-top', (L.heroH - L.visible) + 'px');
     band.style.setProperty('--grass-full', Math.round(L.bandH) + 'px');
     root.style.setProperty('--grass-drop', Math.round(L.bandH - L.visible) + 'px');
@@ -278,12 +280,17 @@
   var cards = [].slice.call(document.querySelectorAll('.card'));
   var SPC = 800, GAP = 240, HOLD = 0.42, stackTop = 0, cardH = [];
 
+  function navH() {
+    var n = document.querySelector('.nav');
+    return n ? n.offsetHeight : 68 * scale;
+  }
+
   function stackLayout() {
     if (!stack || !cards.length) return;
-    if (MOBILE()) { stack.style.height = ''; stack.style.marginTop = ''; cards.forEach(function (c) { c.style.transform = ''; c.style.width = ''; }); return; }
+    if (FLOW()) { stack.style.height = ''; stack.style.marginTop = ''; cards.forEach(function (c) { c.style.transform = ''; c.style.width = ''; }); return; }
     SPC = Math.round(window.innerHeight * 1.2);
     stack.style.height = ((cards.length - 1 + HOLD) * SPC + window.innerHeight) + 'px';
-    var vh0 = window.innerHeight, navH0 = 68 * scale, h0 = cardH[0] || cards[0].offsetHeight;
+    var vh0 = window.innerHeight, navH0 = navH(), h0 = cards[0].offsetHeight;
     var C0 = Math.max(navH0 * 0.4, navH0 + (vh0 - navH0 - h0) / 2);
     stack.style.marginTop = Math.round(34 * scale - C0) + 'px';
     cardH = cards.map(function (c) { return c.offsetHeight; });
@@ -291,9 +298,9 @@
   }
 
   function stackScroll() {
-    if (!stack || !cards.length || MOBILE()) return;
+    if (!stack || !cards.length || FLOW()) return;
     var vh = window.innerHeight;
-    var navH = 68 * scale;
+    var nav = navH();
     var u = clamp((window.scrollY - stackTop) / SPC, 0, cards.length - 1);
     var k = Math.floor(u), f = u - k;
     f = f <= HOLD ? 0 : (f - HOLD) / (1 - HOLD);
@@ -302,7 +309,7 @@
     for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
       var h = cardH[i] || c.offsetHeight;
-      var C = Math.max(navH * 0.4, navH + (vh - navH - h) / 2);
+      var C = Math.max(nav * 0.4, nav + (vh - nav - h) / 2);
       var d = j - i;
       var enter = vh - C + 40;
       var y = d >= 0 ? C - d * gap : C + (-d) * enter;
@@ -317,6 +324,7 @@
     if (!host) return;
     var old = host.querySelector('.portdither');
     if (old) old.remove();
+    if (MOBILE()) return;
     var w = host.offsetWidth, h = host.offsetHeight;
     if (!w || !h) return;
     var size = Math.max(8, Math.round(21 * scale));
@@ -734,6 +742,7 @@
     var f = document.querySelector('.about__portrait-frame');
     if (!f) return;
     f.addEventListener('pointerdown', function () {
+      if (MOBILE()) return;
       f.classList.add('is-touched');
       setTimeout(function () { f.classList.remove('is-touched'); }, 1400);
     });
