@@ -230,3 +230,20 @@ Notas de implementacao:
   circulo caia exactamente em (218, -691) com 994 de lado, como no Figma.
 - Ecras com menos de 620 px de altura (telemovel deitado) voltam a mostrar os cards
   em coluna, porque o card nao cabe no ecra.
+
+## 7. Ecra de carregamento
+
+O estilo e a logica do loader estao dentro do `index.html`, e nao nos ficheiros
+de css/js, de proposito: tem de pintar no primeiro frame, antes de o resto
+carregar. Pela mesma razao a escala (`--s` e `--m`) e definida por um script
+minusculo no `<head>`, para a pagina nascer ja com as medidas certas em vez de
+esperar pelo `main.js`.
+
+- fundo `#262626`, quadrados brancos `#f9fff9`
+- barra de 16 quadrados que enchem com o progresso real (imagens, tipos de
+  letra e evento `load`), com um quadrado a saltar por cima em `steps(16)`
+- saida em pixeis: uma grelha de quadrados da cor do fundo desaparece um a um,
+  cada um com um atraso aleatorio ate 520 ms e transicao instantanea
+- tempo minimo no ecra de 700 ms (para nao piscar) e limite de 7 s (para nunca
+  prender o utilizador)
+- `prefers-reduced-motion`: sai sem animacao

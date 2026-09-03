@@ -11,9 +11,152 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Handjet:ELGR,ELSH,wght@1,2,100..900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v=202609032118">
+<link rel="stylesheet" href="css/style.css?v=202609032153">
+
+<!-- ================= ECRA DE CARREGAMENTO =================
+     Tem de pintar antes de tudo o resto, por isso o estilo vai aqui
+     em vez de ir para o style.css, e a escala e definida ja a seguir
+     para a pagina nascer com as medidas certas. -->
+<style>
+  html.is-loading, html.is-loading body{ overflow: hidden; height: 100%; }
+  #loader{
+    position: fixed; inset: 0; z-index: 999;
+    background: #262626;
+    display: grid; place-items: center;
+    --c: clamp(11px, 3.6vw, 20px);
+  }
+  #loader.is-out{ background: transparent; pointer-events: none; }
+  .ld__set{ display: grid; justify-items: start; gap: calc(var(--c) * .75); }
+  .ld__set.is-hid{ visibility: hidden; }
+
+  .ld__run{ position: relative; width: calc(var(--c) * 16); height: var(--c); }
+  .ld__run i{
+    position: absolute; left: 0; top: 0;
+    width: var(--c); height: var(--c);
+    background: #f9fff9;
+    animation: ldrun 1.6s steps(16, jump-none) infinite;
+  }
+  @keyframes ldrun{ to{ transform: translateX(calc(var(--c) * 15)); } }
+
+  .ld__bar{ display: flex; --p: 0; }
+  .ld__bar i{
+    display: block; width: var(--c); height: var(--c);
+    background: #f9fff9;
+    opacity: clamp(.14, calc((var(--p) - var(--i)) * 999), 1);
+    transition: opacity .18s steps(2);
+  }
+
+  /* saida em pixeis: cada quadrado desaparece de uma vez, no seu momento */
+  .ld__px{ position: absolute; inset: 0; display: grid; }
+  .ld__px i{ display: block; background: #262626; opacity: 1; transition: opacity 1ms linear; }
+  .ld__px.is-gone i{ opacity: 0; }
+
+  @media (prefers-reduced-motion: reduce){
+    .ld__run i{ animation: none; }
+  }
+</style>
+<script>
+  (function () {
+    var r = document.documentElement, w = r.clientWidth || 1920;
+    r.style.setProperty('--s', (w / 1920) + 'px');
+    r.style.setProperty('--m', (w / 710) + 'px');
+    r.className = (r.className + ' is-loading').trim();
+  })();
+</script>
 </head>
 <body>
+
+<div id="loader" role="status" aria-label="A carregar">
+  <div class="ld__set" id="ld-set">
+    <div class="ld__run"><i></i></div>
+    <div class="ld__bar" id="ld-bar"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i><i style="--i:8"></i><i style="--i:9"></i><i style="--i:10"></i><i style="--i:11"></i><i style="--i:12"></i><i style="--i:13"></i><i style="--i:14"></i><i style="--i:15"></i></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement,
+      box  = document.getElementById('loader'),
+      set  = document.getElementById('ld-set'),
+      bar  = document.getElementById('ld-bar');
+  if (!box) return;
+
+  var alvo = 0.06, agora = 0, saiu = false, t0 = Date.now();
+  var MIN = 700;            // tempo minimo no ecra, para nao piscar
+  var MAX = 7000;           // rede de seguranca: nunca prende o utilizador
+
+  function passo() {
+    agora += (alvo - agora) * 0.07;
+    bar.style.setProperty('--p', (agora * 16).toFixed(2));
+    if (!saiu) requestAnimationFrame(passo);
+  }
+  requestAnimationFrame(passo);
+
+  function marco(v) { if (v > alvo) alvo = v; }
+
+  // imagens
+  var imgs = [].slice.call(document.images), feitas = 0;
+  function conta() {
+    feitas++;
+    marco(0.25 + 0.5 * (feitas / Math.max(imgs.length, 1)));
+  }
+  imgs.forEach(function (im) {
+    if (im.complete) conta();
+    else { im.addEventListener('load', conta); im.addEventListener('error', conta); }
+  });
+  if (!imgs.length) marco(0.6);
+
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { marco(0.5); });
+  document.addEventListener('DOMContentLoaded', function () { marco(0.2); });
+
+  function pronto() {
+    marco(1);
+    var espera = Math.max(0, MIN - (Date.now() - t0));
+    setTimeout(function () {
+      // duas voltas para o main.js acabar de medir tudo antes de descobrirmos a pagina
+      requestAnimationFrame(function () { requestAnimationFrame(sair); });
+    }, espera + 240);
+  }
+  window.addEventListener('load', pronto);
+  setTimeout(pronto, MAX);
+
+  function sair() {
+    if (saiu) return;
+    saiu = true;
+    root.classList.remove('is-loading');
+    bar.style.setProperty('--p', '16');
+
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      box.remove();
+      return;
+    }
+
+    var lado = Math.max(22, Math.round(innerWidth / 20));
+    var cols = Math.ceil(innerWidth / lado), linhas = Math.ceil(innerHeight / lado);
+    var g = document.createElement('div');
+    g.className = 'ld__px';
+    g.style.gridTemplateColumns = 'repeat(' + cols + ',' + lado + 'px)';
+    g.style.gridAutoRows = lado + 'px';
+    var frag = document.createDocumentFragment(), n = cols * linhas, ATE = 520;
+    for (var i = 0; i < n; i++) {
+      var c = document.createElement('i');
+      c.style.transitionDelay = Math.round(Math.random() * ATE) + 'ms';
+      frag.appendChild(c);
+    }
+    g.appendChild(frag);
+    box.appendChild(g);
+
+    // forcar o calculo do estado inicial: garante que a transicao arranca
+    // mesmo com o processador ocupado, em vez de depender de dois frames
+    void g.offsetWidth;
+    box.classList.add('is-out');
+    set.classList.add('is-hid');
+    g.classList.add('is-gone');
+    // o contador de remocao so comeca quando a dissolucao comeca de facto
+    setTimeout(function () { box.remove(); }, ATE + 260);
+  }
+})();
+</script>
 
 <!-- ============ NAV ============ -->
 <header class="nav" id="nav">
@@ -224,7 +367,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
-<script src="js/pixel-anim.js?v=202609032118" defer></script>
-<script src="js/main.js?v=202609032118" defer></script>
+<script src="js/pixel-anim.js?v=202609032153" defer></script>
+<script src="js/main.js?v=202609032153" defer></script>
 </body>
 </html>
