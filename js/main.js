@@ -4,6 +4,7 @@
   var WIPE_ON   = false;
   var DESIGN_W  = 1920;
   var GRASS_VIS = 0.20;
+  var GRASS_VIS_M = 0.4905;
   var FEET_Y    = 1645;
   var COLS = 18, ROWS = 9, DISPERSAO = 0.35;
 
@@ -22,9 +23,12 @@
   function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
   function lerp(a, b, t) { return a + (b - a) * t; }
 
+  var MOB_W = 710, mscale = 1;
   function setScale() {
     scale = root.clientWidth / DESIGN_W;
     root.style.setProperty('--s', scale + 'px');
+    mscale = root.clientWidth / MOB_W;
+    root.style.setProperty('--m', mscale + 'px');
   }
   setScale();
 
@@ -35,19 +39,23 @@
     L.vh = window.innerHeight;
 
     if (MOBILE()) {
-      L.bandH = Math.round(L.vh * 0.5);
-      band.style.setProperty('--grass-img-w', Math.round(L.bandH * 1920 / 526) + 'px');
+      // Figma 710: relvado visivel do y=619 ao fundo do ecra de 1215 (49%),
+      // e aterra com o topo em y=1495. O ceu e que estica em ecras mais altos.
+      // relvado com o mesmo enquadramento do Figma: 1920 de largura num quadro de 710
+      L.bandH = Math.round(526 * mscale);
+      L.visible = Math.min(Math.round(L.vh * GRASS_VIS_M), L.bandH);
+      band.style.setProperty('--grass-img-w', Math.round(1920 * mscale) + 'px');
+      band.style.setProperty('--grass-h', L.visible + 'px');
+      var anchor = Math.max(Math.round(1495 * mscale),
+                            L.vh - L.visible + Math.round(876 * mscale));
+      L.heroH = anchor + L.bandH;
+      hero.style.height = L.heroH + 'px';
+      root.style.setProperty('--hero-anchor', anchor + 'px');
     } else {
       L.bandH = root.clientWidth * 526 / 1920;
       band.style.setProperty('--grass-img-w', '100%');
-    }
-    L.visible = Math.round(Math.min(L.vh * GRASS_VIS, L.bandH));
-    band.style.setProperty('--grass-h', L.visible + 'px');
-
-    if (MOBILE()) {
-      hero.style.height = '';
-      L.heroH = hero.offsetHeight;
-    } else {
+      L.visible = Math.round(Math.min(L.vh * GRASS_VIS, L.bandH));
+      band.style.setProperty('--grass-h', L.visible + 'px');
       L.heroH = Math.round((FEET_Y - 19) * scale + L.visible);
       hero.style.height = L.heroH + 'px';
     }
@@ -210,7 +218,7 @@
     navPix.length = 0;
     [].slice.call(document.querySelectorAll('.nav__pix')).forEach(function (cv) {
       var box = cv.getBoundingClientRect();
-      var cell = Math.max(6, MOBILE() ? 11 : 17 * scale);
+      var cell = Math.max(5, MOBILE() ? 17 * mscale : 17 * scale);
       var cols = Math.max(4, Math.round(box.width / cell));
       var rows = Math.max(2, Math.round(box.height / cell));
       cv.width = cols; cv.height = rows;
@@ -305,7 +313,7 @@
     var k = Math.floor(u), f = u - k;
     f = f <= HOLD ? 0 : (f - HOLD) / (1 - HOLD);
     var j = k + f * f * (3 - 2 * f);
-    var gap = GAP * scale;
+    var gap = MOBILE() ? 224 * mscale : GAP * scale;
     for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
       var h = cardH[i] || c.offsetHeight;
@@ -313,7 +321,8 @@
       var d = j - i;
       var enter = vh - C + 40;
       var y = d >= 0 ? C - d * gap : C + (-d) * enter;
-      var z = d < 0 ? 0.93 + 0.07 * clamp(1 + d, 0, 1) : 1;
+      var z0 = MOBILE() ? 0.947 : 0.93;
+      var z = d < 0 ? z0 + (1 - z0) * clamp(1 + d, 0, 1) : 1;
       c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0) rotate(var(--tilt)) scale(' + z.toFixed(3) + ')';
     }
   }
@@ -403,7 +412,7 @@
 
   function fitFrames() {
     [].slice.call(document.querySelectorAll('.pxframe')).forEach(function (el) {
-      var target = MOBILE() ? 8 : 14 * scale;
+      var target = MOBILE() ? 15 * mscale : 14 * scale;
       var w = el.offsetWidth;
       if (!w) return;
       var n = Math.max(8, Math.round(w / target));
@@ -427,12 +436,21 @@
   var scenes = [];
   function glyphs() { return [].slice.call(document.querySelectorAll('.physics .pix')); }
 
+  function glyphW(el) {
+    return MOBILE() && el.dataset.mw ? parseFloat(el.dataset.mw) * mscale
+                                     : parseFloat(el.dataset.w) * scale;
+  }
+  function glyphH(el) {
+    return MOBILE() && el.dataset.mh ? parseFloat(el.dataset.mh) * mscale
+                                     : parseFloat(el.dataset.h) * scale;
+  }
+
   function glyphHome(el) {
     var a = document.querySelector(el.dataset.anchor || '#home');
     var r = a ? a.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0 };
     if (MOBILE() && el.dataset.mx) {
-      return { x: r.left + r.width * parseFloat(el.dataset.mx),
-               y: r.top + window.scrollY + r.height * parseFloat(el.dataset.my) };
+      return { x: r.left + parseFloat(el.dataset.mx) * mscale,
+               y: r.top + window.scrollY + parseFloat(el.dataset.my) * mscale };
     }
     return { x: r.left + parseFloat(el.dataset.x) * scale,
              y: r.top + window.scrollY + parseFloat(el.dataset.y) * scale };
@@ -452,7 +470,7 @@
       host.style.height = hostHeight(host) + 'px';
     });
     glyphs().forEach(function (el) {
-      var w = parseFloat(el.dataset.w) * scale, h = parseFloat(el.dataset.h) * scale;
+      var w = glyphW(el), h = glyphH(el);
       var p = glyphHome(el);
       el.style.transformOrigin = 'center';
       el.style.transform = 'translate3d(' + (p.x - w / 2) + 'px,' + (p.y - h / 2) + 'px,0) rotate(' +
@@ -467,7 +485,6 @@
     scenes = [];
 
     [].slice.call(document.querySelectorAll('.physics')).forEach(function (host) {
-      if (MOBILE() && host.dataset.bound !== 'sky') return;
       var W = root.clientWidth, H = hostHeight(host);
       host.style.height = H + 'px';
       if (!W || !H) return;
@@ -485,8 +502,8 @@
 
       var items = [].slice.call(host.querySelectorAll('.pix')).map(function (el) {
         var r = el.getBoundingClientRect();
-        var w = r.width || parseFloat(el.dataset.w) * scale;
-        var h = r.height || parseFloat(el.dataset.h) * scale;
+        var w = r.width || glyphW(el);
+        var h = r.height || glyphH(el);
         var home = glyphHome(el);
         var body = Bodies.rectangle(
           home.x, home.y, w, h,

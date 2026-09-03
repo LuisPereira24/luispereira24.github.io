@@ -732,103 +732,252 @@ a{ color: inherit; text-decoration: none; }
 }
 .copied.is-on{ opacity: 1; }
 
+/* ==========================================================================
+   BASE DE TELEMOVEL - frame de 710 do Figma (FIRST SCENE TEL / SCROLLED TEL)
+   Todas as medidas sao os numeros do Figma multiplicados por --m,
+   onde --m = largura do ecra / 710. Mesma logica do --s de 1920.
+   ========================================================================== */
 @media (max-width: 900px){
-  .nav{ height: 56px; }
-  .nav__pix{ height: 56px; width: 116px; }
+
+  /* ---------- barra de topo ---------- */
+  .nav{ height: calc(68 * var(--m)); }
+  .nav__pix{ height: calc(68 * var(--m)); width: calc(170 * var(--m)); }
   .nav__pix--right{ display: none; }
-  .nav__burger{ display: block; }
+  .nav__burger{
+    display: block;
+    left: auto; right: calc(19 * var(--m));
+    width: calc(54 * var(--m));
+    height: calc(34 * var(--m));
+  }
+  .nav__burger i{ height: calc(8 * var(--m)); }
+  .nav__burger i + i{ margin-top: calc(5 * var(--m)); }
+  .nav__burger.is-open i:nth-child(1){ transform: translateY(calc(13 * var(--m))) rotate(45deg); }
+  .nav__burger.is-open i:nth-child(3){ transform: translateY(calc(-13 * var(--m))) rotate(-45deg); }
+
   .nav__links{
     position: fixed;
-    left: 0; top: 56px;
-    width: 100%; height: calc(100dvh - 56px);
+    left: 0; top: calc(68 * var(--m));
+    width: 100%; height: calc(100dvh - 68 * var(--m));
     transform: none;
     flex-direction: column;
     justify-content: center;
     gap: 5vh;
     background: var(--paper);
-    font-size: clamp(34px, 11vw, 62px);
+    font-size: calc(88 * var(--m));
     clip-path: inset(0 0 100% 0);
     transition: clip-path .3s steps(7);
   }
   .nav__links.is-open{ clip-path: inset(0 0 0 0); }
-  .nav__links a::after{ bottom: -8px; height: 5px; }
+  .nav__links a::after{ bottom: calc(-14 * var(--m)); height: calc(8 * var(--m)); }
 
-  .hero{ height: auto; min-height: 100svh; padding: 17vh 6vw 40vh; overflow: hidden; }
-  .hero__anim{ left: -25vw; top: auto; bottom: 26vh; width: 150vw; height: 84vw;
-               transform: rotate(90deg); opacity: .9; }
+  /* ---------- hero ---------- */
+  /* altura definida pelo JS; --hero-anchor = topo do relvado depois de aterrar */
+  .hero{ overflow: hidden; }
 
-  .hero__hi, .hero__name, .hero__iam, .hero__role, .hero__basedin, .hero__country{
-    position: relative; z-index: 3; left: auto; top: auto; transform: none;
-    width: auto; white-space: normal; text-align: left;
+  .hero__anim{
+    left: calc(-689 * var(--m));
+    top: calc(502 * var(--m));
+    width: calc(1600 * var(--m));
+    height: calc(900 * var(--m));
+    transform: rotate(90deg);
   }
-  .hero__hi{ font-size: clamp(20px, 6vw, 40px); }
-  .hero__name{ font-size: clamp(42px, 13.5vw, 104px); margin-bottom: 14vh; }
-  .hero__iam, .hero__basedin{ font-size: clamp(14px, 4vw, 24px); }
-  .hero__role, .hero__country{ font-size: clamp(32px, 10.5vw, 88px); }
-  .hero__basedin{ margin-top: 6vh; }
+
+  .hero__hi{
+    left: 50%; transform: translateX(-50%);
+    top: calc(152 * var(--m));
+    font-size: calc(64.662 * var(--m));
+    line-height: .83;
+  }
+  .hero__name{
+    left: 50%; transform: translateX(-50%);
+    top: calc(234 * var(--m));
+    width: calc(644 * var(--m));
+    font-size: calc(224.797 * var(--m));
+    line-height: .71;
+    text-align: center;
+    white-space: normal;
+  }
+
+  /* estes quatro estao presos ao relvado, nao ao topo: e o ceu que estica */
+  .hero__iam{
+    left: calc(44 * var(--m));
+    top: calc(var(--hero-anchor, 0px) - 772 * var(--m));
+    font-size: calc(59.797 * var(--m));
+    line-height: .83;
+  }
+  .hero__role{
+    left: calc(44 * var(--m));
+    top: calc(var(--hero-anchor, 0px) - 712 * var(--m));
+    width: calc(614 * var(--m));
+    font-size: calc(147.642 * var(--m));
+    line-height: .92;
+  }
+  .hero__basedin{
+    left: calc(426 * var(--m));
+    top: calc(var(--hero-anchor, 0px) - 228 * var(--m));
+    width: calc(240 * var(--m));
+    text-align: center;
+    font-size: calc(59.797 * var(--m));
+    line-height: .83;
+  }
+  .hero__country{
+    left: calc(75 * var(--m));
+    top: calc(var(--hero-anchor, 0px) - 168 * var(--m));
+    font-size: calc(147.642 * var(--m));
+    line-height: .92;
+  }
   .hero__hint{ display: none; }
 
-  /* so os icons iniciais ficam, e com um tamanho tocavel */
-  #physics{ display: none; }
-  .physics--sky .pix{ font-size: max(52px, calc(var(--size) * var(--s))); }
-  .grassband .pix--rider{ left: 62vw; top: -11vw; font-size: 15vw; }
-
-  .pxwipe{ height: 60vh; }
-
-  .works{ padding: 80px 0 60px; }
-  .works__head{ padding: 0 6vw; height: auto; }
-  .works__title{ position: static; }
-  .works__title, .works__folder, .about__title{ font-size: clamp(34px, 10vw, 64px); }
-  .stack{ padding: 0 6vw; }
-  /* card compacto para caber inteiro no ecra enquanto esta preso ao centro */
-  .card__inner{ grid-template-columns: 1fr; gap: 14px; padding: 18px 18px 22px; }
-  .card__title{ font-size: clamp(34px, 9.5vw, 60px); margin-bottom: 8px; }
-  .card__text{ font-size: clamp(12px, 3.3vw, 15px); line-height: 1.12; margin-bottom: 10px; }
-  .card__col--media{ gap: 12px; }
-  .card__media{ font-size: 12px; }
-  .btn{ font-size: clamp(22px, 6.4vw, 38px); }
-  .btn__arrow{ width: 26px; }
-
-  .about{ padding: 12vw 0 40px; }
-  .about__band{ height: auto; clip-path: none; padding: 40px 6vw 46px; }
-  .about__edge{ display: none; }
-  .about__band::before, .about__band::after{
-    content: ""; position: absolute; left: 0; width: 100%; height: 26px;
-    background-image: conic-gradient(from 90deg at 50% 50%,
-      var(--paper) 25%, transparent 0 50%, var(--paper) 0 75%, transparent 0);
-    background-size: 26px 26px;
-    pointer-events: none;
+  /* ---------- glifos ---------- */
+  .pix{ font-size: calc(var(--msize, var(--size)) * var(--m)); }
+  .grassband .pix--rider{
+    left: calc(522.11 * var(--m));
+    top: calc(-35 * var(--m));
+    font-size: calc(70.07 * var(--m));
   }
-  .about__band::before{ top: -26px; }
-  .about__band::after{ bottom: -26px; }
-  .about__grid{ position: static; padding: 0; grid-template-columns: 1fr; gap: 30px; }
-  .about__title{ margin-top: 0; }
-  .cvbtn{ position: relative; left: auto; top: auto; width: 260px; height: 64px; margin: 30px auto 0; }
-  .cvbtn__bar--t{ left: 6px; width: 248px; height: 6px; }
-  .cvbtn__bar--b{ left: 6px; top: 58px; width: 248px; height: 6px; }
-  .cvbtn__bar--l{ top: 6px; width: 6px; height: 52px; }
-  .cvbtn__bar--r{ left: 254px; top: 6px; width: 6px; height: 52px; }
-  .cvbtn__fill{ left: 6px; top: 6px; width: 248px; height: 52px; }
-  .cvbtn__label{ left: 19px; top: 13px; font-size: 42px; }
-  .cvbtn__arrow{ left: 219px; top: 24px; width: 24px; }
 
-  .about__text{ font-size: clamp(17px, 4.6vw, 26px); text-align: left; }
-  .about__portrait-frame{ width: 70vw; margin: 0 auto; }
+  /* ---------- works ---------- */
+  .works{ padding: 0 0 calc(120 * var(--m)); }
+  .works__head{ height: calc(331 * var(--m)); padding: 0 calc(44 * var(--m)); }
+  .works__title{
+    left: calc(44 * var(--m));
+    top: calc(107 * var(--m));
+    font-size: calc(96.175 * var(--m));
+  }
+  .stack{ padding: 0 calc(44 * var(--m)); }
+
+  .card__inner{
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: calc(53 * var(--m)) calc(53 * var(--m)) calc(60 * var(--m));
+  }
+  .card__title{
+    font-size: calc(139.235 * var(--m));
+    line-height: .92;
+    margin: 0 0 calc(14 * var(--m));
+  }
+  .card__text{
+    font-size: calc(25.791 * var(--m));
+    line-height: .92;
+    margin: 0 0 calc(20 * var(--m));
+    text-align: left;
+  }
+  .card__col--media{ gap: calc(30 * var(--m)); margin-top: calc(24 * var(--m)); }
+  .card__media{ aspect-ratio: 453 / 328.4; font-size: calc(24 * var(--m)); }
+  .btn{ font-size: calc(58.55 * var(--m)); line-height: .83; }
+  .btn__gap{ flex-basis: calc(34.253 * var(--m)); }
+  .btn__arrow{ width: calc(31.684 * var(--m)); }
+
+  /* animacao do circulo: mesma posicao relativa do Figma (por tras dos cards,
+     a direita, a entrar um pouco no about) */
+  /* a tela e maior que o circulo: estes numeros poem o circulo desenhado
+     exactamente em (218, -691) com 994 de lado, como no Figma de 710 */
+  .circanim{
+    right: auto;
+    left: calc(-873 * var(--m));
+    top: calc(-1087 * var(--m));
+    width: calc(3176 * var(--m));
+    height: calc(1786 * var(--m));
+  }
+
+  /* ---------- about ---------- */
+  .about{ padding: calc(76 * var(--m)) 0 0; }
+  .about__band{
+    height: calc(1751 * var(--m));
+    clip-path: none;
+    padding: 0;
+  }
+  .about__edge{ --sq: calc(38 * var(--m)); }
+  .about__edge--top{ top: calc(76 * var(--m) - var(--sq) * 2); }
+  .about__edge--bottom{ top: calc(1751 * var(--m)); }
+
+  .about__grid{
+    position: absolute;
+    left: calc(48 * var(--m));
+    top: calc(10.9 * var(--m));
+    width: calc(617 * var(--m));
+    right: auto;
+    padding: 0;
+    display: block;
+  }
+  .about__title{
+    margin: 0 0 calc(48 * var(--m)) calc(-8.4 * var(--m));
+    font-size: calc(96.175 * var(--m));
+    line-height: .83;
+  }
+  .about__text{
+    font-size: calc(45 * var(--m));
+    line-height: .92;
+    margin: 0 0 calc(41 * var(--m));
+    text-align: justify;
+  }
+
+  .cvbtn{
+    position: absolute;
+    left: calc(108.8 * var(--m));
+    top: calc(891 * var(--m));
+    width: calc(427 * var(--m));
+    height: calc(104 * var(--m));
+    margin: 0;
+  }
+  .cvbtn__bar--t{ left: calc(10 * var(--m)); top: 0; width: calc(407 * var(--m)); height: calc(10 * var(--m)); }
+  .cvbtn__bar--b{ left: calc(10 * var(--m)); top: calc(94 * var(--m)); width: calc(407 * var(--m)); height: calc(10 * var(--m)); }
+  .cvbtn__bar--l{ left: 0; top: calc(10 * var(--m)); width: calc(10 * var(--m)); height: calc(84 * var(--m)); }
+  .cvbtn__bar--r{ left: calc(417 * var(--m)); top: calc(10 * var(--m)); width: calc(10 * var(--m)); height: calc(84 * var(--m)); }
+  .cvbtn__fill{ left: calc(10 * var(--m)); top: calc(10 * var(--m)); width: calc(407 * var(--m)); height: calc(84 * var(--m)); }
+  .cvbtn__label{ left: calc(31.29 * var(--m)); top: calc(20.91 * var(--m)); font-size: calc(69.019 * var(--m)); }
+  .cvbtn__arrow{ left: calc(360.5 * var(--m)); top: calc(38.2 * var(--m)); width: calc(38.45 * var(--m)); }
+  @keyframes cvdropm{
+    0%   { transform: rotate(89.23deg) translateX(0); }
+    55%  { transform: rotate(89.23deg) translateX(calc(16 * var(--m))); }
+    100% { transform: rotate(89.23deg) translateX(0); }
+  }
+
+  .about__portrait{
+    position: absolute;
+    left: calc(143 * var(--m));
+    top: calc(1066.7 * var(--m));
+    width: calc(411 * var(--m));
+  }
+  .about__portrait-frame{ width: 100%; margin: 0; }
+  .about__portrait-inner.is-missing::after{ font-size: calc(24 * var(--m)); }
+  /* sem interaccao na foto em ecras de toque */
   .portdither{ display: none; }
   .about__portrait-frame:hover .about__portrait-inner img,
   .about__portrait-frame.is-touched .about__portrait-inner img{ filter: none; transform: none; }
-  .about__portrait-inner.is-missing::after{ font-size: 13px; }
 
-  .contact{ height: auto; padding: 44px 6vw 54px; }
-  .contact__bg{ top: 0; height: 100%; }
-  .contact__bg img{ top: 0; height: 100%; object-fit: cover; }
-  .contact__anim{ left: -30vw; top: 10%; width: 150vw; height: 68vw; }
-  .contact__title{ position: static; font-size: clamp(26px, 7vw, 44px); }
-  .contact__mail{ position: static; display: block; margin-top: 14px;
-                  font-size: clamp(30px, 8.6vw, 64px); white-space: normal; word-break: break-word; }
-  .contact__social{ position: static; margin-top: 18px; display: flex; align-items: center; gap: 14px; }
-  .contact__link{ position: static; font-size: clamp(22px, 6vw, 40px); }
-  .contact__dot{ position: static; width: 10px; height: 10px; flex: none; }
+  /* ---------- contact ---------- */
+  .contact{ height: calc(417 * var(--m)); padding: 0; }
+  .contact__bg img{ object-position: center 46%; }
+  .contact__anim{
+    left: calc(-122 * var(--m));
+    top: calc(168 * var(--m));
+    width: calc(1081.872 * var(--m));
+    height: calc(551.883 * var(--m));
+  }
+  .contact__title{
+    left: calc(46 * var(--m));
+    top: calc(79 * var(--m));
+    font-size: calc(70.155 * var(--m));
+  }
+  .contact__mail{
+    left: calc(46 * var(--m));
+    top: calc(191 * var(--m));
+    font-size: calc(61.424 * var(--m));
+  }
+  .contact__social{ top: calc(254.83 * var(--m)); }
+  .contact__link{ font-size: calc(61 * var(--m)); }
+  .contact__link--be{ left: calc(46 * var(--m)); }
+  .contact__link--in{ left: calc(289.43 * var(--m)); }
+  .contact__dot{
+    left: calc(248 * var(--m));
+    top: calc(29.17 * var(--m));
+    width: calc(9.426 * var(--m));
+    height: calc(9.426 * var(--m));
+  }
+
+  .copied{ font-size: calc(30 * var(--m)); padding: calc(8 * var(--m)) calc(18 * var(--m)); }
+  .pxwipe{ height: 60vh; }
 }
 
 @media (max-width: 900px) and (max-height: 620px){

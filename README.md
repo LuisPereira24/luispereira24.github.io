@@ -203,3 +203,30 @@ ficam na pasta — se substituíres algum, gera o `.webp` ao lado com o mesmo no
 - Cor dos quadrados da transição: `var(--ink)` (`#262626`). Muda em
   `.pxwipe-grid i` se preferires preto puro ou o verde dos works.
 - Os textos são o *lorem ipsum* do Figma.
+
+## 6. Outras resolucoes (base de 710)
+
+Abaixo de 900 px de largura o site deixa de usar o desenho de 1920 e passa a usar
+o frame de 710 do Figma (FIRST SCENE TEL / SCROLLED VERSION TEL). O mecanismo e o
+mesmo: uma variavel de escala.
+
+- `--s = largura / 1920` -> usada acima de 900 px
+- `--m = largura / 710`  -> usada abaixo de 900 px
+
+Todas as medidas do bloco `@media (max-width: 900px)` sao os numeros do Figma
+multiplicados por `--m`, tal como no desenho de computador se multiplica por `--s`.
+
+Notas de implementacao:
+
+- O bloco "i am / WEB & BRAND DESIGNER / based in / PORTUGAL" esta ancorado ao
+  relvado (`--hero-anchor`, definido no JS) e nao ao topo. Em ecras mais altos que
+  a proporcao do Figma e o ceu que estica, e o bloco continua escondido por tras do
+  relvado ao entrar na pagina.
+- O relvado usa o enquadramento do Figma: a imagem tem 1920 de largura num quadro
+  de 710, ou seja 2,70x a largura do ecra, centrada.
+- A tela da animacao do circulo e maior que o circulo desenhado. Os valores de
+  `left/top/width/height` no bloco de telemovel foram calculados a partir do SVG
+  (circulo centrado em 960,540 com raio 300 num viewBox de 1920x1080) para que o
+  circulo caia exactamente em (218, -691) com 994 de lado, como no Figma.
+- Ecras com menos de 620 px de altura (telemovel deitado) voltam a mostrar os cards
+  em coluna, porque o card nao cabe no ecra.
