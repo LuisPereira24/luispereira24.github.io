@@ -1,0 +1,204 @@
+/* ============================================================
+   LoopClub — estilos de apoio para conteúdo gerado pelo WordPress
+   (editor de blocos em páginas simples/legal, saída padrão do
+   WooCommerce onde não substituída por template próprio). Usa os
+   tokens do design system para ficar coerente com o resto do site.
+   ============================================================ */
+
+.legal-page { padding-block: clamp(48px, 6vw, 96px); }
+.legal-page__content,
+.about-split__text .entry-content {
+    max-width: 78ch;
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: var(--fs-body);
+    color: var(--preto);
+    line-height: 1.6;
+}
+.legal-page__content h2, .legal-page__content h3 {
+    font-family: var(--font-display);
+    font-weight: var(--w-medium);
+    margin-top: 2em;
+    margin-bottom: .6em;
+}
+.legal-page__content p { margin: 0 0 1.2em; }
+.legal-page__content ul, .legal-page__content ol { margin: 0 0 1.2em 1.4em; }
+.legal-page__content a { color: var(--azul); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Fragmentos WooCommerce que não passam pelos templates próprios do tema
+   (ex.: mensagens de erro/sucesso, notas do carrinho) — mantém legível. */
+.woocommerce-message, .woocommerce-error, .woocommerce-info {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    border: var(--border-w) solid var(--preto);
+    padding: 14px 18px;
+    margin: 0 0 24px;
+    list-style: none;
+}
+.woocommerce-error { border-color: #d10000; }
+
+/* ============================================================
+   JOURNAL — calha azul do herói encostada ao topo
+   No protótipo a calha arrancava só depois do header
+   (.journal-feature__rail { margin-top: var(--header-h) }) para evitar
+   uma costura a meio do logótipo. Por pedido, o azul passa a chegar ao
+   topo do herói; o conteúdo (número + setas) continua a começar abaixo
+   do header, através de padding em vez de margem.
+
+   NOTA DE ESPECIFICIDADE: este ficheiro é enfileirado ANTES do
+   journal.css, por isso um selector de peso igual (.journal-feature__rail)
+   perdia a cascata e a regra original continuava a ganhar. Usamos o
+   selector do contentor + o do elemento (0,2,0 > 0,1,0) para vencer
+   independentemente da ordem de carregamento.
+   ============================================================ */
+.journal-feature .journal-feature__rail,
+.hero .journal-feature__rail {
+    margin-top: 0;
+    padding-top: calc(var(--header-h) + clamp(14px, 1.4vw, 23px));
+}
+
+/* ---- Breadcrumbs do Yoast (disponíveis via loopclub_breadcrumbs()) ---- */
+.loop-breadcrumbs {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: rgba(17, 17, 17, .55);
+    padding-block: clamp(10px, 1.2vw, 18px);
+}
+.loop-breadcrumbs a { color: rgba(17, 17, 17, .55); text-decoration: none; }
+.loop-breadcrumbs a:hover { color: var(--preto); }
+.loop-breadcrumbs .breadcrumb_last { color: var(--preto); }
+
+/* ============================================================
+   HOMEPAGE · ARCHIVE — sempre aos pares
+   Abaixo de 992px o protótipo já troca o scroll horizontal fixado por
+   uma grelha de 2 colunas, mas depois, abaixo de 575px, colapsa para
+   uma só (home.css: ".archive__track { grid-template-columns: 1fr }"),
+   empilhando todas as imagens. Por pedido, o Archive mantém SEMPRE
+   duas por linha — e só o Archive; os cartões do Journal continuam a
+   empilhar como estavam.
+
+   NOTA DE ESPECIFICIDADE: o home.css é enfileirado depois deste
+   ficheiro, por isso um selector de peso igual perderia a cascata.
+   Usamos o contentor + o elemento (0,2,0 > 0,1,0).
+   ============================================================ */
+@media (max-width: 575px) {
+    .archive .archive__track {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--gutter);
+    }
+    /* O painel de introdução (título ARCHIVE + texto) continua a ocupar
+       a linha toda — só as imagens é que emparelham. */
+    .archive .archive__panel--intro { grid-column: 1 / -1; }
+}
+
+/* ============================================================
+   CONTACT FORM 7 — visual LOOP
+   O CF7 imprime campos sem estilo nenhum; sem isto o formulário
+   destoava do resto do site. Mesma linguagem dos campos do checkout:
+   sem caixa, só um filete inferior, etiqueta em mono maiúsculas.
+   ============================================================ */
+.wpcf7 { max-width: 720px; }
+.wpcf7 form { display: flex; flex-direction: column; gap: clamp(18px, 2vw, 30px); }
+
+.wpcf7 .loop-field { display: flex; flex-direction: column; gap: 8px; }
+.wpcf7 .loop-field > label,
+.wpcf7 label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: rgba(17, 17, 17, .55);
+}
+.wpcf7 .loop-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(16px, 2vw, 28px);
+}
+
+.wpcf7 input[type="text"],
+.wpcf7 input[type="email"],
+.wpcf7 input[type="tel"],
+.wpcf7 input[type="url"],
+.wpcf7 input[type="date"],
+.wpcf7 input[type="number"],
+.wpcf7 select,
+.wpcf7 textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 0;
+    border-bottom: 1.5px solid rgba(17, 17, 17, .3);
+    border-radius: 0;
+    background: transparent;
+    padding: 10px 0;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    color: var(--preto);
+    transition: border-color var(--dur-fast) var(--ease);
+}
+.wpcf7 textarea { min-height: 160px; resize: vertical; }
+.wpcf7 input:focus,
+.wpcf7 select:focus,
+.wpcf7 textarea:focus { outline: none; border-bottom-color: var(--preto); }
+.wpcf7 ::placeholder { color: rgba(17, 17, 17, .35); }
+
+.wpcf7 input[type="submit"] {
+    align-self: flex-start;
+    appearance: none;
+    border: 1.5px solid var(--preto);
+    background: var(--preto);
+    color: var(--offwhite);
+    font-family: var(--font-mono);
+    font-size: var(--fs-cta);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    height: var(--btn-h);
+    padding-inline: 32px;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.wpcf7 input[type="submit"]:hover { background: transparent; color: var(--preto); }
+
+/* Mensagens de resposta do CF7 */
+.wpcf7 .wpcf7-response-output {
+    margin: 8px 0 0;
+    padding: 14px 18px;
+    border: 1.5px solid var(--preto);
+    font-family: var(--font-mono);
+    font-size: 14px;
+}
+.wpcf7 form.invalid .wpcf7-response-output,
+.wpcf7 form.failed .wpcf7-response-output { border-color: #d10000; color: #d10000; }
+.wpcf7 form.sent .wpcf7-response-output { border-color: var(--verde); background: var(--verde); color: var(--preto); }
+.wpcf7 .wpcf7-not-valid-tip {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: #d10000;
+    margin-top: 6px;
+}
+.wpcf7 .wpcf7-spinner { margin-left: 12px; }
+
+@media (max-width: 560px) {
+    .wpcf7 .loop-row { grid-template-columns: 1fr; }
+}
+
+/* ---- Newsletter: mensagem de resposta ---- */
+.footer-news__msg { margin: 10px 0 0; min-height: 1em; }
+.loop-news-msg {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+    line-height: 1.4;
+    display: inline-block;
+}
+/* No rodapé/faixa o painel é azul: o texto tem de ser claro. */
+.loop-news-msg--ok   { color: var(--verde); }
+.loop-news-msg--warn { color: #ffd166; }
+.loop-news-msg--err  { color: #ff9a9a; }
+
+/* Botão de submissão enquanto o pedido está a caminho */
+.footer-news__submit.is-submitting,
+.cart-signup__submit.is-submitting,
+.wpcf7 input[type="submit"].is-submitting { opacity: .45; pointer-events: none; }

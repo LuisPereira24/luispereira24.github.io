@@ -1,0 +1,425 @@
+/* ============================================================
+   LOOP — About
+   Herói (imagem + título gigante) · 2 secções split (texto+imagem,
+   alternadas) · faixa de timeline "THE LOOP SO FAR" · footer partilhado
+   Ancorado a 1695px · reutiliza tokens/loop-img/seta do sistema
+   ============================================================ */
+
+/* ===== HERÓI ===== */
+.about-hero {
+    position: relative;
+    min-height: clamp(360px, 43.65vw, 740px);   /* 740/1695 */
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: var(--cinza-img);
+    color: var(--offwhite);
+}
+.about-hero__bg { position: absolute; inset: 0; z-index: 0; }
+.about-hero__bg .loop-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+}
+.about-hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+        rgba(10,10,12,.1) 0%,
+        rgba(10,10,12,.3) 55%,
+        rgba(10,10,12,.6) 100%);
+}
+.about-hero__inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding-top: calc(var(--header-h) + clamp(24px, 3vw, 48px));
+    padding-bottom: clamp(18px, 2.6vw, 44px);
+}
+.about-hero__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: var(--fs-shop);
+    line-height: .8;
+    letter-spacing: -.02em;
+    margin: 0;
+}
+
+/* ===== WRAPPER ===== */
+.about { padding-top: clamp(40px, 4.6vw, 78px); padding-bottom: clamp(56px, 7vw, 118px); }
+/* O último ".about" da página (antes do rodapé) usa um respiro menor —
+   igual em todas as páginas, com a homepage (.journal-strip) como
+   referência — em vez do valor genérico acima (usado entre secções). */
+.about--outro { padding-bottom: clamp(20px, 3vw, 48px); }
+
+/* ===== SPLIT: texto (verde) + imagem, alternado ===== */
+.about-split {
+    display: grid;
+    grid-template-columns: minmax(260px, 522fr) minmax(320px, 1063fr);
+    gap: var(--gutter);
+    align-items: start;
+    margin-bottom: clamp(40px, 4.6vw, 78px);
+}
+.about-split--reverse { grid-template-columns: minmax(320px, 1063fr) minmax(260px, 522fr); }
+.about-split--reverse .about-split__media { order: -1; }
+
+.about-split__text {
+    background: var(--verde);
+    color: var(--preto);
+    padding: clamp(28px, 3.2vw, 54px) clamp(24px, 2.6vw, 45px);
+}
+.about-split__eyebrow {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    margin: 0;
+}
+.about-split__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-post-title);
+    line-height: .95;
+    letter-spacing: -.01em;
+    margin: clamp(16px, 1.8vw, 28px) 0 0;
+}
+.about-split__copy {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: clamp(16px, 1.69vw, 28.703px);
+    line-height: 1.35;
+    margin: clamp(24px, 3vw, 52px) 0 0;
+}
+.about-split__media .loop-img { width: 100%; }
+
+/* ===== FAIXA "THE LOOP SO FAR" — scroll horizontal fixado =====
+   Mesmo mecanismo do Archive na homepage (initHscroll em main.js): o scroll
+   vertical move a pista de anos para o lado enquanto a secção fica presa ao
+   ecrã; liberta no fim e o scroll segue normalmente. A faixa gif vive DENTRO
+   do elemento fixado (.about-timeline__sticky), não da pista que desliza —
+   por isso fica sempre colada à esquerda do ecrã durante toda a fixação,
+   nunca acompanhando o deslize horizontal dos anos.
+   A secção vive FORA do .container-loop (ver about.php) — por isso fica
+   encostada às duas margens da página em qualquer resolução, sem precisar
+   de nenhum truque de "quebra de largura" aqui: o <main> não tem max-width,
+   só os .loop-wrap/.container-loop lá dentro. */
+.about-timeline {
+    position: relative;
+    background: var(--azul);
+    color: var(--offwhite);
+    margin-bottom: clamp(40px, 4.6vw, 78px);
+}
+
+/* --- Base (sem JS / touch / reduced motion): faixa horizontal nativa --- */
+.about-timeline__sticky {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(249, 242, 239, .35) transparent;
+    cursor: grab;
+    padding-block: clamp(48px, 5.6vw, 96px);
+}
+.about-timeline__sticky.is-dragging { cursor: grabbing; }
+.about-timeline__sticky::-webkit-scrollbar { height: 4px; }
+.about-timeline__sticky::-webkit-scrollbar-thumb { background: rgba(249,242,239,.35); border-radius: 2px; }
+.about-timeline__sticky::-webkit-scrollbar-track { background: rgba(249,242,239,.1); }
+
+.about-timeline__strip {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: clamp(28px, 2.65vw, 45px);
+    overflow: hidden;
+    z-index: 2;
+}
+.about-timeline__strip img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* A faixa decorativa (acima) sobrepõe-se à margem do loop-wrap — sem este
+   respiro extra, o texto ficava cortado por baixo dela em ecrãs onde a
+   margem é mais estreita que a faixa (ex.: telemóvel, --margin:18px vs
+   faixa ~28px). Espaço adicional a seguir (para além da largura da faixa)
+   para o texto inicial não ficar colado ao gif. */
+.about-timeline__wrap { padding-left: calc(clamp(28px, 2.65vw, 45px) + clamp(24px, 3vw, 48px)); }
+
+.about-timeline__track {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    /* Espaço entre anos bem maior do que a grelha original — a pista
+       "respira" como uma galeria, não uma tabela apertada. Guardado numa
+       variável para a linha do tempo (abaixo) poder atravessar exactamente
+       esse espaço entre painéis. */
+    --yr-gap: clamp(56px, 7vw, 130px);
+    gap: var(--yr-gap);
+    margin: 0;
+    /* Direita: margem normal + um "yr-gap" inteiro extra, para o último ano
+       (2026/PRESENT) ter espaço de sobra a respirar em vez de ficar
+       encostado ao fim do scroll fixado. */
+    padding: 0 calc(var(--margin) + var(--yr-gap)) 6px 0;
+    width: max-content;
+}
+.about-timeline__panel { flex: 0 0 auto; }
+
+.about-timeline__panel--intro {
+    width: min(70vw, 360px);
+    padding-right: 8px;
+}
+.about-timeline__eyebrow {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    margin: 0 0 10px;
+}
+.about-timeline__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: clamp(32px, 4.14vw, 70.069px);
+    line-height: .88;
+    margin: 0;
+}
+.about-timeline__hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: .14em;
+    color: rgba(249, 242, 239, .55);
+    margin: clamp(24px, 2.8vw, 44px) 0 0;
+}
+.about-timeline__hint-arrow { display: inline-flex; animation: arc-nudge 1.6s var(--ease) infinite; }
+
+/* Painel de cada ano — uma linha do tempo literal e contínua atravessa
+   todos os anos (::before, "esticado" para dentro do espaço entre painéis
+   para nunca partir visualmente); o conteúdo alterna por baixo/por cima
+   dessa linha (.about-timeline__panel--below / --above, definido em PHP),
+   e a foto de "peek" aparece sempre no lado oposto ao do texto. */
+.about-timeline__panel--year {
+    position: relative;
+    width: clamp(150px, 12vw, 200px);
+    height: clamp(320px, 27vw, 420px);
+    outline-offset: 6px;
+}
+.about-timeline__panel--year::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: calc(var(--yr-gap) / -2);
+    right: calc(var(--yr-gap) / -2);
+    height: 1px;
+    background: rgba(249, 242, 239, .35);
+}
+.about-timeline__panel--year:focus-visible { outline: 2px solid var(--verde); }
+.about-timeline__dot {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 11px;
+    height: 11px;
+    margin-top: -5.5px;
+    border-radius: 50%;
+    background: var(--verde);
+    z-index: 1;
+}
+.about-timeline__content {
+    position: absolute;
+    left: 0;
+    width: 100%;
+}
+.about-timeline__panel--below .about-timeline__content { top: calc(50% + 18px); }
+.about-timeline__panel--above .about-timeline__content { bottom: calc(50% + 18px); }
+.about-timeline__year {
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: clamp(24px, 2.39vw, 40.426px);
+    margin: 0;
+}
+.about-timeline__label {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    margin: 6px 0 0;
+}
+.about-timeline__desc {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    line-height: 1.3;
+    margin: 8px 0 0;
+    max-width: 22ch;
+}
+
+/* Pequena interação: ao pairar/focar um ano, uma foto aparece no lado
+   OPOSTO ao do texto (se o texto está por baixo da linha, a foto aparece
+   por cima, e vice-versa) — nunca sobrepõe o próprio texto. */
+.about-timeline__peek {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: clamp(120px, 9.5vw, 165px);
+    opacity: 0;
+    transform: translateY(6px) scale(1.03);
+    transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+    pointer-events: none;
+}
+.about-timeline__panel--below .about-timeline__peek { bottom: calc(50% + 18px); transform-origin: bottom; }
+.about-timeline__panel--above .about-timeline__peek { top: calc(50% + 18px); transform: translateY(-6px) scale(1.03); transform-origin: top; }
+.about-timeline__peek .loop-img { width: 100%; height: 100%; aspect-ratio: auto; }
+.about-timeline__panel--year:hover .about-timeline__peek,
+.about-timeline__panel--year:focus .about-timeline__peek,
+.about-timeline__panel--year:focus-visible .about-timeline__peek {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Barra de progresso (só visível no modo fixado) */
+.about-timeline__progress { display: none; }
+
+/* --- Modo fixado (JS: desktop + movimento permitido) --- */
+.about-timeline.is-pinned .about-timeline__sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    padding-block: 0;
+}
+.about-timeline.is-pinned .about-timeline__track { will-change: transform; }
+.about-timeline.is-pinned .about-timeline__progress {
+    display: block;
+    position: absolute;
+    left: calc(var(--margin) + clamp(28px, 2.65vw, 45px) + clamp(24px, 3vw, 48px));
+    right: var(--margin);
+    bottom: clamp(28px, 3.4vw, 48px);
+    height: 2px;
+    background: rgba(249, 242, 239, .25);
+}
+.about-timeline__progress-bar {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--verde);
+    transform-origin: left;
+}
+@keyframes arc-nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+
+/* ===== Parallax (secções verdes) =====
+   initParallax() em main.js aplica um translateY à coluna de texto, limitado
+   a [0, delta] em que delta = altura da imagem − altura do texto — o texto
+   nunca ultrapassa o topo nem o fundo da imagem ao lado (ver JS). Aqui só a
+   transição que dá fluidez ao movimento. */
+.about-split[data-parallax] .about-split__text {
+    will-change: transform;
+    transition: transform .12s linear;
+}
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media (max-width: 991px) {
+    .about-split,
+    .about-split--reverse { grid-template-columns: 1fr; }
+    .about-split--reverse .about-split__media { order: 0; }
+
+    /* ===== Timeline: abaixo do breakpoint de fixação (992px, initHscroll
+       em main.js), o scroll horizontal deixa de fazer sentido — a linha
+       roda 90°: passa de horizontal a vertical. O título/intro fica sempre
+       no topo (é uma introdução, não faz parte da linha); logo a seguir, a
+       linha dos anos cresce "de baixo para cima" — o presente (2026) surge
+       primeiro, junto ao título, e os anos mais antigos vão ficando cada
+       vez mais abaixo, até ao início (2021) no fundo — via a propriedade
+       "order" (--i vem do PHP), sem tocar na ordem real do DOM nem no modo
+       horizontal (desktop). O conteúdo alterna à esquerda/direita da linha
+       em vez de por baixo/cima, e o "peek" continua sempre do lado oposto —
+       mesmo princípio, só o eixo muda. */
+    .about-timeline__sticky {
+        overflow: visible;
+        cursor: auto;
+        padding-block: clamp(40px, 9vw, 72px);
+    }
+    .about-timeline__track {
+        flex-direction: column;
+        align-items: center;
+        width: auto;
+        padding: var(--margin) 0;
+        --yr-gap: clamp(64px, 15vw, 110px);
+    }
+    .about-timeline__panel--intro {
+        order: -100;
+        width: auto;
+        max-width: 380px;
+        padding-right: 0;
+        padding-bottom: clamp(24px, 6vw, 40px);
+    }
+    .about-timeline__panel--year { order: calc(var(--i) * -1); }
+
+    .about-timeline__panel--year {
+        width: clamp(220px, 58vw, 420px);
+        height: clamp(150px, 26vw, 220px);
+    }
+    .about-timeline__panel--year::before {
+        top: calc(var(--yr-gap) / -2);
+        bottom: calc(var(--yr-gap) / -2);
+        left: 50%;
+        right: auto;
+        width: 1px;
+        height: auto;
+    }
+    .about-timeline__dot {
+        top: 0;
+        left: 50%;
+        margin-top: 0;
+        margin-left: -5.5px;
+    }
+
+    .about-timeline__panel--below .about-timeline__content {
+        top: 0;
+        bottom: auto;
+        left: calc(50% + 18px);
+        right: auto;
+        width: auto;
+        max-width: calc(50% - 18px);
+        height: 100%;
+    }
+    .about-timeline__panel--above .about-timeline__content {
+        top: 0;
+        bottom: auto;
+        right: calc(50% + 18px);
+        left: auto;
+        width: auto;
+        max-width: calc(50% - 18px);
+        height: 100%;
+    }
+
+    /* O hover não existe em toque — as fotos ficam sempre visíveis neste
+       modo (em vez de dependerem de um :hover/:focus que nunca dispara),
+       para nenhuma imagem ficar escondida por falta de interacção. */
+    .about-timeline__peek {
+        opacity: 1;
+    }
+    .about-timeline__panel--below .about-timeline__peek {
+        top: 0;
+        bottom: auto;
+        right: calc(50% + 18px);
+        left: auto;
+        width: clamp(110px, 26vw, 160px);
+        height: 100%;
+        transform: translateX(0) scale(1);
+        transform-origin: right;
+    }
+    .about-timeline__panel--above .about-timeline__peek {
+        top: 0;
+        right: auto;
+        left: calc(50% + 18px);
+        width: clamp(110px, 26vw, 160px);
+        height: 100%;
+        transform: translateX(0) scale(1);
+        transform-origin: left;
+    }
+
+    .about-timeline__hint { display: none; }
+}

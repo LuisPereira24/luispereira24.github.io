@@ -1,0 +1,427 @@
+/* ============================================================
+   LOOP — Homepage
+   Ancorada a 1695px · grelha 4 col · responsivo 4→2→1
+   ============================================================ */
+
+/* ===== Cartão de colecção (partilhado herói/faixa/collections) ===== */
+.col-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 18px;
+    overflow: hidden;
+}
+.col-card--green    { background: var(--verde);    color: var(--preto); }
+.col-card--blue     { background: var(--azul);     color: var(--offwhite); }
+.col-card--offwhite { background: var(--offwhite); color: var(--preto); }
+
+.col-card__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    letter-spacing: .03em;
+    margin: 0 0 10px;
+}
+.col-card__number {
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: var(--fs-num-lg);
+    line-height: .82;
+    letter-spacing: -.02em;
+    margin: 0;
+}
+.col-card__season {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: var(--fs-season);
+    line-height: 1.08;
+    letter-spacing: -.01em;
+    margin: 14px 0 0;
+}
+.col-card__season .col-card__year { font-weight: var(--w-xthin); font-size: .78em; }
+.col-card__cta { margin-top: auto; padding-top: 22px; }
+
+/* variantes de tamanho */
+.col-card--tall { min-height: clamp(420px, 37vw, 628px); }
+
+/* Cartão do herói */
+.col-card--hero { padding: 20px 22px 22px; justify-content: flex-start; }
+.col-card--hero .col-card__label  { margin-bottom: 8px; }
+.col-card--hero .col-card__number { font-size: var(--fs-num-card); line-height: .9; }
+.col-card--hero .col-card__season { margin-top: 12px; }
+.col-card--hero .col-card__cta    { margin-top: auto; padding-top: 20px; }
+
+/* ===== 1 · HERÓI ===== */
+.hero {
+    position: relative;
+    min-height: 100vh;        /* fallback */
+    min-height: 100svh;       /* adapta-se ao ecrã do utilizador */
+    background: #0d0d0f;
+    color: var(--offwhite);
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+}
+.hero__bg { position: absolute; inset: 0; z-index: 0; }
+.hero__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero__scrim {
+    position: absolute; inset: 0;
+    background:
+        linear-gradient(180deg, rgba(10,10,12,.55) 0%, rgba(10,10,12,.15) 32%, rgba(10,10,12,.35) 100%),
+        radial-gradient(120% 90% at 70% 10%, rgba(10,10,12,0) 40%, rgba(10,10,12,.5) 100%);
+}
+/* Marca gigante esbatida (watermark) */
+.hero__watermark {
+    position: absolute;
+    left: -22%; top: 4%;
+    width: min(79vw, 1337px);
+    color: var(--offwhite);
+    opacity: .12;
+    filter: blur(6px);
+    line-height: 0;
+    pointer-events: none;
+}
+.hero__watermark .loop-logo,
+.hero__watermark svg { width: 100%; height: auto; }
+
+.hero__inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    align-self: stretch;
+    padding-top: calc(var(--header-h) + clamp(28px, 4.6vw, 78px));
+    padding-bottom: clamp(24px, 2.9vw, 49px);
+    /* Coluna que ocupa toda a altura: o conteúdo distribui-se e "muda de
+       sítio" conforme a altura do ecrã (título empurrado para baixo). */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.hero__meta {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: var(--fs-lead);
+    line-height: 1.28;
+    margin: 0;
+}
+.hero__meta p { margin: 0; }
+
+.hero__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-hero);
+    line-height: .9;
+    letter-spacing: -.02em;
+    /* margin-top:auto empurra o bloco título+discover para a base do herói,
+       preenchendo a altura livre — o conteúdo reposiciona-se com o ecrã. */
+    margin: auto 0 0;
+}
+.hero__title-alt { font-weight: var(--w-xthin); }
+
+.hero__discover {
+    display: inline-flex;
+    align-items: center;
+    gap: .5em;
+    margin-top: clamp(20px, 2.6vw, 44px);
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: var(--fs-lead);
+    color: var(--offwhite);
+}
+.hero__discover-arrow { transition: transform var(--dur-fast) var(--ease); }
+.hero__discover:hover .hero__discover-arrow { transform: translateX(.4em); }
+
+/* Cartão actual sobreposto (canto inferior direito) */
+.hero__card {
+    position: absolute;
+    right: 0;                       /* encostado à extremidade da página, como o vídeo */
+    bottom: min(2.9vw, 49px);
+    width: min(29.7vw, 504px);
+    height: auto;
+    min-height: min(14.7vw, 250px);
+    display: flex;
+}
+.hero__card .col-card { flex: 1; min-width: 0; }
+.hero__card-strip {
+    position: relative;
+    flex: 0 0 min(2.65vw, 45px);
+    align-self: stretch;
+    background: var(--azul);
+    overflow: hidden;
+}
+.hero__card-gif {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== 2 · FAIXA COLECÇÃO ACTUAL (grelha Bootstrap) ===== */
+.band { padding-top: clamp(48px, 6.1vw, 104px); }
+.band .cell > .col-card,
+.band .cell > .loop-img { width: 100%; }
+
+/* ===== 3 · COLLECTIONS (grelha Bootstrap) ===== */
+.collections { padding-top: clamp(56px, 7vw, 118px); }
+.collections__head { margin-bottom: clamp(20px, 2.2vw, 36px); }
+.collections__card > .col-card { min-height: clamp(300px, 26.6vw, 451px); }
+
+/* ===== 4 · ARCHIVE — scroll horizontal fixado (pinned) ===== */
+.archive {
+    position: relative;
+    padding-top: clamp(64px, 8vw, 130px);
+}
+
+/* --- Base (sem JS / touch / reduced-motion): faixa horizontal nativa --- */
+.archive__sticky {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(17,17,17,.35) transparent;
+    cursor: grab;
+    padding-bottom: 14px;
+}
+.archive__sticky.is-dragging { cursor: grabbing; }
+.archive__sticky::-webkit-scrollbar { height: 4px; }
+.archive__sticky::-webkit-scrollbar-thumb { background: rgba(17,17,17,.3); border-radius: 2px; }
+.archive__sticky::-webkit-scrollbar-track { background: rgba(17,17,17,.06); }
+
+.archive__track {
+    list-style: none;
+    display: flex;
+    align-items: stretch;
+    gap: var(--gutter);
+    margin: 0;
+    padding-inline: var(--margin);
+    width: max-content;
+}
+.archive__panel { flex: 0 0 auto; }
+.archive__panel img { -webkit-user-drag: none; user-select: none; }
+
+.archive__panel--intro {
+    width: min(84vw, 460px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: 8px;
+}
+.archive__panel--intro .section-title { margin: 14px 0 0; }
+.archive__text {
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: var(--fs-body);
+    line-height: 1.32;
+    letter-spacing: -.005em;
+    max-width: 34ch;
+    margin: 18px 0 0;
+    color: rgba(17,17,17,.82);
+}
+.archive__cta { margin-top: 26px; }
+.archive__hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: .14em;
+    color: rgba(17,17,17,.5);
+    margin: 30px 0 0;
+}
+.archive__hint-arrow { animation: arc-nudge 1.6s var(--ease) infinite; }
+@keyframes arc-nudge { 0%,100% { transform: translateX(0);} 50% { transform: translateX(5px);} }
+
+.archive__panel--img { width: clamp(220px, 24vw, 360px); }
+.archive__panel--img .loop-img { width: 100%; }
+
+/* Barra de progresso (só visível no modo fixado) */
+.archive__progress { display: none; }
+
+/* --- Modo fixado (JS: desktop + movimento permitido) --- */
+.archive.is-pinned { padding-top: 0; }
+.archive.is-pinned .archive__sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    padding-bottom: 0;
+}
+.archive.is-pinned .archive__track {
+    align-items: center;
+    height: auto;
+    will-change: transform;
+}
+.archive.is-pinned .archive__panel--intro {
+    width: min(38vw, 520px);
+    height: 62vh;
+}
+.archive.is-pinned .archive__panel--img {
+    width: auto;
+    height: 62vh;
+    aspect-ratio: 340 / 451;
+}
+.archive.is-pinned .archive__panel--img .loop-img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+}
+.archive.is-pinned .archive__progress {
+    display: block;
+    position: absolute;
+    left: var(--margin);
+    right: var(--margin);
+    bottom: 40px;
+    height: 2px;
+    background: rgba(17,17,17,.12);
+}
+.archive__progress-bar {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--preto);
+    transform-origin: left;
+}
+
+/* ===== 5 · THE LOOP JOURNAL ===== */
+.journal-strip { padding-block: clamp(64px, 8vw, 130px) clamp(20px, 3vw, 48px); }
+.journal-strip__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: clamp(20px, 2.4vw, 40px);
+}
+.journal-strip__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-medium);
+    font-size: clamp(18px, 1.42vw, 24px);
+    letter-spacing: .01em;
+    margin: 0;
+}
+.journal-strip__all {
+    display: inline-flex;
+    align-items: center;
+    gap: .5em;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: .03em;
+}
+.journal-strip__all span:last-child { transition: transform var(--dur-fast) var(--ease); }
+.journal-strip__all:hover span:last-child { transform: translateX(.35em); }
+
+/* Journal card (grelha Bootstrap: col-12 col-lg-4) */
+.journal-card { height: 100%; width: 100%; }
+.journal-card__link {
+    display: grid;
+    grid-template-columns: 226fr 296fr;
+    height: 100%;
+    min-height: 198px;
+}
+.journal-card--green .journal-card__body { background: var(--verde);    color: var(--preto); }
+.journal-card--blue  .journal-card__body { background: var(--azul);     color: var(--offwhite); }
+.journal-card--dark  .journal-card__body { background: var(--preto);    color: var(--offwhite); }
+
+.journal-card__media { overflow: hidden; }
+.journal-card__media .loop-img { height: 100%; aspect-ratio: auto; }
+
+.journal-card__body {
+    display: flex;
+    flex-direction: column;
+    padding: 22px;
+}
+.journal-card__cat {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: var(--fs-label);
+    letter-spacing: .05em;
+    margin: 0;
+}
+.journal-card__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-medium);
+    font-size: clamp(19px, 1.5vw, 25px);
+    line-height: 1.02;
+    letter-spacing: -.01em;
+    margin: 14px 0 auto;
+}
+.journal-card__byline {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: var(--fs-label);
+    letter-spacing: .05em;
+    margin: 18px 0 0;
+    opacity: .9;
+}
+.journal-card__link:hover .journal-card__title { text-decoration: none; }
+.journal-card__link:hover .loop-img img,
+.journal-card__link:hover .loop-img__ph { transform: scale(var(--zoom)); }
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media (max-width: 1100px) {
+    .hero__card { width: min(38vw, 504px); }
+}
+
+@media (max-width: 991px) {
+    /* colunas 4→2→1 são geridas pelas classes .col-* do Bootstrap */
+    .journal-card__link { min-height: 220px; }
+
+    /* Archive: abaixo do breakpoint de fixação (992px, ver initHscroll em
+       main.js) o scroll horizontal deixa de fazer sentido — nem pinado nem
+       a arrastar uma faixa comprida. Os cartões passam a fluir numa grelha
+       normal, como qualquer outra secção do site. */
+    .archive { padding-top: clamp(48px, 6.4vw, 96px); }
+    .archive__sticky {
+        overflow: visible;
+        cursor: auto;
+        padding-bottom: 0;
+    }
+    .archive__track {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--gutter);
+        width: auto;
+        padding: 0 var(--margin);
+    }
+    .archive__panel--intro {
+        grid-column: 1 / -1;
+        width: auto;
+        padding-right: 0;
+    }
+    .archive__hint { display: none; }
+    .archive__panel--img { width: auto; }
+}
+
+@media (max-width: 720px) {
+    /* Herói: cartão passa a fluir abaixo do conteúdo, ocupando o ecrã */
+    .hero { min-height: 100svh; }
+    .hero__inner {
+        justify-content: flex-start;
+    }
+    .hero__title {
+        font-size: clamp(3.4rem, 19vw, 8rem);
+        margin-top: clamp(28px, 9vw, 72px);
+    }
+    .hero__card {
+        position: static;
+        width: min(82vw, 440px);
+        height: auto;
+        margin-top: auto;
+    }
+    .hero__card-strip { display: none; }
+    .hero__card .col-card { min-height: 210px; }
+    .hero__card .col-card--hero .col-card__number { text-align: left; }
+}
+
+@media (max-width: 575px) {
+    .archive__track { grid-template-columns: 1fr; }
+    .journal-card__link { grid-template-columns: 1fr; }
+    .journal-card__media .loop-img { aspect-ratio: 16 / 10; }
+}

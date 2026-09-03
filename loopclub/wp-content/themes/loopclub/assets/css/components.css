@@ -1,0 +1,152 @@
+/* ============================================================
+   LOOP — Componentes partilhados: botões, imagens, logo
+   ============================================================ */
+
+/* ---- Logo ---- */
+.loop-logo {
+    display: inline-flex;
+    line-height: 0;
+    color: currentColor;
+}
+.loop-logo svg { width: var(--logo-size, 63px); height: auto; }
+
+/* ---- Botão outline com seta deslizante ---- */
+.btn-loop {
+    --bc: var(--preto);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5em;
+    min-height: var(--btn-h);
+    padding: var(--btn-pad);
+    border: var(--border-w) solid var(--bc);
+    color: var(--bc);
+    background: transparent;
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: var(--fs-cta);
+    line-height: 1;
+    letter-spacing: .01em;
+    white-space: nowrap;
+    transition: background var(--dur-fast) var(--ease),
+                color var(--dur-fast) var(--ease);
+}
+.btn-loop--light { --bc: var(--offwhite); }
+
+.btn-loop__arrow {
+    display: inline-block;
+    transition: transform var(--dur-fast) var(--ease);
+}
+.btn-loop:hover  { background: var(--bc); color: var(--fundo); }
+.btn-loop--light:hover { color: var(--preto); }
+.btn-loop:hover .btn-loop__arrow { transform: translateX(.35em); }
+
+/* Botão em superfície colorida (dentro de cartão verde/azul): inverte no hover
+   preservando contraste. */
+.btn-loop--on-color:hover { background: var(--preto); color: var(--offwhite); border-color: var(--preto); }
+
+/* ---- Imagem editorial + placeholder ---- */
+.loop-img {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    aspect-ratio: var(--ratio, 1 / 1);
+    background: var(--cinza-img);
+}
+.loop-img img,
+.loop-img__ph {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+.loop-img img { object-fit: cover; }
+
+.loop-img__ph {
+    display: flex;
+    align-items: flex-end;
+    background: var(--cinza-img);
+    /* textura subtil de placeholder */
+    background-image:
+        repeating-linear-gradient(-45deg,
+            rgba(17, 17, 17, .028) 0 2px,
+            transparent 2px 9px);
+}
+.loop-img__label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: rgba(17, 17, 17, .45);
+    padding: 12px 14px;
+}
+
+.loop-img--zoom img,
+.loop-img--zoom .loop-img__ph {
+    transition: transform 1.1s var(--ease);
+}
+.loop-img--zoom:hover img,
+.loop-img--zoom:hover .loop-img__ph {
+    transform: scale(var(--zoom));
+}
+
+/* Link que envolve uma imagem + legenda (cartões) */
+.media-link { display: block; color: inherit; }
+
+/* ---- Acordeão genérico (filtros da shop, detalhes do produto, …) ----
+   Marcação: <section class="filter-group" data-accordion> com um
+   .filter-group__toggle (h2>button) + .filter-group__sign (—/+) +
+   .filter-group__body. JS (initAccordions) alterna .is-collapsed. */
+.filter-group {
+    border-top: 1px solid rgba(17,17,17,.85);
+    padding: clamp(6px, .6vw, 9px) 0;
+}
+.filter-group:first-child { border-top: 0; padding-top: 0; }
+
+.filter-group__head { margin: 0; }
+.filter-group__toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    letter-spacing: .01em;
+    color: var(--preto);
+    text-align: left;
+}
+.filter-group__sign {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+}
+.filter-group__sign::before,
+.filter-group__sign::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: currentColor;
+    transform: translate(-50%, -50%);
+}
+.filter-group__sign::before { width: 18px; height: 1.5px; }         /* horizontal (—) */
+.filter-group__sign::after  { width: 1.5px; height: 0; transition: height var(--dur-fast) var(--ease); }  /* vertical (+) */
+.filter-group.is-collapsed .filter-group__sign::after { height: 18px; }
+
+.filter-group__body { margin-top: clamp(6px, .5vw, 9px); }
+.filter-group.is-collapsed .filter-group__body { display: none; }
+
+/* ---- Ícone de seta partilhado (arrow_svg() em config.php) ----
+   Dimensiona-se ao font-size do contexto onde é usado (1em), tal como o
+   glifo de texto "→" que substitui — nenhum CSS extra é necessário nos
+   sítios que já tinham transições de transform no elemento envolvente. */
+.icon-arrow {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    flex: 0 0 auto;
+    vertical-align: -0.08em;
+}

@@ -1,0 +1,110 @@
+/* ============================================================
+   LOOP — Design tokens (extraídos das variáveis do Figma)
+   Canvas de desenho: 1695px · margem 45px · conteúdo 1605px
+   ============================================================ */
+
+:root {
+    /* ---- Cor (Figma manda) ---- */
+    --preto:      #111111;
+    --offwhite:   #f9f2ef;
+    --azul:       #0047ff;
+    --verde:      #a8ff00;
+    --fundo:      #f6f6f6;
+    --cinza-img:  #e2e2e2;   /* placeholder de imagem */
+
+    --branco:     #ffffff;
+
+    /* Papéis semânticos */
+    --bg:         var(--fundo);
+    --fg:         var(--preto);
+
+    /* ---- Tipografia ---- */
+    --font-display: "Neue Haas Grotesk Display",
+                    "Helvetica Now Display", "Inter Tight", Helvetica, Arial, sans-serif;
+    --font-mono:    "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+    /* Pesos display (Haas: 25 XThin → 65 Medium) */
+    --w-xthin:  200;
+    --w-thin:   300;
+    --w-light:  350;
+    --w-roman:  400;
+    --w-medium: 500;
+
+    /* ---- Grelha ---- */
+    --canvas:      1695px;   /* largura de referência do desenho */
+    --content:     1605px;   /* área de conteúdo */
+    --margin:      45px;     /* margem lateral */
+    --gutter:      20px;     /* goteira entre colunas */
+    --col:         386px;    /* largura nominal de coluna (4 col) */
+    --wrap-max:    calc(var(--content) + 2 * var(--margin));  /* 1695px */
+
+    /* ---- Escala tipográfica fluida (ancorada a 1695px) ----
+       clamp(chão, tamanho_px/1695*100vw, teto): o vw acompanha o desenho
+       até 1695px (teto), mas nunca encolhe abaixo do chão em ecrãs pequenos.
+       Sem o chão, o vw colapsava para quase 0 no telemóvel (texto minúsculo). */
+    --fs-hero:     clamp(58px, 11.72vw, 198.639px);  /* "PLAY IT AGAIN." */
+    --fs-h1:       clamp(42px, 5.18vw, 87.806px);    /* COLLECTIONS / ARCHIVE */
+    --fs-num-lg:   clamp(52px, 4.93vw, 83.625px);    /* números de colecção 001/002 */
+    --fs-num-card: clamp(54px, 4.69vw, 79.418px);    /* número do cartão herói */
+    --fs-lead:     clamp(15px, 1.52vw, 25.697px);    /* metadata do herói (mono) */
+    --fs-h3:       clamp(18px, 1.42vw, 24px);        /* títulos de cartão journal */
+    --fs-body:     clamp(15px, 1.06vw, 18px);        /* corpo editorial */
+    --fs-season:   clamp(15px, 1.18vw, 20px);        /* estação nos cartões */
+    --fs-nav:      20px;                      /* links de nav */
+    --fs-label:    12px;                      /* labels mono [CURRENT LOOP] */
+    --fs-cta:      clamp(14px, 1.18vw, 20px);        /* CTAs mono SHOP NOW → */
+    --fs-filter:   clamp(15px, 1.23vw, 20.822px);    /* labels de filtro / ordenação (shop) */
+    --fs-product:  clamp(22px, 1.87vw, 31.714px);    /* nome de produto no cartão */
+    --fs-coltag:   clamp(30px, 2.8vw, 47.468px);     /* título da barra de colecção */
+    --fs-shop:     clamp(88px, 17.95vw, 304.205px);  /* título gigante "SHOP" do herói */
+    --fs-feature:        clamp(40px, 5.68vw, 96.324px); /* título da featured story (Journal) */
+    --fs-feature-kicker: clamp(16px, 1.59vw, 27.012px); /* kicker da featured story */
+    --fs-feature-lead:   clamp(16px, 1.8vw,  30.566px); /* parágrafo da featured story */
+    --fs-post-title:     clamp(26px, 2.78vw, 47.134px); /* título dos cartões do Journal */
+    --fs-product-hero:   clamp(38px, 4.16vw, 70.489px); /* nome do produto (página de detalhe) */
+    --fs-price:          clamp(18px, 1.31vw, 22.155px); /* preço grande na página de produto */
+
+    /* ---- Traços / componentes ---- */
+    --border-w:    1.5px;
+    --btn-pad:     16.333px;
+    --btn-h:       49px;
+
+    /* ---- Header ---- */
+    --header-h:    96px;
+    --logo-h:      63px;
+    --nav-gap:     56px;
+
+    /* ---- Movimento ---- */
+    --ease:        cubic-bezier(.22, .61, .36, 1);
+    --dur:         .5s;
+    --dur-fast:    .28s;
+    --zoom:        1.045;
+
+    /* ---- Layers ---- */
+    --z-header:    1000;
+    --z-overlay:   1100;
+}
+
+/* Resoluções maiores: menos margens laterais — o conteúdo alarga para
+   além da largura de desenho em vez de ficar preso a 1695px centrado. */
+@media (min-width: 1850px) {
+    :root { --wrap-max: min(2160px, 92vw); }
+}
+
+/* Escala ligeiramente comprimida abaixo da largura de desenho para
+   manter respiração em ecrãs médios. */
+@media (max-width: 900px) {
+    :root {
+        --margin: 24px;
+        --gutter: 14px;
+    }
+}
+
+@media (max-width: 560px) {
+    :root {
+        --margin: 18px;
+        --gutter: 12px;
+        --header-h: 72px;
+        --logo-h: 44px;
+    }
+}

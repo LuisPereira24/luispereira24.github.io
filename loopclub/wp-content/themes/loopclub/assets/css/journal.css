@@ -1,0 +1,446 @@
+/* ============================================================
+   LOOP — Journal
+   Featured story (mini-carrossel) · filtro/pesquisa · grelha de posts
+   (3 estilos: framed/plain com cor, archive sem cor nenhuma) · newsletter
+   Ancorado a 1695px · reutiliza tokens/loop-img/footer-news do sistema
+   ============================================================ */
+
+/* ===== FEATURED STORY ===== */
+.journal-feature {
+    position: relative;
+    min-height: clamp(440px, 38.2vw, 648px);
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    background: #0d0d0f;
+    color: var(--offwhite);
+}
+.journal-feature__bg { position: absolute; inset: 0; z-index: 0; }
+.journal-feature__img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: opacity var(--dur) var(--ease);
+}
+.journal-feature__scrim {
+    position: absolute; inset: 0;
+    background:
+        linear-gradient(90deg, rgba(0,71,255,.55) 0%, rgba(10,10,12,.1) 40%),
+        linear-gradient(0deg, rgba(10,10,12,.55) 0%, rgba(10,10,12,.1) 45%);
+}
+
+/* Calha esquerda (índice no topo, setas prev/next em baixo — como no Figma).
+   Começa só depois do header (margin-top), nunca por trás dele: a rail
+   opaca a começar em y=0 criava uma costura (azul/imagem) mesmo por baixo
+   do logótipo em certas larguras, onde a margem do header não coincidia
+   com a largura da rail. A imagem continua a preencher o herói inteiro
+   por trás do header transparente — só o bloco de cor azul é que recua. */
+.journal-feature__rail {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 clamp(64px, 5.6vw, 95px);
+    margin-top: var(--header-h);
+    background: var(--azul);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block: clamp(14px, 1.4vw, 23px) clamp(24px, 2.4vw, 40px);
+}
+.journal-feature__index {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: clamp(20px, 2.1vw, 35.814px);
+    color: var(--offwhite);
+}
+.journal-feature__nav-group {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(20px, 2.4vw, 40px);
+}
+.journal-feature__nav {
+    color: var(--offwhite);
+    transition: transform var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
+}
+.journal-feature__nav-arrow { display: inline-block; font-size: clamp(24px, 2.2vw, 34px); transform: rotate(-90deg); }
+.journal-feature__nav--down .journal-feature__nav-arrow { transform: rotate(90deg); }
+/* .icon-arrow tem vertical-align (para se alinhar com texto normal) — ao
+   rodar 90º/-90º esse pequeno desvio vertical passa a horizontal, e como as
+   duas setas rodam para lados opostos, ficavam desalinhadas uma da outra.
+   display:block anula o vertical-align (só se aplica a inline), centrando
+   o ícone de forma idêntica nas duas rotações. */
+.journal-feature__nav-arrow .icon-arrow { display: block; vertical-align: 0; }
+.journal-feature__nav:hover { opacity: .7; }
+
+.journal-feature__inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    align-self: center;
+    padding-top: calc(var(--header-h) + clamp(16px, 2vw, 32px));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(12px, 1.4vw, 21px);
+    color: inherit;
+}
+.journal-feature__kicker {
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: var(--fs-feature-kicker);
+    color: var(--verde);
+    margin: 0;
+    transition: opacity var(--dur) var(--ease);
+}
+.journal-feature__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-feature);
+    line-height: .92;
+    letter-spacing: -.01em;
+    max-width: 14ch;
+    margin: 0;
+    transition: opacity var(--dur) var(--ease);
+}
+.journal-feature__text {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: var(--fs-feature-lead);
+    line-height: 1.3;
+    max-width: 34ch;
+    margin: 0;
+    transition: opacity var(--dur) var(--ease);
+}
+.journal-feature.is-fading .journal-feature__kicker,
+.journal-feature.is-fading .journal-feature__title,
+.journal-feature.is-fading .journal-feature__text { opacity: 0; }
+
+/* Cartão flutuante (data/assinatura + tira de gif) */
+.journal-feature__card {
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    bottom: min(2.9vw, 49px);
+    width: min(11.7vw, 198px);
+    display: flex;
+}
+.journal-feature__card-inner {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    background: var(--verde);
+    color: var(--preto);
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+}
+.journal-feature__card-date {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: clamp(12px, 1.05vw, 14.935px);
+    margin: 0;
+}
+.journal-feature__card-byline {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: clamp(9px, .76vw, 10.778px);
+    margin: 2px 0 0;
+}
+.journal-feature__card-link {
+    margin-top: auto;
+    align-self: flex-start;
+    padding-top: 18px;
+    font-size: 18px;
+    transition: transform var(--dur-fast) var(--ease);
+}
+.journal-feature__card-link:hover { transform: translateX(.3em); }
+.journal-feature__card-strip {
+    position: relative;
+    flex: 0 0 min(2.65vw, 45px);
+    align-self: stretch;
+    background: var(--azul);
+    overflow: hidden;
+}
+.journal-feature__card-strip img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+
+/* ===== BARRA: separadores de categoria + pesquisa ===== */
+/* Espaço antes do rodapé — igual em todas as páginas (homepage como
+   referência, .journal-strip em home.css). */
+.journal { padding-top: clamp(28px, 3.2vw, 54px); padding-bottom: clamp(20px, 3vw, 48px); }
+
+.journal-bar {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: clamp(10px, .9vw, 14px) 0;
+    background: var(--fundo);
+    border-bottom: 1px solid rgba(17,17,17,.85);
+}
+.journal-tabs {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(28px, 3.4vw, 58px);
+    margin: 0;
+    padding: 0;
+}
+.journal-tab {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    color: #8e8e8e;
+    transition: color var(--dur-fast) var(--ease);
+}
+.journal-tab:hover,
+.journal-tab.is-active { color: var(--preto); }
+
+.journal-search { position: relative; display: flex; align-items: center; }
+.journal-search__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    color: var(--preto);
+    white-space: nowrap;
+}
+.journal-search__toggle svg { flex: 0 0 auto; }
+.journal-search__input {
+    width: 0;
+    opacity: 0;
+    margin-left: 0;
+    border: 0;
+    border-bottom: 1.5px solid transparent;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: .03em;
+    color: var(--preto);
+    padding: 4px 0;
+    transition: width var(--dur) var(--ease), opacity var(--dur-fast) var(--ease),
+                margin var(--dur) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.journal-search__input:not([hidden]) {
+    width: min(46vw, 260px);
+    opacity: 1;
+    margin-left: 16px;
+    border-bottom-color: rgba(17,17,17,.35);
+}
+.journal-search__input:focus { outline: none; border-bottom-color: var(--preto); }
+
+/* A barra já tem o próprio border-bottom (sticky, como na shop) — isto é
+   só o respiro antes da grelha, não uma segunda linha. */
+.journal-rule { margin-bottom: clamp(28px, 3vw, 52px); }
+
+/* ===== GRELHA DE POSTS ===== */
+.journal-grid { margin-bottom: clamp(48px, 5vw, 86px); }
+.journal-grid:last-of-type { margin-bottom: 0; }
+
+/* .cell > * já preenche a coluna à altura toda (base.css) — só falta a largura. */
+.journal-post { width: 100%; aspect-ratio: 521 / 779; }
+.journal-post[hidden] { display: none; }
+.journal-post__link { display: flex; flex-direction: column; height: 100%; color: inherit; }
+
+/* --- Fundos por acento (partilhado framed + plain) --- */
+.journal-post--green { background: var(--verde); color: var(--preto); }
+.journal-post--blue  { background: var(--azul);  color: var(--offwhite); }
+.journal-post--fundo { background: var(--fundo); color: var(--preto); }
+.journal-post--dark  { background: var(--preto); color: var(--offwhite); }
+
+/* --- Variante 'framed': imagem com margem + selo --- */
+.journal-post--framed .journal-post__media {
+    position: relative;
+    margin: clamp(14px, 1.5vw, 26px);
+    aspect-ratio: 469 / 368;
+}
+.journal-post--framed .journal-post__media .loop-img { width: 100%; height: 100%; }
+.journal-post__badge {
+    position: absolute;
+    top: 17px; left: 19px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--branco);
+    color: var(--azul);
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: 13px;
+    padding: 8px 12px;
+}
+.journal-post__badge-star { flex: 0 0 auto; }
+
+/* --- Variante 'plain': imagem a papel inteiro em cima --- */
+.journal-post--plain .journal-post__media { aspect-ratio: 521 / 394; }
+.journal-post--plain .journal-post__media .loop-img { width: 100%; }
+
+/* Corpo de texto comum a framed/plain */
+.journal-post__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    padding: 0 clamp(14px, 1.6vw, 27px) clamp(14px, 1.6vw, 27px);
+}
+.journal-post--framed .journal-post__body { padding-top: 8px; }
+.journal-post--plain  .journal-post__body { padding-top: clamp(18px, 1.7vw, 27px); }
+.journal-post__cat {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    margin: 0;
+}
+.journal-post__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-post-title);
+    line-height: 1.05;
+    letter-spacing: -.01em;
+    margin: 14px 0 0;
+}
+.journal-post__foot { margin-top: auto; padding-top: 20px; }
+.journal-post__date {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    margin: 0;
+}
+.journal-post__arrow {
+    display: none; /* mostrado via .journal-post__foot no framed/plain */
+}
+.journal-post--framed .journal-post__foot,
+.journal-post--plain .journal-post__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.journal-post--framed .journal-post__arrow,
+.journal-post--plain .journal-post__arrow {
+    display: inline-block;
+    font-size: 20px;
+    transition: transform var(--dur-fast) var(--ease);
+}
+.journal-post__link:hover .journal-post__arrow { transform: translateX(.3em); }
+.journal-post__link:hover .loop-img img,
+.journal-post__link:hover .loop-img__ph { transform: scale(var(--zoom)); }
+
+/* --- Variante 'archive': SEM cor — só a foto, texto sobreposto --- */
+.journal-post--archive { position: relative; background: none; }
+.journal-post--archive .journal-post__link { position: relative; }
+.journal-post--archive .journal-post__media { position: absolute; inset: 0; height: 100%; }
+.journal-post--archive .journal-post__media .loop-img { width: 100%; height: 100%; aspect-ratio: auto; }
+
+.journal-post__scrim { position: absolute; left: 0; right: 0; pointer-events: none; z-index: 1; }
+.journal-post__scrim--top {
+    top: 0; height: 45%;
+    background: linear-gradient(180deg, rgba(10,10,12,.62) 0%, rgba(10,10,12,0) 100%);
+}
+.journal-post__scrim--bottom {
+    bottom: 0; height: 32%;
+    background: linear-gradient(0deg, rgba(10,10,12,.55) 0%, rgba(10,10,12,0) 100%);
+}
+.journal-post__overlay {
+    position: relative;
+    z-index: 2;
+    padding: 0 clamp(14px, 1.6vw, 27px);
+    color: var(--offwhite);
+}
+.journal-post__overlay--top { padding-top: clamp(16px, 1.4vw, 24px); }
+.journal-post--archive .journal-post__cat { color: var(--offwhite); }
+.journal-post--archive .journal-post__title { color: var(--offwhite); margin-top: 10px; }
+.journal-post__overlay--bottom {
+    margin-top: auto;
+    padding-bottom: clamp(16px, 1.4vw, 24px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.journal-post--archive .journal-post__date { color: var(--offwhite); }
+.journal-post--archive .journal-post__arrow {
+    display: inline-block;
+    color: var(--offwhite);
+    font-size: 20px;
+    transition: transform var(--dur-fast) var(--ease);
+}
+.journal-post--archive .journal-post__link:hover .journal-post__arrow { transform: translateX(.3em); }
+
+/* ===== FAIXA DE NEWSLETTER (meio da listagem) ===== */
+.journal-news-strip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: clamp(24px, 3.2vw, 61px);
+    height: clamp(76px, 5.5vw, 93px);
+    margin-bottom: clamp(48px, 5vw, 86px);
+    padding-inline: clamp(20px, 2.8vw, 47px);
+    background: var(--azul);
+    color: var(--offwhite);
+    overflow: hidden;
+}
+.journal-news-strip__gif {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: min(57%, 968px);
+    z-index: 0;
+}
+.journal-news-strip__gif img { width: 100%; height: 100%; object-fit: cover; }
+.journal-news-strip__gif::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--azul) 0%, var(--azul) 30%, rgba(0,71,255,0) 65%);
+}
+.journal-news-strip__mark { position: relative; z-index: 1; flex: 0 0 auto; color: var(--offwhite); line-height: 0; }
+.journal-news-strip__copy {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: clamp(13px, 1.07vw, 18.085px);
+    line-height: 1.3;
+    margin: 0;
+}
+.journal-news-strip__form { position: relative; z-index: 1; flex: 0 1 264px; min-width: 0; margin-top: 0; }
+
+/* ===== ESTADO VAZIO ===== */
+.journal__empty {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: .04em;
+    color: rgba(17,17,17,.7);
+    text-align: center;
+    padding: clamp(40px, 6vw, 90px) 0;
+}
+.journal__empty[hidden] { display: none; }
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media (max-width: 991px) {
+    .journal-feature__card { display: none; }   /* liberta espaço no ecrã médio */
+}
+
+@media (max-width: 720px) {
+    .journal-feature__title { font-size: clamp(2.4rem, 11vw, 4rem); max-width: 12ch; }
+    .journal-feature__text { display: none; }   /* mantém o herói compacto no telemóvel */
+    .journal-bar { flex-wrap: wrap; }
+    .journal-tabs { gap: clamp(18px, 5vw, 32px); order: 2; flex-basis: 100%; }
+    .journal-search { order: 1; margin-left: auto; }
+}
+
+@media (max-width: 560px) {
+    .journal-news-strip { flex-wrap: wrap; height: auto; padding-block: 18px; gap: 12px 24px; }
+    .journal-news-strip__gif { display: none; }
+    .journal-news-strip__form { flex-basis: 100%; }
+}

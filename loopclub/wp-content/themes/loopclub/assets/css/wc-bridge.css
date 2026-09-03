@@ -1,0 +1,519 @@
+/* ============================================================
+   LoopClub — ponte de estilo para marcação REAL do WooCommerce que
+   propositadamente não reescrevemos em PHP (checkout: morada/pagamento;
+   cart: nenhuma, já é 100% nosso). Reescrever à mão o formulário de
+   pagamento ou a tabela de revisão de encomenda arriscava partir a
+   finalização real de encomendas — em vez disso, mantemos as funções
+   nativas do WooCommerce e só as reestilizamos aqui para bater com o
+   resto do site (mesmos tokens/fontes de checkout.css).
+   ============================================================ */
+
+/* ---- Campos de morada (form-row nativo do WooCommerce) ---- */
+.checkout-fields-stack .form-row { margin: 0 0 clamp(16px, 1.8vw, 26px); }
+.checkout-fields-stack .form-row:last-child { margin-bottom: 0; }
+.checkout-fields-stack label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: .06em;
+    color: rgba(17, 17, 17, .55);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+.checkout-fields-stack .required { color: var(--azul); text-decoration: none; }
+.checkout-fields-stack .input-text,
+.checkout-fields-stack select {
+    width: 100%;
+    border: 0;
+    border-bottom: 1.5px solid rgba(17, 17, 17, .3);
+    background: transparent;
+    padding: 8px 0;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    color: var(--preto);
+    border-radius: 0;
+    transition: border-color var(--dur-fast) var(--ease);
+}
+.checkout-fields-stack .input-text:focus,
+.checkout-fields-stack select:focus { outline: none; border-bottom-color: var(--preto); }
+.checkout-fields-stack .select2-container { width: 100% !important; }
+
+/* ---- "Ship to a different address?" (col-2) — discreto, não está no protótipo ---- */
+.checkout-shipping-toggle { margin-top: clamp(24px, 2.8vw, 40px); }
+.checkout-shipping-toggle h3 {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: .06em;
+    color: rgba(17, 17, 17, .55);
+    font-weight: 400;
+    margin: 0 0 12px;
+}
+.checkout-shipping-toggle .shipping_address { margin-top: clamp(16px, 1.8vw, 24px); }
+.checkout-shipping-toggle .shipping_address .form-row { margin: 0 0 clamp(16px, 1.8vw, 26px); }
+.checkout-shipping-toggle .shipping_address label {
+    display: block; font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em;
+    color: rgba(17, 17, 17, .55); margin-bottom: 8px; text-transform: uppercase;
+}
+.checkout-shipping-toggle .shipping_address .input-text,
+.checkout-shipping-toggle .shipping_address select {
+    width: 100%; border: 0; border-bottom: 1.5px solid rgba(17, 17, 17, .3); background: transparent;
+    padding: 8px 0; font-family: var(--font-display); font-weight: var(--w-light); font-size: var(--fs-filter);
+}
+
+/* ---- Tabela de revisão de encomenda (dentro de #order_review) ---- */
+.woocommerce-checkout-review-order-table { width: 100%; border-collapse: collapse; margin: 0 0 clamp(20px, 2.2vw, 32px); }
+.woocommerce-checkout-review-order-table thead { display: none; }
+.woocommerce-checkout-review-order-table tbody tr {
+    display: flex; align-items: center; gap: clamp(12px, 1.4vw, 18px);
+    padding: clamp(10px, 1.2vw, 16px) 0; border-bottom: 1px solid rgba(17, 17, 17, .12);
+}
+.woocommerce-checkout-review-order-table .product-thumbnail { flex: 0 0 clamp(52px, 4.7vw, 80px); }
+.woocommerce-checkout-review-order-table .product-thumbnail img { width: 100%; height: auto; display: block; }
+.woocommerce-checkout-review-order-table .product-name {
+    flex: 1; min-width: 0; font-family: var(--font-display); font-weight: var(--w-roman);
+    font-size: clamp(14px, 1.1vw, 17px); color: var(--preto);
+}
+.woocommerce-checkout-review-order-table .product-name .product-quantity {
+    display: block; font-family: var(--font-mono); font-weight: 300; font-size: 12px; color: rgba(17, 17, 17, .55);
+}
+.woocommerce-checkout-review-order-table .product-total {
+    font-family: var(--font-mono); font-weight: 300; font-size: 15px; color: var(--preto); white-space: nowrap;
+}
+.woocommerce-checkout-review-order-table tfoot tr { display: flex; justify-content: space-between; padding: 6px 0; font-family: var(--font-mono); font-size: 14px; }
+.woocommerce-checkout-review-order-table tfoot .order-total { font-weight: 500; font-size: 16px; border-top: 1.5px solid var(--preto); margin-top: 8px; padding-top: 12px; }
+.woocommerce-checkout-review-order-table tfoot th { font-weight: 400; text-align: left; }
+
+/* ---- Pagamento (#payment) ---- */
+#payment { background: transparent; border: 0; padding: 0; }
+#payment ul.payment_methods { list-style: none; margin: 0 0 clamp(16px, 1.8vw, 24px); padding: 0; border-top: 1px solid rgba(17, 17, 17, .18); }
+#payment ul.payment_methods li {
+    border-bottom: 1px solid rgba(17, 17, 17, .18); padding: 12px 0;
+    font-family: var(--font-mono); font-size: 14px; color: var(--preto);
+}
+#payment ul.payment_methods li img { display: none; }
+#payment .payment_box {
+    font-family: var(--font-display); font-weight: var(--w-light); font-size: 14px;
+    color: rgba(17, 17, 17, .75); background: var(--fundo); padding: 14px 16px; margin: 10px 0 0;
+}
+#payment .form-row { margin: 0 0 12px; }
+.woocommerce-terms-and-conditions-wrapper { font-family: var(--font-mono); font-size: 13px; margin: 0 0 16px; }
+#payment #place_order,
+.checkout-submit {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; border: 0; cursor: pointer; appearance: none;
+    background: var(--preto); color: var(--offwhite);
+    font-family: var(--font-mono); font-size: var(--fs-cta); letter-spacing: .04em;
+    height: var(--btn-h); padding-inline: var(--btn-pad); text-transform: uppercase;
+}
+#payment #place_order:hover, .checkout-submit:hover { background: var(--azul); }
+
+/* ---- Notificações do WooCommerce (login/cupão/erros de validação) ---- */
+.woocommerce-notices-wrapper .woocommerce-error,
+.woocommerce-notices-wrapper .woocommerce-info,
+.woocommerce-notices-wrapper .woocommerce-message { margin: 0 0 24px; }
+
+@media (max-width: 991px) {
+    .col2-set#customer_details { display: block; }
+}
+
+/* ============================================================
+   CART — correcções de ponte
+   A quantidade tem de ser um <input name="cart[KEY][qty]"> real (é assim
+   que o WooCommerce actualiza o carrinho); o protótipo usava um <span>,
+   por isso .product-qty__value (product.css) não tem largura nem reset de
+   aparência — sem isto o input fica com a largura default do browser
+   (~177px), transborda a coluna QUANTITY e TAPA a coluna PRICE.
+   ============================================================ */
+.product-qty input.product-qty__value {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    box-sizing: border-box;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    text-align: center;
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+.product-qty input.product-qty__value::-webkit-outer-spin-button,
+.product-qty input.product-qty__value::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.product-qty input.product-qty__value:focus { outline: none; }
+.product-qty { flex-wrap: nowrap; }
+
+@media (max-width: 720px) {
+    .cart-row__qty input.product-qty__value { width: 34px; min-width: 34px; max-width: 34px; font-size: 14px; }
+}
+@media (max-width: 480px) {
+    .cart-row__qty input.product-qty__value { width: 22px; min-width: 22px; max-width: 22px; font-size: 11px; }
+}
+
+/* O nome do produto e o "REMOVE" são <a> reais (link para o produto /
+   URL de remoção do WooCommerce) — no protótipo eram texto/<button>, por
+   isso apanhavam o estilo default do browser (azul + sublinhado). */
+.cart-row__name a { color: inherit; text-decoration: none; }
+.cart-row__name a:hover,
+.cart-row__name a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+a.cart-row__remove { color: var(--preto); text-decoration: none; }
+a.cart-row__remove:hover,
+a.cart-row__remove:focus-visible { border-bottom-color: currentColor; text-decoration: none; }
+
+/* A imagem vem da media library (largura intrínseca grande) — garante que
+   nunca estica a coluna para lá do flex-basis definido em cart.css. */
+.cart-row__media-wrap { min-width: 0; }
+.cart-row__media .loop-img { width: 100%; }
+
+/* Variações/meta do artigo (dl.variation nativo) com o look de .cart-row__desc */
+.cart-row__desc .variation { margin: 0; display: flex; flex-wrap: wrap; gap: 0 .5em; }
+.cart-row__desc .variation dt,
+.cart-row__desc .variation dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: clamp(14px, 1.71vw, 28.997px);
+    line-height: 1.32;
+    color: rgba(17, 17, 17, .78);
+}
+.cart-row__desc .variation dd p { margin: 0; }
+
+/* Wrapper do shortcode [woocommerce_cart] — não pode acrescentar recuos,
+   senão as linhas full-bleed deixam de alcançar a margem do ecrã e a
+   faixa gif descola da extremidade esquerda. */
+.woocommerce, .woocommerce-page .woocommerce { margin: 0; padding: 0; }
+.woocommerce-cart-form { margin: 0; }
+
+/* Botão "UPDATE CART" (necessário para o fallback sem JavaScript) */
+.cart-update-row { padding-top: clamp(16px, 1.8vw, 26px); }
+.cart-update-btn {
+    appearance: none;
+    border: 1.5px solid var(--preto);
+    background: transparent;
+    color: var(--preto);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: .04em;
+    height: 44px;
+    padding-inline: 20px;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.cart-update-btn:hover { background: var(--preto); color: var(--offwhite); }
+
+/* O <form> tem de manter a classe "checkout" (exigida pelo checkout.js do
+   WooCommerce), mas a .checkout do protótipo é o wrapper de PÁGINA, com
+   padding de topo/fundo — sem este reset o padding era aplicado duas
+   vezes (wrapper + form). */
+form.checkout { padding: 0; }
+.checkout .checkout-grid { margin-top: clamp(28px, 3.2vw, 54px); }
+
+/* Sem produto sem imagem destacada, a coluna de miniaturas fica vazia e
+   desalinha a galeria — esconde-a quando não houver miniaturas. */
+.product-hero__thumbs:empty { display: none; }
+
+/* Colunas do checkout — defensivo.
+   Os campos do WooCommerce (select2 do país, etc.) trazem larguras
+   próprias que podem forçar o min-content da coluna e espremer/estourar
+   o grid. min-width:0 permite que a coluna encolha até ao tamanho do
+   grid em vez de ser ditada pelo conteúdo. */
+.checkout-grid > * { min-width: 0; }
+.checkout-grid .col2-set,
+.checkout-grid .col-1,
+.checkout-grid .col-2 { min-width: 0; width: 100%; }
+.checkout-fields-stack .form-row { width: 100%; box-sizing: border-box; }
+.checkout-fields-stack .input-text,
+.checkout-fields-stack select,
+.checkout-fields-stack .select2-container { max-width: 100%; box-sizing: border-box; }
+
+/* O título gigante (--fs-shop, até 304px) não pode criar scroll
+   horizontal na página se a fonte de display não carregar e o fallback
+   for mais largo. */
+.checkout .cart-title,
+.cart-top .cart-title { max-width: 100%; }
+
+/* ============================================================
+   FICHA DE PRODUTO — galeria em ecrãs médios/pequenos
+   O protótipo já passava as miniaturas para uma tira horizontal por
+   baixo da imagem principal, mas só abaixo de 720px; entre 720 e 1199px
+   a coluna vertical de miniaturas ficava espremida ao lado da imagem.
+   Antecipamos a mudança para 1199px: imagem principal grande em cima,
+   miniaturas pequenas (quadradas) por baixo, como pedido.
+   ============================================================ */
+@media (max-width: 1199px) {
+    .product-hero {
+        grid-template-columns: 1fr;
+    }
+    .product-hero__main { order: 1; }
+    .product-hero__thumbs {
+        order: 2;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: clamp(8px, 1.2vw, 16px);
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+    }
+    .product-hero__thumbs::-webkit-scrollbar { display: none; }
+    .product-hero__thumbs .product-hero__thumb {
+        flex: 0 0 clamp(64px, 12vw, 96px);
+        width: clamp(64px, 12vw, 96px);
+    }
+    /* Quadrados pequenos: a proporção 173/193 do desktop é substituída
+       por 1:1 nesta tira. */
+    .product-hero__thumbs .product-hero__thumb .loop-img { aspect-ratio: 1 / 1; }
+    .product-hero__info { order: 3; grid-column: 1 / -1; }
+}
+
+/* Confirmação de encomenda (order-received) — o wrapper .checkout já dá
+   as margens; o bloco em si reutiliza .checkout-confirm de checkout.css. */
+.checkout-confirm__order {
+    max-width: 640px;
+    margin: clamp(28px, 3.2vw, 48px) auto 0;
+    text-align: left;
+}
+.checkout-confirm__order .checkout-summary__title { margin-bottom: 16px; }
+.woocommerce-order-overview {
+    list-style: none;
+    margin: 0 0 clamp(20px, 2.4vw, 34px);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(14px, 1.8vw, 28px);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: rgba(17, 17, 17, .6);
+}
+.woocommerce-order-overview li strong {
+    display: block;
+    margin-top: 4px;
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: clamp(14px, 1.1vw, 17px);
+    color: var(--preto);
+}
+
+/* ============================================================
+   FICHA DE PRODUTO — espaçamento do bloco de compra
+   No protótipo, COLOR / SIZE / QUANTITY / ADD TO CART eram filhos
+   directos de .product-hero__info, que é flex com gap. Na versão
+   WordPress têm de viver dentro de <form class="cart"> (o WooCommerce
+   exige o formulário), o que os colapsava num ÚNICO filho flex — o gap
+   deixava de se aplicar entre eles e ficava tudo colado. Devolvemos o
+   comportamento ao formulário, com metade da folga do protótipo.
+   ============================================================ */
+.product-hero__info form.cart,
+.product-hero__info .product-add-wc-fallback {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(10px, 1.1vw, 19px);
+    margin: 0;
+}
+.product-opt__label { margin-bottom: clamp(7px, 0.65vw, 11px); }
+.product-opt { margin: 0; }
+
+/* "Ver carrinho" (link que o WooCommerce acrescenta depois de adicionar)
+   colado ao botão de compra, como uma extensão dele. */
+.product-hero__info form.cart .added_to_cart,
+.product-hero__info .added_to_cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    min-height: 44px;
+    background: var(--verde);
+    color: var(--preto);
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: var(--fs-filter);
+    letter-spacing: .02em;
+    text-decoration: none;
+    transition: background var(--dur-fast) var(--ease);
+}
+.product-hero__info .added_to_cart:hover { background: var(--preto); color: var(--offwhite); }
+/* Anula o gap do formulário só entre o botão e o "ver carrinho". */
+.product-hero__info form.cart .product-add + .added_to_cart,
+.product-hero__info form.cart .added_to_cart { margin-top: calc(clamp(10px, 1.1vw, 19px) * -1); }
+
+/* ---- CART: botão UPDATE CART com respiro antes da linha do rodapé ---- */
+.cart-update-row {
+    padding-top: clamp(16px, 1.8vw, 26px);
+    padding-bottom: clamp(28px, 3.2vw, 54px);
+}
+
+/* ============================================================
+   CONFIRMAÇÃO DE ENCOMENDA — tabela oficial do WooCommerce
+   (order-details.php + customer-details.php). Mantemos a marcação
+   nativa, que trata reembolsos/impostos/downloads correctamente, e
+   damos-lhe a tipografia e as linhas do design LOOP — antes saía com
+   a fonte default do browser, destoando do resto da página.
+   ============================================================ */
+.woocommerce-order-details,
+.woocommerce-customer-details {
+    max-width: 760px;
+    margin: clamp(32px, 3.6vw, 56px) auto 0;
+    text-align: left;
+}
+
+.woocommerce-order-details__title,
+.woocommerce-customer-details h2,
+.woocommerce-column__title {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(17, 17, 17, .55);
+    margin: 0 0 clamp(14px, 1.6vw, 22px);
+}
+
+.woocommerce-table--order-details {
+    width: 100%;
+    border-collapse: collapse;
+}
+.woocommerce-table--order-details thead th {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: rgba(17, 17, 17, .55);
+    text-align: left;
+    padding: 0 0 12px;
+    border-bottom: 1px solid rgba(17, 17, 17, .85);
+}
+.woocommerce-table--order-details thead th:last-child,
+.woocommerce-table--order-details tbody td:last-child,
+.woocommerce-table--order-details tfoot td { text-align: right; }
+
+.woocommerce-table--order-details tbody td {
+    padding: clamp(12px, 1.4vw, 18px) 0;
+    border-bottom: 1px solid rgba(17, 17, 17, .12);
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: clamp(15px, 1.15vw, 18px);
+    color: var(--preto);
+    vertical-align: top;
+}
+.woocommerce-table--order-details td.product-name a { color: inherit; text-decoration: none; }
+.woocommerce-table--order-details td.product-name a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.woocommerce-table--order-details .product-quantity {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: rgba(17, 17, 17, .6);
+}
+.woocommerce-table--order-details td.product-total,
+.woocommerce-table--order-details tfoot td {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    white-space: nowrap;
+}
+.woocommerce-table--order-details .wc-item-meta,
+.woocommerce-table--order-details .variation {
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: 14px;
+    color: rgba(17, 17, 17, .7);
+}
+.woocommerce-table--order-details .wc-item-meta li,
+.woocommerce-table--order-details .wc-item-meta p { margin: 0; }
+
+.woocommerce-table--order-details tfoot th {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: rgba(17, 17, 17, .6);
+    text-align: left;
+    padding: 8px 0;
+}
+.woocommerce-table--order-details tfoot td { padding: 8px 0; font-size: 15px; }
+.woocommerce-table--order-details tfoot tr:last-child th,
+.woocommerce-table--order-details tfoot tr:last-child td {
+    border-top: 1.5px solid var(--preto);
+    padding-top: 14px;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--preto);
+}
+
+/* ---- Moradas ---- */
+.woocommerce-customer-details .woocommerce-columns { display: flex; flex-wrap: wrap; gap: clamp(24px, 3vw, 48px); }
+.woocommerce-customer-details .woocommerce-column { flex: 1 1 260px; min-width: 0; }
+.woocommerce-customer-details address {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: clamp(14px, 1.05vw, 17px);
+    line-height: 1.7;
+    color: rgba(17, 17, 17, .78);
+    font-style: normal;
+    border: 0;
+    padding: 0;
+}
+.woocommerce-customer-details .woocommerce-customer-details--email,
+.woocommerce-customer-details .woocommerce-customer-details--phone {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: rgba(17, 17, 17, .6);
+    margin: 8px 0 0;
+}
+
+/* A confirmação é centrada; estes blocos são de leitura, alinhados à esquerda. */
+.checkout-confirm .woocommerce-order-details,
+.checkout-confirm .woocommerce-customer-details { text-align: left; }
+
+/* ============================================================
+   CHECKOUT — notas da encomenda ("Additional information")
+   Este campo é impresso pelo WooCommerce em .woocommerce-additional-fields,
+   FORA do .checkout-fields-stack que estilei para a morada — por isso
+   saía com o aspecto default do browser (caixa minúscula com contorno e
+   etiqueta em fonte de sistema). Recebe agora exactamente o mesmo
+   tratamento dos restantes campos do checkout.
+   ============================================================ */
+.woocommerce-additional-fields { margin-top: clamp(24px, 2.8vw, 40px); }
+
+.woocommerce-additional-fields__field-wrapper .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    width: 100%;
+}
+.woocommerce-additional-fields__field-wrapper label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: rgba(17, 17, 17, .55);
+    margin: 0;
+}
+.woocommerce-additional-fields__field-wrapper textarea,
+#order_comments {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 120px;
+    resize: vertical;
+    border: 0;
+    border-bottom: 1.5px solid rgba(17, 17, 17, .3);
+    border-radius: 0;
+    background: transparent;
+    padding: 10px 0;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    line-height: 1.5;
+    color: var(--preto);
+    transition: border-color var(--dur-fast) var(--ease);
+}
+.woocommerce-additional-fields__field-wrapper textarea::placeholder,
+#order_comments::placeholder { color: rgba(17, 17, 17, .35); }
+.woocommerce-additional-fields__field-wrapper textarea:focus,
+#order_comments:focus { outline: none; border-bottom-color: var(--preto); }
+
+/* Linha do carrinho enquanto a quantidade está a ser actualizada */
+.cart-row.is-updating { opacity: .55; transition: opacity .15s var(--ease); }
+.cart-row.is-updating .product-qty__btn { pointer-events: none; }

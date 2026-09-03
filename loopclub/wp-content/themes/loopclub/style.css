@@ -1,0 +1,17 @@
+/*
+Theme Name: Loop Club
+Author: LOOP CLUB
+Author URI: https://loopclub.example
+Description: Tema WordPress oficial da LOOP — editorial streetwear, WooCommerce, Journal e páginas geridas pelo Personalizador. Portado a partir do protótipo estático (Bootstrap 5.3 + CSS/JS vanilla).
+Version: 1.0.0
+Requires at least: 6.4
+Requires PHP: 7.4
+Tested up to: 6.7
+Text Domain: loopclub
+Tags: e-commerce, blog, custom-menu, featured-images, full-width-template, translation-ready
+*/
+
+/* O CSS real do site vive em assets/css/*.css (tokens, base, components,
+   header, footer, home, shop, product, journal, journal-article, about) e é
+   enfileirado condicionalmente por functions.php — este ficheiro serve só
+   para o WordPress identificar o tema (cabeçalho acima) + reset mínimo. */

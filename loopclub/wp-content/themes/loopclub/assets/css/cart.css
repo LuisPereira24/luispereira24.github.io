@@ -1,0 +1,335 @@
+/* ============================================================
+   LOOP — Cart
+   Título gigante + cabeçalho de colunas · linhas do carrinho (full-bleed,
+   faixa gif colada à margem esquerda) · rodapé (continuar a comprar +
+   newsletter | resumo + checkout)
+   Ancorado a 1695px · reutiliza tokens/loop-img/product-qty/arrow_svg
+   ============================================================ */
+
+.cart-top {
+    padding-top: calc(var(--header-h) + clamp(24px, 3vw, 48px));
+}
+.cart-title {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: var(--fs-shop);
+    line-height: .8;
+    letter-spacing: -.02em;
+    color: var(--preto);
+    margin: 0;
+}
+
+/* ---- Cabeçalho de colunas (ITEM / PRICE / QUANTITY / TOTAL) ---- */
+.cart-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(52px, 7vw, 124px) clamp(132px, 10.8vw, 181px) clamp(52px, 7vw, 124px);
+    gap: clamp(10px, 2vw, 32px);
+    margin-top: clamp(28px, 3.2vw, 54px);
+    padding-top: clamp(18px, 2vw, 32px);
+    border-top: 1px solid rgba(17, 17, 17, .85);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: .04em;
+}
+.cart-head__price,
+.cart-head__qty { text-align: center; }
+.cart-head__total { text-align: right; }
+
+/* ============================================================
+   LINHAS — cada uma é full-bleed (fora do .container-loop, ver cart.php)
+   só para a faixa gif poder alcançar a margem verdadeira do ecrã; o resto
+   do conteúdo (incl. a linha divisória) fica sempre inset por --margin,
+   tal como o resto da página — nunca colado às extremidades.
+   ============================================================ */
+.cart-list { list-style: none; margin: 0; padding: 0; }
+
+.cart-row { position: relative; }
+
+.cart-row__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(52px, 7vw, 124px) clamp(132px, 10.8vw, 181px) clamp(52px, 7vw, 124px);
+    gap: clamp(10px, 2vw, 32px);
+    align-items: start;
+    margin-inline: var(--margin);
+    padding-block: clamp(28px, 3.2vw, 54px);
+    border-top: 1px solid rgba(17, 17, 17, .85);
+}
+.cart-row:first-child .cart-row__inner { border-top: 0; }
+
+.cart-row__item {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(14px, 2.6vw, 44px);
+    min-width: 0;
+}
+
+/* A faixa gif vive dentro do MESMO contentor posicionado que a imagem
+   (não do row inteiro) — a sua altura vem do "top:0;bottom:0" a esticar
+   exactamente até onde a imagem (altura via aspect-ratio) termina, nunca
+   mais nem menos, e segue a imagem em qualquer resolução. Estica-se para
+   a esquerda, para dentro da margem real da página (onde a imagem já
+   começa a --margin de distância da margem verdadeira). */
+.cart-row__media-wrap {
+    position: relative;
+    flex: 0 0 clamp(72px, 27.5vw, 380px);
+}
+.cart-row__media { width: 100%; }
+.cart-row__media .loop-img { width: 100%; }
+.cart-row__strip {
+    position: absolute;
+    left: calc(var(--margin) * -1);
+    top: 0;
+    bottom: 0;
+    width: clamp(28px, 2.65vw, 45px);
+    overflow: hidden;
+}
+.cart-row__strip img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+.cart-row__info { min-width: 0; }
+.cart-row__collection {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    margin: 0;
+}
+.cart-row__name {
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: clamp(20px, 2.19vw, 37.054px);
+    line-height: 1.1;
+    letter-spacing: -.01em;
+    margin: clamp(10px, 1.3vw, 22px) 0 0;
+}
+.cart-row__variant {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: clamp(17px, 1.94vw, 32.832px);
+    margin: clamp(8px, 1vw, 16px) 0 0;
+}
+.cart-row__desc {
+    margin-top: clamp(14px, 1.7vw, 28px);
+}
+.cart-row__desc p {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: clamp(14px, 1.71vw, 28.997px);
+    line-height: 1.32;
+    color: rgba(17, 17, 17, .78);
+    margin: 0;
+}
+.cart-row__remove {
+    display: inline-block;
+    margin-top: clamp(18px, 2.5vw, 40px);
+    font-family: var(--font-mono);
+    font-size: clamp(13px, 1.39vw, 23.589px);
+    color: var(--preto);
+    border-bottom: 1.5px solid transparent;
+}
+.cart-row__remove:hover,
+.cart-row__remove:focus-visible { border-bottom-color: currentColor; }
+
+.cart-row__price,
+.cart-row__total {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: clamp(16px, 1.63vw, 27.556px);
+    color: var(--preto);
+    margin: 0;
+    text-align: center;
+}
+.cart-row__total { text-align: right; }
+.cart-row__qty { justify-self: center; }
+
+/* Painel vazio (todos os artigos removidos) — alternado via [hidden] em JS */
+.cart-empty {
+    padding: clamp(48px, 6vw, 96px) var(--margin);
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 15px;
+}
+.cart-empty a {
+    display: inline-flex;
+    align-items: center;
+    gap: .5em;
+    margin-left: .6em;
+    border-bottom: 1.5px solid currentColor;
+}
+
+/* ============================================================
+   RODAPÉ — continuar a comprar + newsletter | resumo + checkout
+   ============================================================ */
+.cart-bottom {
+    display: grid;
+    grid-template-columns: minmax(280px, 605fr) minmax(320px, 779fr);
+    gap: clamp(32px, 4vw, 64px);
+    padding-top: clamp(28px, 3.2vw, 54px);
+    /* Espaço antes do rodapé — igual em todas as páginas (homepage como
+       referência, .journal-strip em home.css). */
+    padding-bottom: clamp(20px, 3vw, 48px);
+    border-top: 1px solid rgba(17, 17, 17, .85);
+}
+.cart-bottom__left,
+.cart-bottom__right { display: flex; flex-direction: column; gap: clamp(18px, 2vw, 28px); }
+
+.cart-continue {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 49px;
+    border: 1.5px solid var(--preto);
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: 20px;
+    color: var(--preto);
+    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.cart-continue:hover { background: var(--preto); color: var(--offwhite); }
+
+/* Cartão de newsletter — mesma linguagem visual do footer (footer-cta__panel--news) */
+.cart-signup {
+    position: relative;
+    overflow: hidden;
+    background: var(--azul);
+    color: var(--offwhite);
+    padding: clamp(20px, 2.4vw, 34px);
+    min-height: clamp(180px, 17.35vw, 294px);
+    display: flex;
+    flex-direction: column;
+}
+.cart-signup__mark { display: block; margin-bottom: auto; opacity: .9; }
+.cart-signup__kicker,
+.cart-signup__line,
+.cart-signup__sub {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: clamp(15px, 1.28vw, 21.702px);
+    line-height: 1.25;
+    margin: 0;
+}
+.cart-signup__kicker { margin-top: 14px; }
+
+.cart-signup__form { margin-top: clamp(16px, 1.9vw, 32px); }
+.cart-signup__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    max-width: 320px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(249, 242, 239, .6);
+}
+.cart-signup__input {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    color: var(--offwhite);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 4px 0;
+}
+.cart-signup__input::placeholder { color: rgba(249, 242, 239, .82); font-weight: 500; }
+.cart-signup__input:focus { outline: none; }
+.cart-signup__row:focus-within { border-bottom-color: var(--offwhite); }
+.cart-signup__submit {
+    color: var(--offwhite);
+    font-size: 18px;
+    line-height: 1;
+    padding: 2px 4px;
+    transition: transform var(--dur-fast) var(--ease);
+}
+.cart-signup__submit:hover { transform: translateX(.25em); }
+
+/* Resumo (subtotal / shipping / total / checkout) */
+.cart-summary { display: flex; flex-direction: column; gap: clamp(18px, 2vw, 30px); }
+.cart-summary__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.cart-summary__row p {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: clamp(16px, 1.63vw, 27.556px);
+    color: var(--preto);
+    margin: 0;
+}
+.cart-summary__row--total {
+    padding-top: clamp(16px, 1.8vw, 28px);
+    border-top: 1px solid rgba(17, 17, 17, .85);
+}
+.cart-summary__row--total p:first-child { font-weight: 600; }
+.cart-summary__row--total p:last-child { font-weight: 500; }
+
+.cart-checkout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 76px;
+    padding-inline: clamp(14px, 1.3vw, 22px);
+    background: var(--preto);
+    color: var(--fundo);
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: clamp(18px, 1.68vw, 28.444px);
+    transition: background var(--dur-fast) var(--ease);
+}
+.cart-checkout:hover { background: #2a2a2a; }
+
+.cart-secure {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: clamp(16px, 1.63vw, 27.556px);
+    color: var(--preto);
+    margin: 0;
+}
+
+/* ============================================================
+   RESPONSIVO — a linha mantém-se sempre em linha (item · price · qty ·
+   total lado a lado, como no Figma); a imagem, a faixa gif e o stepper
+   de quantidade encolhem para caber, em vez de empilhar o layout.
+   ============================================================ */
+@media (max-width: 991px) {
+    .cart-bottom { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+    .cart-head,
+    .cart-row__inner {
+        grid-template-columns: minmax(0, 1fr) clamp(50px, 8vw, 90px) clamp(112px, 15vw, 140px) clamp(50px, 8vw, 90px);
+        gap: clamp(8px, 2vw, 20px);
+    }
+    .cart-row__media-wrap { flex-basis: clamp(70px, 22vw, 140px); }
+    .cart-row__name { font-size: clamp(15px, 3.4vw, 22px); }
+
+    /* Stepper mais compacto — os 40px fixos do .product-qty__btn
+       (product.css) já não cabem na coluna QUANTITY encolhida a partir
+       daqui; sem isto o stepper "invade" as colunas vizinhas. */
+    .cart-row__qty .product-qty__btn { width: 32px; height: 32px; font-size: 15px; }
+    .cart-row__qty .product-qty__value { min-width: 34px; font-size: 14px; }
+}
+
+@media (max-width: 480px) {
+    .cart-head,
+    .cart-row__inner {
+        grid-template-columns: minmax(0, 1fr) clamp(40px, 8vw, 60px) clamp(84px, 20vw, 100px) clamp(40px, 8vw, 60px);
+        gap: clamp(6px, 2vw, 12px);
+    }
+    .cart-row__item { gap: clamp(10px, 3vw, 16px); }
+    .cart-row__media-wrap { flex-basis: clamp(56px, 20vw, 90px); }
+    .cart-row__collection,
+    .cart-row__desc { display: none; }
+    .cart-row__name { font-size: clamp(13px, 3.8vw, 17px); margin-top: 0; }
+    .cart-row__variant { font-size: clamp(11px, 2.8vw, 14px); margin-top: 4px; }
+    .cart-row__remove { margin-top: 10px; font-size: 11px; }
+    .cart-row__price,
+    .cart-row__total { font-size: clamp(11px, 2.8vw, 14px); }
+
+    /* Stepper mais compacto — o tamanho fixo de 40px do .product-qty__btn
+       (product.css) é largo de mais para a coluna QUANTITY encolhida. */
+    .cart-row__qty .product-qty__btn { width: 24px; height: 24px; font-size: 13px; }
+    .cart-row__qty .product-qty__value { min-width: 18px; font-size: 11px; }
+}

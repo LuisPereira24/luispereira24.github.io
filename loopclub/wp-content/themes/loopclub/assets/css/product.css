@@ -1,0 +1,275 @@
+/* ============================================================
+   LOOP — Página de produto
+   Galeria (miniaturas + imagem principal) · painel de info + cor/tamanho ·
+   adicionar ao carrinho · acordeão de detalhes · "you might also like"
+   Ancorado a 1695px · reutiliza tokens/loop-img/product-card/acordeão
+   ============================================================ */
+
+/* padding-top conta com a altura do header (fixo, opaco nesta página) —
+   sem isto o topo da galeria/painel ficava tapado por ele. */
+.product {
+    padding-top: calc(var(--header-h) + clamp(28px, 3.2vw, 54px));
+    /* Espaço antes do rodapé — igual em todas as páginas (homepage como
+       referência, .journal-strip em home.css). */
+    padding-bottom: clamp(20px, 3vw, 48px);
+}
+
+/* ===== GALERIA + INFO ===== */
+.product-hero {
+    display: grid;
+    grid-template-columns: clamp(90px, 9vw, 160px) minmax(0, 1fr) minmax(320px, 36.6%);
+    gap: clamp(24px, 2.8vw, 48px);
+    align-items: start;
+}
+
+.product-hero__thumbs {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(10px, 1.3vw, 22px);
+}
+.product-hero__thumb {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    opacity: .55;
+    transition: opacity var(--dur-fast) var(--ease);
+}
+.product-hero__thumb .loop-img { width: 100%; }
+.product-hero__thumb:hover,
+.product-hero__thumb.is-active { opacity: 1; }
+.product-hero__thumb.is-active::after {
+    content: "";
+    position: absolute; inset: 0;
+    border: 1.5px solid var(--preto);
+    pointer-events: none;
+}
+
+.product-hero__main .loop-img { width: 100%; }
+
+.product-hero__info {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(20px, 2.2vw, 37px);
+}
+
+.product-hero__top { display: flex; align-items: stretch; }
+.product-hero__panel {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: clamp(16px, 1.7vw, 29px);
+    background: var(--verde);
+    color: var(--preto);
+}
+.product-hero__panel--green { background: var(--verde); color: var(--preto); }
+.product-hero__panel--blue  { background: var(--azul);  color: var(--offwhite); }
+.product-hero__panel--dark  { background: var(--preto); color: var(--offwhite); }
+
+.product-hero__mark {
+    position: absolute;
+    right: -6%;
+    bottom: -10%;
+    width: 42%;
+    opacity: .16;
+    line-height: 0;
+    pointer-events: none;
+}
+.product-hero__mark .loop-logo svg { width: 100%; height: auto; }
+
+.product-hero__eyebrow {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-mono);
+    font-size: clamp(13px, 1.05vw, 15.726px);
+    margin: 0;
+}
+.product-hero__name {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: var(--fs-product-hero);
+    line-height: 1;
+    letter-spacing: -.01em;
+    margin: clamp(10px, 1vw, 16px) 0 0;
+}
+.product-hero__price {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-price);
+    margin: clamp(10px, 1vw, 16px) 0 0;
+}
+.product-hero__desc {
+    position: relative;
+    z-index: 1;
+    margin-top: clamp(20px, 2.2vw, 36px);
+}
+.product-hero__desc p {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: clamp(14px, 1.16vw, 19.688px);
+    line-height: 1.4;
+    margin: 0;
+}
+
+.product-hero__strip {
+    position: relative;
+    flex: 0 0 clamp(38px, 4.4vw, 76px);
+    align-self: stretch;
+    background: var(--azul);
+    overflow: hidden;
+}
+.product-hero__strip img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---- Opções: cor / tamanho ---- */
+.product-opt__label {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    color: var(--preto);
+    margin: 0 0 clamp(10px, 1vw, 16px);
+}
+.product-swatches { display: flex; align-items: center; gap: 10px; }
+.product-swatch {
+    width: 37px; height: 37px;
+    flex: 0 0 auto;
+    background: var(--sw);
+    box-shadow: inset 0 0 0 .5px #a2a2a2;
+    transition: box-shadow var(--dur-fast) var(--ease);
+}
+.product-swatch.is-active {
+    box-shadow: 0 0 0 2px var(--fundo), 0 0 0 3.5px var(--preto);
+}
+
+.product-sizes { display: flex; flex-wrap: wrap; gap: 0; }
+.product-size {
+    flex: 1 1 auto;
+    min-width: 15%;
+    padding: 10px;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    color: var(--preto);
+    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.product-size:hover { background: rgba(17,17,17,.06); }
+.product-size.is-active { background: var(--preto); color: var(--offwhite); }
+
+/* ---- Quantidade ---- */
+.product-qty {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(17,17,17,.85);
+    width: fit-content;
+}
+.product-qty__btn {
+    width: 40px;
+    height: 40px;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: 18px;
+    color: var(--preto);
+    transition: background var(--dur-fast) var(--ease);
+}
+.product-qty__btn:hover { background: rgba(17,17,17,.06); }
+.product-qty__value {
+    min-width: 44px;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    color: var(--preto);
+    user-select: none;
+}
+
+/* ---- Adicionar ao carrinho ---- */
+.product-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    background: var(--preto);
+    color: var(--offwhite);
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: var(--fs-filter);
+    letter-spacing: .02em;
+    transition: background var(--dur-fast) var(--ease);
+}
+.product-add:hover { background: #2a2a2a; }
+.product-add.is-added { background: var(--verde); color: var(--preto); }
+.product-add__icon { flex: 0 0 auto; }
+
+/* ---- Acordeão (usa .filter-group partilhado — components.css) ----
+   Fluxo normal: abrir uma secção empurra o que vem a seguir, como seria de
+   esperar. Só uma secção fica aberta de cada vez (ver initAccordions/
+   [data-accordion-single] em main.js). */
+.product-accordion { border-top: 1px solid rgba(17,17,17,.85); }
+.product-accordion .filter-group { border-top: 1px solid rgba(17,17,17,.85); padding: clamp(14px, 1.3vw, 20px) 0; }
+.product-accordion .filter-group:first-child { border-top: 0; }
+.product-accordion__text {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(17,17,17,.75);
+    max-width: 46ch;
+    margin: 0;
+}
+
+/* ===== YOU MIGHT ALSO LIKE ===== */
+.product-related { padding-top: clamp(64px, 8vw, 130px); }
+.product-related__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: clamp(24px, 2.6vw, 44px);
+}
+.product-related__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    letter-spacing: .01em;
+    margin: 0;
+}
+.product-related__all {
+    display: inline-flex;
+    align-items: center;
+    gap: .5em;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+}
+.product-related__all span:last-child { transition: transform var(--dur-fast) var(--ease); }
+.product-related__all:hover span:last-child { transform: translateX(.35em); }
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media (max-width: 1199px) {
+    .product-hero {
+        grid-template-columns: clamp(100px, 12vw, 160px) minmax(0, 1fr);
+    }
+    .product-hero__info { grid-column: 1 / -1; }
+}
+
+@media (max-width: 720px) {
+    .product-hero { grid-template-columns: 1fr; }
+    .product-hero__thumbs { flex-direction: row; order: 2; }
+    .product-hero__thumbs .product-hero__thumb { flex: 1 1 0; }
+    .product-hero__main { order: 1; }
+    .product-hero__info { order: 3; }
+    .product-hero__top { flex-direction: column-reverse; }
+    .product-hero__strip { flex-basis: 32px; }
+}
+
+@media (max-width: 560px) {
+    .product-size { min-width: 30%; }
+}

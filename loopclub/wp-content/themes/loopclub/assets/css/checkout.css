@@ -1,0 +1,205 @@
+/* ============================================================
+   LOOP — Checkout
+   Não existe no Figma — reutiliza a linguagem visual do carrinho
+   (cart.css: .cart-title, .cart-summary, .cart-checkout, .cart-continue,
+   .cart-secure) com um formulário de contacto/envio/pagamento + um resumo
+   de encomenda sticky.
+   Ancorado a 1695px
+   ============================================================ */
+
+.checkout {
+    padding-top: calc(var(--header-h) + clamp(24px, 3vw, 48px));
+    /* Espaço antes do rodapé — igual em todas as páginas (homepage como
+       referência, .journal-strip em home.css). */
+    padding-bottom: clamp(20px, 3vw, 48px);
+}
+/* "CHECKOUT" é mais comprido que "CART" — floor mais baixo que --fs-shop
+   para não estourar a largura do ecrã em telemóvel (uma só palavra, sem
+   ponto de quebra); mesma escala/tecto, só o chão desce. */
+.checkout .cart-title { font-size: clamp(46px, 17.95vw, 304.205px); }
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 480px);
+    gap: clamp(32px, 4.6vw, 78px);
+    margin-top: clamp(28px, 3.2vw, 54px);
+    padding-top: clamp(18px, 2vw, 32px);
+    border-top: 1px solid rgba(17, 17, 17, .85);
+    align-items: start;
+}
+/* Depois de encomenda confirmada (form escondido), o resumo passa a ser o
+   único filho do grid — ocupa toda a largura em vez de ficar estreito. */
+.checkout-grid.is-confirmed { grid-template-columns: 1fr; }
+
+/* ---- Formulário ---- */
+.checkout-form { display: flex; flex-direction: column; gap: clamp(28px, 3.2vw, 48px); }
+
+.checkout-section { display: flex; flex-direction: column; gap: clamp(16px, 1.8vw, 26px); }
+.checkout-section__title {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: .08em;
+    color: rgba(17, 17, 17, .55);
+    margin: 0;
+}
+
+.checkout-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(16px, 2vw, 28px);
+}
+
+.checkout-field { display: flex; flex-direction: column; gap: 8px; }
+.checkout-field label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: .06em;
+    color: rgba(17, 17, 17, .55);
+}
+.checkout-field input {
+    border: 0;
+    border-bottom: 1.5px solid rgba(17, 17, 17, .3);
+    background: transparent;
+    padding: 8px 0;
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-filter);
+    color: var(--preto);
+    transition: border-color var(--dur-fast) var(--ease);
+}
+.checkout-field input::placeholder { color: rgba(17, 17, 17, .35); }
+.checkout-field input:focus { outline: none; border-bottom-color: var(--preto); }
+
+.checkout-demo-note {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: rgba(17, 17, 17, .55);
+    margin: 0;
+}
+
+.checkout-submit {
+    align-self: flex-start;
+    width: 100%;
+    border: 0;
+    cursor: pointer;
+}
+
+/* ---- Resumo da encomenda (sticky) ---- */
+.checkout-summary {
+    position: sticky;
+    top: calc(var(--header-h) + 28px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(20px, 2.2vw, 32px);
+}
+.checkout-summary__title {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: .08em;
+    color: rgba(17, 17, 17, .55);
+    margin: 0;
+}
+.checkout-summary__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 1.8vw, 24px);
+}
+.checkout-summary__row {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 1.4vw, 18px);
+}
+.checkout-summary__media {
+    position: relative;
+    flex: 0 0 clamp(52px, 4.7vw, 80px);
+}
+.checkout-summary__media .loop-img { width: 100%; }
+.checkout-summary__qty {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--preto);
+    color: var(--offwhite);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    border-radius: 50%;
+}
+.checkout-summary__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.checkout-summary__name {
+    font-family: var(--font-display);
+    font-weight: var(--w-roman);
+    font-size: clamp(14px, 1.1vw, 17px);
+}
+.checkout-summary__variant {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: 13px;
+    color: rgba(17, 17, 17, .6);
+}
+.checkout-summary__price {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: 15px;
+    color: var(--preto);
+    white-space: nowrap;
+}
+
+/* ---- Confirmação (após submeter — sem back-end real) ---- */
+.checkout-confirm {
+    padding: clamp(64px, 8vw, 130px) 0;
+    text-align: center;
+}
+.checkout-confirm__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: .08em;
+    color: rgba(17, 17, 17, .55);
+    margin: 0;
+}
+.checkout-confirm__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: clamp(40px, 4.9vw, 83.625px);
+    line-height: .95;
+    margin: clamp(12px, 1.4vw, 20px) 0 0;
+}
+.checkout-confirm__text {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color: rgba(17, 17, 17, .7);
+    margin: clamp(14px, 1.6vw, 24px) auto 0;
+    max-width: 46ch;
+}
+.checkout-confirm .cart-continue {
+    display: inline-flex;
+    width: auto;
+    padding-inline: 28px;
+    margin-top: clamp(24px, 2.8vw, 40px);
+}
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media (max-width: 991px) {
+    .checkout-grid { grid-template-columns: 1fr; }
+    .checkout-summary { position: static; order: -1; padding-bottom: clamp(24px, 3vw, 40px); border-bottom: 1px solid rgba(17, 17, 17, .85); }
+}
+
+@media (max-width: 560px) {
+    .checkout-row { grid-template-columns: 1fr; }
+}

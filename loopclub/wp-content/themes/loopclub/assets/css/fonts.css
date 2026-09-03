@@ -1,0 +1,77 @@
+/* ============================================================
+   LOOP — Fontes
+   Neue Haas Grotesk Display (trial) é a fonte de display — versão TRIAL,
+   sem licença de produção. Só se declaram aqui os 5 pesos realmente usados
+   no Figma/código (200/300/350/400/500); ficheiros Round, Text, itálicos,
+   Bold/Black/XXThin foram removidos por não estarem em uso.
+   ============================================================ */
+
+/* ---- IBM Plex Mono (auto-hospedada) ---- */
+@font-face {
+    font-family: "IBM Plex Mono";
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+    src: url("../../../../../wp-content/themes/loopclub/assets/fonts/ibm-plex-mono-300.woff2") format("woff2");
+}
+@font-face {
+    font-family: "IBM Plex Mono";
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url("../../../../../wp-content/themes/loopclub/assets/fonts/ibm-plex-mono-400.woff2") format("woff2");
+}
+@font-face {
+    font-family: "IBM Plex Mono";
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    src: url("../../../../../wp-content/themes/loopclub/assets/fonts/ibm-plex-mono-500.woff2") format("woff2");
+}
+
+/* ---- Neue Haas Grotesk Display (trial, assets/fonts/) ---- */
+
+/* 25 XThin (200) */
+@font-face {
+    font-family: "Neue Haas Grotesk Display";
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+    src: url("../../../../../wp-content/themes/loopclub/assets/fonts/neuehaasgrotdisp-25xthin-trial.otf") format("opentype");
+}
+
+/* 35 Thin (300) */
+@font-face {
+    font-family: "Neue Haas Grotesk Display";
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+    src: url("../../../../../wp-content/themes/loopclub/assets/fonts/neuehaasgrotdisp-35thin-trial.otf") format("opentype");
+}
+
+/* 45 Light (350) */
+@font-face {
+    font-family: "Neue Haas Grotesk Display";
+    font-weight: 350;
+    font-style: normal;
+    font-display: swap;
+    src: url("../../../../../wp-content/themes/loopclub/assets/fonts/neuehaasgrotdisp-45light-trial.otf") format("opentype");
+}
+
+/* 55 Roman (400) */
+@font-face {
+    font-family: "Neue Haas Grotesk Display";
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url("../../../../../wp-content/themes/loopclub/assets/fonts/neuehaasgrotdisp-55roman-trial.otf") format("opentype");
+}
+
+/* 65 Medium (500) */
+@font-face {
+    font-family: "Neue Haas Grotesk Display";
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    src: url("../../../../../wp-content/themes/loopclub/assets/fonts/neuehaasgrotdisp-65medium-trial.otf") format("opentype");
+}

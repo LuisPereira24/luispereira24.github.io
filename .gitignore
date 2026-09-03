@@ -5,3 +5,6 @@ desktop.ini
 *.ai
 *.fig
 node_modules/
+
+# exportacoes do WordPress (fica so a pasta loopclub/)
+simply-static-*.zip

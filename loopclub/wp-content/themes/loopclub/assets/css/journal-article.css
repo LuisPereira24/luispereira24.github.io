@@ -1,0 +1,172 @@
+/* ============================================================
+   LOOP — Journal article
+   Herói (imagem de capa + gradient + título arrastado à esquerda +
+   imagens anexadas à direita) · barra de metadados · citação em
+   destaque (azul) a abrir o corpo · corpo em parágrafos simples (sem
+   capitular) · "MORE FROM THE JOURNAL" (replica journal-strip da home)
+   Ancorado a 1695px · carrega journal.css + home.css antes (reusa as
+   classes journal-post, journal-strip e journal-card)
+   ============================================================ */
+
+/* ===== HERÓI ===== */
+.article-hero {
+    position: relative;
+    min-height: clamp(360px, 40.1vw, 680px);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: var(--cinza-img);
+    color: var(--offwhite);
+}
+.article-hero__bg { position: absolute; inset: 0; z-index: 0; }
+.article-hero__bg .loop-img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    aspect-ratio: auto;
+}
+/* Gradiente mais forte à esquerda (onde o texto vive) do que à direita —
+   garante que o título continua legível mesmo que a foto por baixo seja
+   clara/branca, em qualquer resolução. */
+.article-hero__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(10, 10, 12, .82) 0%, rgba(10, 10, 12, .55) 45%, rgba(10, 10, 12, .25) 100%),
+        linear-gradient(0deg, rgba(10, 10, 12, .55) 0%, rgba(10, 10, 12, .1) 40%, rgba(10, 10, 12, .1) 100%);
+}
+.article-hero__inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(150px, 260px);
+    align-items: end;
+    gap: clamp(24px, 3vw, 48px);
+    /* O topo conta sempre com a altura do header (transparente sobre o
+       herói) — sem isto, em ecrãs onde o conteúdo cresce mais alto que o
+       min-height do herói, o kicker/título ficavam por baixo do header. */
+    padding-top: calc(var(--header-h) + clamp(20px, 2.4vw, 40px));
+    padding-bottom: clamp(28px, 3.4vw, 54px);
+}
+.article-hero__kicker {
+    font-family: var(--font-mono);
+    font-size: clamp(14px, 1.2vw, 20px);
+    letter-spacing: .1em;
+    color: var(--verde);
+    margin: 0;
+}
+.article-hero__title {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: var(--fs-feature);
+    line-height: .95;
+    letter-spacing: -.01em;
+    max-width: 18ch;
+    margin: 14px 0 0;
+}
+.article-hero__lead {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: var(--fs-feature-lead);
+    line-height: 1.4;
+    color: rgba(249, 242, 239, .8);
+    max-width: 46ch;
+    margin: clamp(16px, 2vw, 28px) 0 0;
+}
+
+/* Espaço reservado às imagens anexadas à notícia — pequenas, empilhadas
+   com desfasamento, do lado direito do herói. */
+.article-hero__attached {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+}
+.article-hero__attached-item {
+    display: block;
+    width: clamp(90px, 9.5vw, 160px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .35);
+}
+.article-hero__attached-item:nth-child(2) { margin-right: clamp(20px, 2.4vw, 40px); }
+.article-hero__attached-item .loop-img { width: 100%; }
+
+/* ===== BARRA DE METADADOS ===== */
+.article-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-block: clamp(16px, 1.8vw, 28px);
+    border-bottom: 1px solid rgba(17, 17, 17, .12);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: .04em;
+    color: rgba(17, 17, 17, .65);
+}
+.article-meta p { margin: 0; }
+.article-meta__strip {
+    display: inline-block;
+    position: relative;
+    width: 22px;
+    height: 22px;
+    overflow: hidden;
+    background: var(--azul);
+    flex: 0 0 auto;
+}
+.article-meta__strip img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.article-meta__author { color: var(--preto); font-weight: 600; }
+.article-meta__sep { opacity: .4; }
+
+/* ===== CITAÇÃO EM DESTAQUE — abre o corpo do artigo ===== */
+.article-quote {
+    padding-block: clamp(40px, 5vw, 80px) clamp(20px, 2.6vw, 36px);
+    max-width: 900px;
+}
+.article-quote__mark {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(48px, 5.5vw, 88px);
+    line-height: .5;
+    color: var(--azul);
+}
+.article-quote__text {
+    font-family: var(--font-display);
+    font-weight: var(--w-light);
+    font-size: clamp(28px, 3.4vw, 54px);
+    line-height: 1.15;
+    letter-spacing: -.01em;
+    color: var(--preto);
+    max-width: 18ch;
+    margin: 8px 0 0;
+}
+.article-quote__attr {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: .06em;
+    color: var(--azul);
+    margin: clamp(16px, 2vw, 28px) 0 0;
+}
+
+/* ===== CORPO — parágrafos simples, sem capitular ===== */
+.article-body {
+    max-width: 900px;
+    padding-bottom: clamp(40px, 5vw, 72px);
+}
+.article-body p {
+    font-family: var(--font-display);
+    font-weight: var(--w-thin);
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: rgba(17, 17, 17, .85);
+    margin: 0 0 24px;
+}
+.article-body p:last-child { margin-bottom: 0; }
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media (max-width: 720px) {
+    .article-hero__inner { grid-template-columns: 1fr; align-items: flex-start; }
+    .article-hero__attached { flex-direction: row; align-items: flex-start; margin-top: 20px; }
+    .article-hero__attached-item:nth-child(2) { margin-right: 0; margin-top: 20px; }
+    .article-meta { flex-wrap: wrap; }
+}
