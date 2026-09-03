@@ -758,6 +758,22 @@ a{ color: inherit; text-decoration: none; }
    Todas as medidas sao os numeros do Figma multiplicados por --m,
    onde --m = largura do ecra / 710. Mesma logica do --s de 1920.
    ========================================================================== */
+/* ============ CREDITOS ============
+   Barra por baixo do rodape. Por agora so na base de telemovel (710):
+   as medidas da versao de computador ainda nao estao no codigo. */
+.credits{ display: none; position: relative; overflow-x: clip; background: #1e1e1e; }
+.credits__t{
+  position: absolute;
+  margin: 0;
+  font-family: var(--font-hand);
+  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
+  line-height: normal;
+  color: #ffffff;
+  white-space: nowrap;
+}
+.credits__sep{ position: absolute; display: block; }
+.credits__sep i{ position: absolute; display: block; background: #ffffff; }
+
 @media (max-width: 900px){
 
   /* ---------- barra de topo ---------- */
@@ -1008,6 +1024,31 @@ a{ color: inherit; text-decoration: none; }
       repeating-linear-gradient(0deg,  rgba(249,255,249,.055) 0 1px, transparent 1px var(--grid)),
       repeating-linear-gradient(90deg, rgba(249,255,249,.055) 0 1px, transparent 1px var(--grid));
   }
+
+  /* ---------- creditos ---------- */
+  .credits{ display: block; height: calc(73 * var(--m)); }
+  .credits__t{ top: calc(14.12 * var(--m)); font-size: calc(40.475 * var(--m)); }
+  .credits__t--a{ left: calc(45 * var(--m)); }
+  .credits__t--b{ left: calc(371.43 * var(--m)); }
+  .credits__t--c{ left: calc(600.13 * var(--m)); }
+
+  .credits__sep{
+    top: calc(26.02 * var(--m));
+    width: calc(28.227 * var(--m));
+    height: calc(28.227 * var(--m));
+  }
+  .credits__sep i{ width: calc(9.433 * var(--m)); height: calc(9.433 * var(--m)); }
+  .credits__sep--1{ left: calc(321.28 * var(--m)); }
+  .credits__sep--1 i:nth-child(1){ left: calc(9.4 * var(--m));  top: calc(9.4 * var(--m)); }
+  .credits__sep--1 i:nth-child(2){ left: 0;                     top: calc(18.79 * var(--m)); }
+  .credits__sep--1 i:nth-child(3){ left: calc(18.79 * var(--m)); top: calc(18.79 * var(--m)); }
+  .credits__sep--1 i:nth-child(4){ left: calc(18.79 * var(--m)); top: 0; }
+
+  .credits__sep--2{ left: calc(549.98 * var(--m)); }
+  .credits__sep--2 i:nth-child(1){ left: calc(9.4 * var(--m));  top: calc(9.4 * var(--m)); }
+  .credits__sep--2 i:nth-child(2){ left: calc(9.4 * var(--m));  top: calc(18.79 * var(--m)); }
+  .credits__sep--2 i:nth-child(3){ left: 0;                     top: calc(9.4 * var(--m)); }
+  .credits__sep--2 i:nth-child(4){ left: calc(18.79 * var(--m)); top: 0; }
 
   .copied{ font-size: calc(30 * var(--m)); padding: calc(8 * var(--m)) calc(18 * var(--m)); }
   .pxwipe{ height: 60vh; }

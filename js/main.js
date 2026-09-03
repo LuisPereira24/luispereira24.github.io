@@ -607,41 +607,49 @@
   }
 
   function attachDrag(list) {
+    list.forEach(function (it) { it.el.pixItem = it; });
+
     list.forEach(function (it) {
       if (it.el.dataset.drag) return;
       it.el.dataset.drag = '1';
+      var el = it.el;
       var last = null, lastT = 0, vx = 0, vy = 0, offX = 0, offY = 0, dragging = false;
 
-      it.el.addEventListener('pointerdown', function (e) {
+      el.addEventListener('pointerdown', function (e) {
+        var cur = el.pixItem;
+        if (!cur || !cur.body) return;
         e.preventDefault();
         dragging = true;
-        it.el.setPointerCapture(e.pointerId);
-        it.el.classList.add('is-dragging');
-        var host = it.el.parentElement.getBoundingClientRect();
-        offX = it.body.position.x - (e.clientX - host.left);
-        offY = it.body.position.y - (e.clientY - host.top);
+        el.setPointerCapture(e.pointerId);
+        el.classList.add('is-dragging');
+        var host = el.parentElement.getBoundingClientRect();
+        offX = cur.body.position.x - (e.clientX - host.left);
+        offY = cur.body.position.y - (e.clientY - host.top);
         last = { x: e.clientX, y: e.clientY }; lastT = performance.now();
-        Matter.Body.setStatic(it.body, true);
+        Matter.Body.setStatic(cur.body, true);
       });
-      it.el.addEventListener('pointermove', function (e) {
-        if (!dragging) return;
-        var host = it.el.parentElement.getBoundingClientRect();
+      el.addEventListener('pointermove', function (e) {
+        var cur = el.pixItem;
+        if (!dragging || !cur || !cur.body) return;
+        var host = el.parentElement.getBoundingClientRect();
         var now = performance.now(), dt = Math.max(now - lastT, 8);
         vx = (e.clientX - last.x) / dt * 14; vy = (e.clientY - last.y) / dt * 14;
         last = { x: e.clientX, y: e.clientY }; lastT = now;
-        Matter.Body.setPosition(it.body, { x: e.clientX - host.left + offX, y: e.clientY - host.top + offY });
+        Matter.Body.setPosition(cur.body, { x: e.clientX - host.left + offX, y: e.clientY - host.top + offY });
       });
       function release(e) {
         if (!dragging) return;
         dragging = false;
-        it.el.classList.remove('is-dragging');
-        try { it.el.releasePointerCapture(e.pointerId); } catch (err) {}
-        Matter.Body.setStatic(it.body, false);
-        Matter.Body.setVelocity(it.body, { x: vx, y: vy });
-        Matter.Body.setAngularVelocity(it.body, (vx + vy) * 0.004);
+        el.classList.remove('is-dragging');
+        try { el.releasePointerCapture(e.pointerId); } catch (err) {}
+        var cur = el.pixItem;
+        if (!cur || !cur.body) return;
+        Matter.Body.setStatic(cur.body, false);
+        Matter.Body.setVelocity(cur.body, { x: vx, y: vy });
+        Matter.Body.setAngularVelocity(cur.body, (vx + vy) * 0.004);
       }
-      it.el.addEventListener('pointerup', release);
-      it.el.addEventListener('pointercancel', release);
+      el.addEventListener('pointerup', release);
+      el.addEventListener('pointercancel', release);
     });
   }
 
@@ -661,7 +669,7 @@
     scenes.forEach(function (sc) {
       Matter.World.clear(sc.world, false);
       Matter.Engine.clear(sc.engine);
-      sc.items.forEach(function (it) { it.el.style.transform = ''; });
+      sc.items.forEach(function (it) { it.el.style.transform = ''; it.el.pixItem = null; });
     });
     scenes = []; sunItem = null;
   }
