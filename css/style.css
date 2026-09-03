@@ -235,8 +235,9 @@ a{ color: inherit; text-decoration: none; }
   left: 50%; transform: translateX(-50%);
   top: calc(424.69 * var(--s));
   font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes);
+  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
   font-weight: 600;
+  --hand-w: 600;
   font-size: calc(282.745 * var(--s));
   line-height: .83;
   color: var(--hero-ink);
@@ -416,8 +417,9 @@ a{ color: inherit; text-decoration: none; }
 .card__title{
   margin: 0 0 calc(24 * var(--s));
   font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes);
+  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
   font-weight: 500;
+  --hand-w: 500;
   font-size: calc(161.957 * var(--s));
   line-height: .92;
   color: var(--ink);
@@ -425,26 +427,33 @@ a{ color: inherit; text-decoration: none; }
 .card__text{
   margin: 0 0 calc(28 * var(--s));
   font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes);
+  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
   font-size: max(14px, calc(30 * var(--s)));
   line-height: .92;
   color: var(--ink);
 }
-.card__col--media{ display: flex; flex-direction: column; gap: calc(28 * var(--s)); }
+.card__inner > *{ min-width: 0; }
+.card__col--media{ display: flex; flex-direction: column; gap: calc(28 * var(--s)); min-width: 0; }
+.card__text{ overflow-wrap: anywhere; }
 .card__media{
   aspect-ratio: 708 / 382;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   background: #949494;
   display: grid; place-items: center;
   font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes);
+  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
   font-size: max(13px, calc(28 * var(--s)));
   color: #f0f0f0;
 }
 .btn{
   display: flex; align-items: center; width: 100%;
+  min-width: 0; max-width: 100%;
   font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes);
+  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
   font-weight: 500;
+  --hand-w: 500;
   font-size: calc(68.374 * var(--s));
   line-height: .83;
   color: var(--olive);
@@ -454,6 +463,7 @@ a{ color: inherit; text-decoration: none; }
 
 .btn__arrow{
   width: calc(46 * var(--s));
+  min-width: 0;
   height: auto;
   flex: none;
   shape-rendering: crispEdges;
@@ -517,7 +527,7 @@ a{ color: inherit; text-decoration: none; }
 .about__text{
   margin: 0 0 calc(38 * var(--s));
   font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes);
+  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
   font-size: calc(45 * var(--s));
   line-height: .92;
   text-align: justify;
@@ -562,8 +572,9 @@ a{ color: inherit; text-decoration: none; }
   left: calc(31.29 * var(--s));
   top: calc(20.91 * var(--s));
   font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes);
+  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
   font-weight: 500;
+  --hand-w: 500;
   font-size: calc(69.019 * var(--s));
   line-height: .92;
   white-space: nowrap;
@@ -604,7 +615,7 @@ a{ color: inherit; text-decoration: none; }
 }
 .hero__name .ch:hover, .card__title .ch:hover, .contact__mail .ch:hover{
   -webkit-text-stroke: 0;
-  font-variation-settings: "ELGR" 2, "ELSH" 2;
+  font-variation-settings: "ELGR" 2, "ELSH" 2, "wght" 900;
   font-weight: 900;
 }
 
@@ -687,8 +698,9 @@ a{ color: inherit; text-decoration: none; }
   left: calc(161 * var(--s));
   top: calc(198 * var(--s));
   font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes);
+  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
   font-weight: 500;
+  --hand-w: 500;
   font-size: calc(157.806 * var(--s));
   line-height: normal;
   color: var(--paper);
@@ -699,8 +711,9 @@ a{ color: inherit; text-decoration: none; }
 .contact__link{
   position: absolute;
   font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes);
+  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
   font-weight: 500;
+  --hand-w: 500;
   font-size: calc(91.716 * var(--s));
   line-height: normal;
   text-transform: lowercase;
