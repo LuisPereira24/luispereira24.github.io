@@ -886,8 +886,11 @@ a{ color: inherit; text-decoration: none; }
   .about{ padding: calc(76 * var(--m)) 0 0; }
   .about__band{
     height: calc(1751 * var(--m));
-    clip-path: none;
     padding: 0;
+    clip-path: polygon(0 0,
+                       100% calc(7.4 * var(--m)),
+                       100% calc(100% - 8.13 * var(--m)),
+                       0 100%);
   }
   .about__edge{ --sq: calc(18 * var(--m)); }
   .about__edge--top{ top: calc(76 * var(--m) - var(--sq) * 2); }

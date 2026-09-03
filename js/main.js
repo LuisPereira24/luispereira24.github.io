@@ -110,24 +110,25 @@
   function buildDither() {
     var clip = band && band.querySelector('.grassband__clip');
     if (!clip) return;
-    if (MOBILE()) { if (dith.el) { dith.el.remove(); dith.el = null; dith.cells = []; } return; }
     if (!dith.el) {
       dith.el = document.createElement('div');
       dith.el.className = 'grassdither';
       clip.appendChild(dith.el);
     }
-    var size = Math.max(6, Math.round(D_CELL * scale));
+    var size = MOBILE() ? Math.max(4, Math.round(D_CELL * mscale))
+                        : Math.max(6, Math.round(D_CELL * scale));
+    var rows = MOBILE() ? 7 : D_ROWS;
     var cols = Math.ceil(root.clientWidth / size);
-    dith.size = size; dith.cols = cols; dith.rows = D_ROWS;
-    dith.el.style.top = Math.round(L.bandH - D_ROWS * size) + 'px';
+    dith.size = size; dith.cols = cols; dith.rows = rows;
+    dith.el.style.top = Math.round(L.bandH - rows * size) + 'px';
     dith.el.style.gridTemplateColumns = 'repeat(' + cols + ',' + size + 'px)';
     dith.el.style.gridAutoRows = size + 'px';
     dith.el.style.width = (cols * size) + 'px';
-    dith.el.style.height = (D_ROWS * size) + 'px';
+    dith.el.style.height = (rows * size) + 'px';
     dith.el.innerHTML = '';
     dith.cells = []; dith.noise = [];
     var frag = document.createDocumentFragment();
-    for (var r = 0; r < D_ROWS; r++) for (var c = 0; c < cols; c++) {
+    for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) {
       var i = document.createElement('i');
       frag.appendChild(i);
       dith.cells.push({ el: i, c: c, r: r, on: false });
