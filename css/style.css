@@ -844,7 +844,7 @@ a{ color: inherit; text-decoration: none; }
   .works__title{
     left: calc(44 * var(--m));
     top: calc(107 * var(--m));
-    font-size: calc(96.175 * var(--m));
+    font-size: calc(81.75 * var(--m));
   }
   .stack{ padding: 0 calc(44 * var(--m)); }
 
@@ -889,7 +889,7 @@ a{ color: inherit; text-decoration: none; }
     clip-path: none;
     padding: 0;
   }
-  .about__edge{ --sq: calc(38 * var(--m)); }
+  .about__edge{ --sq: calc(20.25 * var(--m)); }
   .about__edge--top{ top: calc(76 * var(--m) - var(--sq) * 2); }
   .about__edge--bottom{ top: calc(1751 * var(--m)); }
 
@@ -904,7 +904,7 @@ a{ color: inherit; text-decoration: none; }
   }
   .about__title{
     margin: 0 0 calc(48 * var(--m)) calc(-8.4 * var(--m));
-    font-size: calc(96.175 * var(--m));
+    font-size: calc(81.75 * var(--m));
     line-height: .83;
   }
   .about__text{
@@ -960,7 +960,7 @@ a{ color: inherit; text-decoration: none; }
   .contact__title{
     left: calc(46 * var(--m));
     top: calc(79 * var(--m));
-    font-size: calc(70.155 * var(--m));
+    font-size: calc(59.63 * var(--m));
   }
   .contact__mail{
     left: calc(46 * var(--m));

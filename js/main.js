@@ -296,9 +296,9 @@
   function stackLayout() {
     if (!stack || !cards.length) return;
     if (FLOW()) { stack.style.height = ''; stack.style.marginTop = ''; cards.forEach(function (c) { c.style.transform = ''; c.style.width = ''; }); return; }
-    SPC = Math.round(window.innerHeight * 1.2);
-    stack.style.height = ((cards.length - 1 + HOLD) * SPC + window.innerHeight) + 'px';
-    var vh0 = window.innerHeight, navH0 = navH(), h0 = cards[0].offsetHeight;
+    SPC = Math.round((L.vh || window.innerHeight) * 1.2);
+    stack.style.height = ((cards.length - 1 + HOLD) * SPC + (L.vh || window.innerHeight)) + 'px';
+    var vh0 = L.vh || window.innerHeight, navH0 = navH(), h0 = cards[0].offsetHeight;
     var C0 = Math.max(navH0 * 0.4, navH0 + (vh0 - navH0 - h0) / 2);
     stack.style.marginTop = Math.round(34 * scale - C0) + 'px';
     cardH = cards.map(function (c) { return c.offsetHeight; });
@@ -307,7 +307,7 @@
 
   function stackScroll() {
     if (!stack || !cards.length || FLOW()) return;
-    var vh = window.innerHeight;
+    var vh = L.vh || window.innerHeight;
     var nav = navH();
     var u = clamp((window.scrollY - stackTop) / SPC, 0, cards.length - 1);
     var k = Math.floor(u), f = u - k;
@@ -465,20 +465,57 @@
     return Math.max(document.body.scrollHeight, window.innerHeight);
   }
 
+  function paintGlyph(el) {
+    var w = glyphW(el), h = glyphH(el), p = glyphHome(el);
+    var dx = parseFloat(el.dataset.dx) || 0, dy = parseFloat(el.dataset.dy) || 0;
+    el.style.transformOrigin = 'center';
+    el.style.transform = 'translate3d(' + (p.x - w / 2 + dx) + 'px,' + (p.y - h / 2 + dy) + 'px,0) rotate(' +
+      (parseFloat(el.dataset.rot) || 0) + 'deg)';
+  }
+
   function placeGlyphs() {
     [].slice.call(document.querySelectorAll('.physics')).forEach(function (host) {
       host.style.height = hostHeight(host) + 'px';
     });
+    glyphs().forEach(paintGlyph);
+  }
+
+  // Em telemovel nao ha motor de fisica: o glifo segue o dedo e fica onde ficar.
+  // Poupa uma actualizacao do mundo em cada frame, que era o que tornava o
+  // arrasto lento nos telemoveis.
+  function attachTouchDrag() {
     glyphs().forEach(function (el) {
-      var w = glyphW(el), h = glyphH(el);
-      var p = glyphHome(el);
-      el.style.transformOrigin = 'center';
-      el.style.transform = 'translate3d(' + (p.x - w / 2) + 'px,' + (p.y - h / 2) + 'px,0) rotate(' +
-        (parseFloat(el.dataset.rot) || 0) + 'deg)';
+      if (el.dataset.tdrag) return;
+      el.dataset.tdrag = '1';
+      var sx = 0, sy = 0, ox = 0, oy = 0, on = false;
+      el.addEventListener('pointerdown', function (e) {
+        if (!MOBILE()) return;
+        e.preventDefault();
+        on = true;
+        el.setPointerCapture(e.pointerId);
+        el.classList.add('is-dragging');
+        sx = e.clientX; sy = e.clientY;
+        ox = parseFloat(el.dataset.dx) || 0; oy = parseFloat(el.dataset.dy) || 0;
+      });
+      el.addEventListener('pointermove', function (e) {
+        if (!on) return;
+        el.dataset.dx = ox + (e.clientX - sx);
+        el.dataset.dy = oy + (e.clientY - sy);
+        paintGlyph(el);
+      });
+      function off(e) {
+        if (!on) return;
+        on = false;
+        el.classList.remove('is-dragging');
+        try { el.releasePointerCapture(e.pointerId); } catch (err) {}
+      }
+      el.addEventListener('pointerup', off);
+      el.addEventListener('pointercancel', off);
     });
   }
 
   function buildPhysics() {
+    if (MOBILE()) { attachTouchDrag(); return; }
     if (typeof Matter === 'undefined') return;
     var Engine = Matter.Engine, World = Matter.World, Bodies = Matter.Bodies;
     sunItem = null;
@@ -724,8 +761,13 @@
     animCanvas.setAnimSpeed(animNow);
   }
 
-  var resizeT;
+  var resizeT, lastVW = root.clientWidth, lastVH = window.innerHeight;
   window.addEventListener('resize', function () {
+    // no telemovel a barra do browser aparece e desaparece durante o scroll e
+    // dispara resize: se so a altura mudou um pouco, nao se remede nada
+    var vw = root.clientWidth, vh = window.innerHeight;
+    if (vw === lastVW && Math.abs(vh - lastVH) < 170) return;
+    lastVW = vw; lastVH = vh;
     clearTimeout(resizeT);
     resizeT = setTimeout(function () {
       setScale(); layout();
