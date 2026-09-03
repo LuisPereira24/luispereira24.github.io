@@ -336,6 +336,7 @@ a{ color: inherit; text-decoration: none; }
 .pxwipe-grid i.on{ opacity: 1; }
 
 .pxframe{
+  margin-inline: auto;
   --sq: calc(14 * var(--s));
   --frame-bg: var(--card-bg, var(--paper));
   --frame-void: var(--olive);
@@ -839,11 +840,11 @@ a{ color: inherit; text-decoration: none; }
   }
 
   /* ---------- works ---------- */
-  .works{ padding: 0 0 calc(120 * var(--m)); }
-  .works__head{ height: calc(331 * var(--m)); padding: 0 calc(44 * var(--m)); }
+  .works{ padding: 0 0 calc(190 * var(--m)); }
+  .works__head{ height: calc(430 * var(--m)); padding: 0 calc(44 * var(--m)); }
   .works__title{
     left: calc(44 * var(--m));
-    top: calc(107 * var(--m));
+    top: calc(200 * var(--m));
     font-size: calc(81.75 * var(--m));
   }
   .stack{ padding: 0 calc(44 * var(--m)); }
@@ -885,8 +886,10 @@ a{ color: inherit; text-decoration: none; }
   /* ---------- about ---------- */
   .about{ padding: calc(76 * var(--m)) 0 0; }
   .about__band{
-    height: calc(1751 * var(--m));
-    padding: 0;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    padding: calc(90 * var(--m)) calc(46.5 * var(--m)) calc(120 * var(--m));
     clip-path: polygon(0 0,
                        100% calc(7.4 * var(--m)),
                        100% calc(100% - 8.13 * var(--m)),
@@ -894,36 +897,33 @@ a{ color: inherit; text-decoration: none; }
   }
   .about__edge{ --sq: calc(18 * var(--m)); }
   .about__edge--top{ top: calc(76 * var(--m) - var(--sq) * 2); }
-  .about__edge--bottom{ top: calc(1827 * var(--m)); }
+  .about__edge--bottom{ top: auto; bottom: calc(var(--sq) * -2); }
 
-  .about__grid{
-    position: absolute;
-    left: calc(48 * var(--m));
-    top: calc(10.9 * var(--m));
-    width: calc(617 * var(--m));
-    right: auto;
-    padding: 0;
-    display: block;
-  }
+  /* o Figma poe titulo, texto, botao e retrato uns por baixo dos outros:
+     em fluxo nada fica cortado, seja qual for a altura que o texto ocupe */
+  .about__grid{ display: contents; }
+  .about__col{ order: 1; }
   .about__title{
-    margin: 0 0 calc(48 * var(--m)) calc(-8.4 * var(--m));
+    margin: 0 0 calc(72 * var(--m));
     font-size: calc(81.75 * var(--m));
     line-height: .83;
   }
   .about__text{
     font-size: calc(45 * var(--m));
-    line-height: .92;
-    margin: 0 0 calc(41 * var(--m));
+    line-height: 1.12;
+    margin: 0 0 calc(52 * var(--m));
     text-align: justify;
   }
+  .about__text:last-child{ margin-bottom: 0; }
 
   .cvbtn{
-    position: absolute;
-    left: calc(108.8 * var(--m));
-    top: calc(891 * var(--m));
+    order: 2;
+    position: relative;
+    left: auto; top: auto;
+    flex: none;
     width: calc(427 * var(--m));
     height: calc(104 * var(--m));
-    margin: 0;
+    margin: calc(96 * var(--m)) auto 0;
   }
   .cvbtn__bar--t{ left: calc(10 * var(--m)); top: 0; width: calc(407 * var(--m)); height: calc(10 * var(--m)); }
   .cvbtn__bar--b{ left: calc(10 * var(--m)); top: calc(94 * var(--m)); width: calc(407 * var(--m)); height: calc(10 * var(--m)); }
@@ -939,12 +939,13 @@ a{ color: inherit; text-decoration: none; }
   }
 
   .about__portrait{
-    position: absolute;
-    left: calc(143 * var(--m));
-    top: calc(1066.7 * var(--m));
+    order: 3;
+    position: static;
+    flex: none;
     width: calc(411 * var(--m));
+    margin: calc(104 * var(--m)) auto 0;
   }
-  .about__portrait-frame{ width: 100%; margin: 0; }
+  .about__portrait-frame{ width: 100%; margin: 0 auto; }
   .about__portrait-inner.is-missing::after{ font-size: calc(24 * var(--m)); }
   /* sem interaccao na foto em ecras de toque */
   .portdither{ display: none; }

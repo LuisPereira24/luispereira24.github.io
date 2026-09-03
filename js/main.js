@@ -198,7 +198,7 @@
     });
   }
 
-  var litCells = [], sunItem = null;
+  var litCells = [], sunItem = null, sunEl = null, sunBox = null;
 
   function cacheLit() {
     litCells = [].slice.call(document.querySelectorAll('.hero__hi .ch, .hero__name .ch'))
@@ -211,9 +211,14 @@
   }
 
   function litUpdate() {
-    if (!sunItem || !litCells.length) return;
-    var p = sunItem.body.position, hw = sunItem.w / 2, hh = sunItem.h / 2;
-    var l = p.x - hw, r = p.x + hw, t = p.y - hh, b = p.y + hh;
+    if (!litCells.length) return;
+    var l, r, t, b;
+    if (sunItem && sunItem.body) {
+      var p = sunItem.body.position, hw = sunItem.w / 2, hh = sunItem.h / 2;
+      l = p.x - hw; r = p.x + hw; t = p.y - hh; b = p.y + hh;
+    } else if (sunBox) {
+      l = sunBox.l; r = sunBox.r; t = sunBox.t; b = sunBox.b;
+    } else return;
     for (var i = 0; i < litCells.length; i++) {
       var c = litCells[i];
       var hit = !(r < c.l || l > c.r || b < c.t || t > c.b);
@@ -297,7 +302,7 @@
 
   var stack = document.getElementById('stack');
   var cards = [].slice.call(document.querySelectorAll('.card'));
-  var SPC = 800, GAP = 240, HOLD = 0.42, stackTop = 0, cardH = [], cardTilt = [];
+  var SPC = 800, GAP = 240, HOLD = 0.42, stackTop = 0, cardH = [], cardTilt = [], cardFit = [];
 
   var navPx = 0;
   function navH() {
@@ -323,6 +328,11 @@
     var C0 = Math.max(navH0 * 0.4, navH0 + (vh0 - navH0 - h0) / 2);
     stack.style.marginTop = Math.round(34 * scale - C0) + 'px';
     cardH = cards.map(function (c) { return c.offsetHeight; });
+    // se o card nao couber no ecra, encolhe o suficiente para caber e poder
+    // ficar mesmo centrado (quanto mais estreito o ecra, mais pequeno o card)
+    var margem = Math.round(22 * (MOBILE() ? mscale : scale));
+    var cabe = vhRef - navH0 - margem * 2;
+    cardFit = cardH.map(function (h) { return (h > cabe && cabe > 0) ? cabe / h : 1; });
     cardTilt = cards.map(function (c) {
       return (getComputedStyle(c).getPropertyValue('--tilt') || '0deg').trim() || '0deg';
     });
@@ -340,13 +350,16 @@
     var gap = MOBILE() ? 224 * mscale : GAP * scale;
     for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
-      var h = cardH[i] || c.offsetHeight;
+      var h0 = cardH[i] || c.offsetHeight;
+      var f = cardFit[i] || 1;
+      var h = h0 * f;
       var C = Math.max(nav * 0.4, nav + (vh - nav - h) / 2);
       var d = j - i;
       var enter = vh - C + 40;
-      var y = d >= 0 ? C - d * gap : C + (-d) * enter;
       var z0 = MOBILE() ? 0.947 : 0.93;
-      var z = d < 0 ? z0 + (1 - z0) * clamp(1 + d, 0, 1) : 1;
+      var z = (d < 0 ? z0 + (1 - z0) * clamp(1 + d, 0, 1) : 1) * f;
+      // a escala e feita a partir do centro: compensar para o topo visivel cair em C
+      var y = (d >= 0 ? C - d * gap : C + (-d) * enter) - h0 * (1 - z) / 2;
       c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0) rotate(' + (cardTilt[i] || '0deg') + ') scale(' + z.toFixed(3) + ')';
     }
   }
@@ -437,11 +450,13 @@
   function fitFrames() {
     [].slice.call(document.querySelectorAll('.pxframe')).forEach(function (el) {
       var target = MOBILE() ? 15 * mscale : 14 * scale;
+      el.style.width = '';                        // medir a largura natural, nao a que ja la esta
       var w = el.offsetWidth;
       if (!w) return;
       var n = Math.max(8, Math.round(w / target));
       if (n % 2) n++;
       var sq = Math.max(2, Math.round(w / n));   // pixeis inteiros: sem falhas nas arestas
+      while (n * sq > w && n > 8) n -= 2;         // nunca mais largo que o espaco disponivel
       el.style.width = (n * sq) + 'px';           // largura multipla exacta do quadrado
       el.style.setProperty('--sq', sq + 'px');
       el.style.padding = (sq * 2) + 'px';       // anel de 2 quadrados, igual dos 4 lados
@@ -496,12 +511,17 @@
   function paintGlyph(el) {
     var w = glyphW(el), h = glyphH(el), p = glyphHome(el);
     var dx = parseFloat(el.dataset.dx) || 0, dy = parseFloat(el.dataset.dy) || 0;
+    var x = p.x - w / 2 + dx, y = p.y - h / 2 + dy;
     el.style.transformOrigin = 'center';
-    el.style.transform = 'translate3d(' + (p.x - w / 2 + dx) + 'px,' + (p.y - h / 2 + dy) + 'px,0) rotate(' +
+    el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) rotate(' +
       (parseFloat(el.dataset.rot) || 0) + 'deg)';
+    if (el === sunEl) sunBox = { l: x, r: x + w, t: y, b: y + h };
   }
 
   function placeGlyphs() {
+    if (!sunEl) {
+      glyphs().forEach(function (el) { if (el.textContent.trim() === 'X') sunEl = el; });
+    }
     [].slice.call(document.querySelectorAll('.physics')).forEach(function (host) {
       host.style.height = hostHeight(host) + 'px';
     });
@@ -740,7 +760,7 @@
     stepDither();
     stackScroll();
     if (WIPE_ON) updateWipe();
-    if (scenes.length) stepPhysics();
+    if (scenes.length) stepPhysics(); else litUpdate();
     navSpyUpdate();
     animSpeed();
   }
