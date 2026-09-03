@@ -251,3 +251,27 @@ esperar pelo `main.js`.
 - ao sair dispara `site:relayout`, que faz o `main.js` medir tudo de novo:
   enquanto o loader esteve no ecra o scroll estava bloqueado e a largura util
   era outra, por isso as posicoes calculadas antes disso nao serviam
+
+## 8. Loop Club (site em WordPress)
+
+O botao "CHECK WEBSITE" do card LOOP CLUB vai apontar para uma copia estatica
+do site WordPress, publicada dentro deste mesmo repositorio em `loopclub/`,
+ou seja `https://luispereira24.github.io/loopclub/`.
+
+Porque estatica: o GitHub Pages so serve ficheiros, nao corre PHP nem base de
+dados, por isso o WordPress em si nao pode ser alojado aqui. Uma copia estatica
+mantem o aspecto e a navegacao; deixa de funcionar tudo o que precisa de
+servidor (carrinho, checkout, formulario de contacto, pesquisa).
+
+Como gerar a copia (no WordPress local):
+
+1. Plugins -> Adicionar novo -> instalar e activar **Simply Static**
+2. Simply Static -> Settings -> **Destination URL**: absolute, com
+   `https://luispereira24.github.io/loopclub`
+3. Delivery method: **ZIP** (ou pasta local)
+4. Generate -> descarregar o ZIP
+5. Deixar o ZIP numa pasta ligada a sessao; a copia entra em `loopclub/` e o
+   link do card e trocado de `#` para `loopclub/`
+
+O site tem ~11 MB de uploads e um tema proprio de ~11 MB, portanto a copia
+estatica fica bem dentro dos limites do GitHub Pages.
