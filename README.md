@@ -240,10 +240,14 @@ minusculo no `<head>`, para a pagina nascer ja com as medidas certas em vez de
 esperar pelo `main.js`.
 
 - fundo `#262626`, quadrados brancos `#f9fff9`
+- a palavra "loading" com tres pontos que contam 1, 2, 3 e reiniciam
 - barra de 16 quadrados que enchem com o progresso real (imagens, tipos de
-  letra e evento `load`), com um quadrado a saltar por cima em `steps(16)`
+  letra e evento `load`)
 - saida em pixeis: uma grelha de quadrados da cor do fundo desaparece um a um,
   cada um com um atraso aleatorio ate 520 ms e transicao instantanea
 - tempo minimo no ecra de 700 ms (para nao piscar) e limite de 7 s (para nunca
   prender o utilizador)
 - `prefers-reduced-motion`: sai sem animacao
+- ao sair dispara `site:relayout`, que faz o `main.js` medir tudo de novo:
+  enquanto o loader esteve no ecra o scroll estava bloqueado e a largura util
+  era outra, por isso as posicoes calculadas antes disso nao serviam

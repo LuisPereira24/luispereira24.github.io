@@ -809,6 +809,19 @@
     animCanvas.setAnimSpeed(animNow);
   }
 
+  // medir tudo de novo. Alem do resize, o ecra de carregamento chama isto ao
+  // sair: enquanto esteve no ecra o scroll estava bloqueado e a largura util
+  // era outra, por isso as posicoes medidas antes disso nao servem.
+  function remedir() {
+    setScale(); layout();
+    destroyPhysics(); placeGlyphs();
+    if (!REDUCED) buildPhysics();
+    buildWipe(); buildNavPix(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); stackScroll();
+    layoutGreen();
+    navSpyMeasure(); cacheLit(); scene(); updateWipe();
+  }
+  window.addEventListener('site:relayout', remedir);
+
   var resizeT, lastVW = root.clientWidth, lastVH = window.innerHeight;
   window.addEventListener('resize', function () {
     // no telemovel a barra do browser aparece e desaparece durante o scroll e
@@ -819,14 +832,7 @@
     lastVW = vw; lastVH = vh;
     if (barOnly) return;
     clearTimeout(resizeT);
-    resizeT = setTimeout(function () {
-      setScale(); layout();
-      destroyPhysics(); placeGlyphs();
-      if (!REDUCED) buildPhysics();
-      buildWipe(); buildNavPix(); buildDither(); fitFrames(); buildPortraitDither(); stackLayout(); stackScroll();
-      layoutGreen();
-      navSpyMeasure(); cacheLit(); scene(); updateWipe();
-    }, 180);
+    resizeT = setTimeout(remedir, 180);
   });
 
   var y = document.getElementById('year');

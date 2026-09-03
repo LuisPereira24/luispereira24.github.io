@@ -11,14 +11,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Handjet:ELGR,ELSH,wght@1,2,100..900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v=202609032153">
+<link rel="stylesheet" href="css/style.css?v=202609032200">
 
 <!-- ================= ECRA DE CARREGAMENTO =================
      Tem de pintar antes de tudo o resto, por isso o estilo vai aqui
      em vez de ir para o style.css, e a escala e definida ja a seguir
      para a pagina nascer com as medidas certas. -->
 <style>
-  html.is-loading, html.is-loading body{ overflow: hidden; height: 100%; }
+  html.is-loading{ overflow: hidden; scrollbar-gutter: stable; }
+  html.is-loading body{ overflow: hidden; }
   #loader{
     position: fixed; inset: 0; z-index: 999;
     background: #262626;
@@ -29,14 +30,25 @@
   .ld__set{ display: grid; justify-items: start; gap: calc(var(--c) * .75); }
   .ld__set.is-hid{ visibility: hidden; }
 
-  .ld__run{ position: relative; width: calc(var(--c) * 16); height: var(--c); }
-  .ld__run i{
-    position: absolute; left: 0; top: 0;
-    width: var(--c); height: var(--c);
-    background: #f9fff9;
-    animation: ldrun 1.6s steps(16, jump-none) infinite;
+  .ld__txt{
+    font-family: 'DotGothic16', ui-monospace, 'Courier New', monospace;
+    font-size: calc(var(--c) * 1.15);
+    line-height: 1;
+    letter-spacing: .16em;
+    color: #f9fff9;
+    -webkit-font-smoothing: none;
   }
-  @keyframes ldrun{ to{ transform: translateX(calc(var(--c) * 15)); } }
+  .ld__txt b{ font-weight: inherit; }
+  /* os pontos aparecem um a um e voltam ao zero: um a piscar de cada vez */
+  .ld__txt i{
+    font-style: normal; letter-spacing: 0; opacity: 0;
+    animation: lddot1 1.2s linear infinite;
+  }
+  .ld__txt i:nth-of-type(2){ animation-name: lddot2; }
+  .ld__txt i:nth-of-type(3){ animation-name: lddot3; }
+  @keyframes lddot1{ 0%, 24.9%{ opacity: 0; } 25%, 100%{ opacity: 1; } }
+  @keyframes lddot2{ 0%, 49.9%{ opacity: 0; } 50%, 100%{ opacity: 1; } }
+  @keyframes lddot3{ 0%, 74.9%{ opacity: 0; } 75%, 100%{ opacity: 1; } }
 
   .ld__bar{ display: flex; --p: 0; }
   .ld__bar i{
@@ -52,7 +64,7 @@
   .ld__px.is-gone i{ opacity: 0; }
 
   @media (prefers-reduced-motion: reduce){
-    .ld__run i{ animation: none; }
+    .ld__txt i{ animation: none; opacity: 1; }
   }
 </style>
 <script>
@@ -68,7 +80,7 @@
 
 <div id="loader" role="status" aria-label="A carregar">
   <div class="ld__set" id="ld-set">
-    <div class="ld__run"><i></i></div>
+    <div class="ld__txt"><b>loading</b><i>.</i><i>.</i><i>.</i></div>
     <div class="ld__bar" id="ld-bar"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i><i style="--i:8"></i><i style="--i:9"></i><i style="--i:10"></i><i style="--i:11"></i><i style="--i:12"></i><i style="--i:13"></i><i style="--i:14"></i><i style="--i:15"></i></div>
   </div>
 </div>
@@ -125,6 +137,8 @@
     saiu = true;
     root.classList.remove('is-loading');
     bar.style.setProperty('--p', '16');
+    // a largura util muda ao devolver o scroll: pedir ao site que se remeca
+    try { window.dispatchEvent(new Event('site:relayout')); } catch (e) {}
 
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
       box.remove();
@@ -367,7 +381,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
-<script src="js/pixel-anim.js?v=202609032153" defer></script>
-<script src="js/main.js?v=202609032153" defer></script>
+<script src="js/pixel-anim.js?v=202609032200" defer></script>
+<script src="js/main.js?v=202609032200" defer></script>
 </body>
 </html>
