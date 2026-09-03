@@ -286,29 +286,42 @@
 
   var stack = document.getElementById('stack');
   var cards = [].slice.call(document.querySelectorAll('.card'));
-  var SPC = 800, GAP = 240, HOLD = 0.42, stackTop = 0, cardH = [];
+  var SPC = 800, GAP = 240, HOLD = 0.42, stackTop = 0, cardH = [], cardTilt = [];
 
+  var navPx = 0;
   function navH() {
     var n = document.querySelector('.nav');
-    return n ? n.offsetHeight : 68 * scale;
+    navPx = n ? n.offsetHeight : Math.round(68 * scale);
+    return navPx;
+  }
+
+  // No computador a altura da janela so muda quando o utilizador a muda.
+  // No telemovel muda sozinha durante o scroll (a barra do browser esconde-se),
+  // por isso ai usa-se a altura da ultima medicao a serio.
+  function stackVH() {
+    return MOBILE() ? (L.vh || window.innerHeight) : window.innerHeight;
   }
 
   function stackLayout() {
     if (!stack || !cards.length) return;
     if (FLOW()) { stack.style.height = ''; stack.style.marginTop = ''; cards.forEach(function (c) { c.style.transform = ''; c.style.width = ''; }); return; }
-    SPC = Math.round((L.vh || window.innerHeight) * 1.2);
-    stack.style.height = ((cards.length - 1 + HOLD) * SPC + (L.vh || window.innerHeight)) + 'px';
-    var vh0 = L.vh || window.innerHeight, navH0 = navH(), h0 = cards[0].offsetHeight;
+    var vhRef = stackVH();
+    SPC = Math.round(vhRef * 1.2);
+    stack.style.height = ((cards.length - 1 + HOLD) * SPC + vhRef) + 'px';
+    var vh0 = vhRef, navH0 = navH(), h0 = cards[0].offsetHeight;
     var C0 = Math.max(navH0 * 0.4, navH0 + (vh0 - navH0 - h0) / 2);
     stack.style.marginTop = Math.round(34 * scale - C0) + 'px';
     cardH = cards.map(function (c) { return c.offsetHeight; });
+    cardTilt = cards.map(function (c) {
+      return (getComputedStyle(c).getPropertyValue('--tilt') || '0deg').trim() || '0deg';
+    });
     stackTop = stack.getBoundingClientRect().top + window.scrollY;
   }
 
   function stackScroll() {
     if (!stack || !cards.length || FLOW()) return;
-    var vh = L.vh || window.innerHeight;
-    var nav = navH();
+    var vh = stackVH();
+    var nav = navPx || navH();
     var u = clamp((window.scrollY - stackTop) / SPC, 0, cards.length - 1);
     var k = Math.floor(u), f = u - k;
     f = f <= HOLD ? 0 : (f - HOLD) / (1 - HOLD);
@@ -323,7 +336,7 @@
       var y = d >= 0 ? C - d * gap : C + (-d) * enter;
       var z0 = MOBILE() ? 0.947 : 0.93;
       var z = d < 0 ? z0 + (1 - z0) * clamp(1 + d, 0, 1) : 1;
-      c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0) rotate(var(--tilt)) scale(' + z.toFixed(3) + ')';
+      c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0) rotate(' + (cardTilt[i] || '0deg') + ') scale(' + z.toFixed(3) + ')';
     }
   }
 
@@ -764,10 +777,12 @@
   var resizeT, lastVW = root.clientWidth, lastVH = window.innerHeight;
   window.addEventListener('resize', function () {
     // no telemovel a barra do browser aparece e desaparece durante o scroll e
-    // dispara resize: se so a altura mudou um pouco, nao se remede nada
+    // dispara resize: se so a altura mudou um pouco, nao se remede nada.
+    // No computador remede-se sempre, como antes.
     var vw = root.clientWidth, vh = window.innerHeight;
-    if (vw === lastVW && Math.abs(vh - lastVH) < 170) return;
+    var barOnly = MOBILE() && vw === lastVW && Math.abs(vh - lastVH) < 170;
     lastVW = vw; lastVH = vh;
+    if (barOnly) return;
     clearTimeout(resizeT);
     resizeT = setTimeout(function () {
       setScale(); layout();
