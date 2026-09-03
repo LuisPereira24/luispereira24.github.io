@@ -55,7 +55,6 @@
 html{ scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce){ html{ scroll-behavior: auto; } }
 
-html{ overflow-x: clip; }
 body{
   margin: 0;
   background: var(--olive);
@@ -349,6 +348,7 @@ a{ color: inherit; text-decoration: none; }
 
 .works{
   position: relative;
+  overflow-x: clip;
   background: transparent;
 
   padding: calc(var(--grass-drop, 0px) + 145 * var(--s)) 0 0;
