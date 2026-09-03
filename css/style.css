@@ -778,7 +778,7 @@ a{ color: inherit; text-decoration: none; }
 
   .hero__anim{
     left: calc(-689 * var(--m));
-    top: calc(502 * var(--m));
+    top: calc(680 * var(--m));
     width: calc(1600 * var(--m));
     height: calc(900 * var(--m));
     transform: rotate(90deg);
@@ -786,13 +786,13 @@ a{ color: inherit; text-decoration: none; }
 
   .hero__hi{
     left: 50%; transform: translateX(-50%);
-    top: calc(152 * var(--m));
+    top: var(--hero-hi, calc(270 * var(--m)));
     font-size: calc(64.662 * var(--m));
     line-height: .83;
   }
   .hero__name{
     left: 50%; transform: translateX(-50%);
-    top: calc(234 * var(--m));
+    top: calc(var(--hero-hi, calc(270 * var(--m))) + 82 * var(--m));
     width: calc(644 * var(--m));
     font-size: calc(224.797 * var(--m));
     line-height: .71;
@@ -889,9 +889,9 @@ a{ color: inherit; text-decoration: none; }
     clip-path: none;
     padding: 0;
   }
-  .about__edge{ --sq: calc(20.25 * var(--m)); }
+  .about__edge{ --sq: calc(18 * var(--m)); }
   .about__edge--top{ top: calc(76 * var(--m) - var(--sq) * 2); }
-  .about__edge--bottom{ top: calc(1751 * var(--m)); }
+  .about__edge--bottom{ top: calc(1827 * var(--m)); }
 
   .about__grid{
     position: absolute;
@@ -976,6 +976,19 @@ a{ color: inherit; text-decoration: none; }
     top: calc(29.17 * var(--m));
     width: calc(9.426 * var(--m));
     height: calc(9.426 * var(--m));
+  }
+
+  /* entrada do verde depois do relvado, na escala de 710 */
+  .gridbg{
+    --grid: calc(48 * var(--m));
+    --fade-from: 0px;
+    background-image:
+      linear-gradient(180deg,
+        var(--olive) 0,
+        var(--olive) calc(40 * var(--m)),
+        rgba(39,48,29,0) calc(430 * var(--m))),
+      repeating-linear-gradient(0deg,  rgba(249,255,249,.055) 0 1px, transparent 1px var(--grid)),
+      repeating-linear-gradient(90deg, rgba(249,255,249,.055) 0 1px, transparent 1px var(--grid));
   }
 
   .copied{ font-size: calc(30 * var(--m)); padding: calc(8 * var(--m)) calc(18 * var(--m)); }

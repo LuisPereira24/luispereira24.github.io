@@ -4,7 +4,7 @@
   var WIPE_ON   = false;
   var DESIGN_W  = 1920;
   var GRASS_VIS = 0.20;
-  var GRASS_VIS_M = 0.4905;
+  var GRASS_VIS_M = 0.344;
   var FEET_Y    = 1645;
   var COLS = 18, ROWS = 9, DISPERSAO = 0.35;
 
@@ -32,7 +32,7 @@
   }
   setScale();
 
-  var L = { vh: 0, visible: 0, heroH: 0, bandH: 0, stop: 0 };
+  var L = { vh: 0, visible: 0, heroH: 0, bandH: 0, stop: 0, hiTop: 0 };
 
   function layout() {
     if (!band || !hero) return;
@@ -46,6 +46,16 @@
       L.visible = Math.min(Math.round(L.vh * GRASS_VIS_M), L.bandH);
       band.style.setProperty('--grass-img-w', Math.round(1920 * mscale) + 'px');
       band.style.setProperty('--grass-h', L.visible + 'px');
+      // bloco do nome centrado entre a barra de topo e a linha do relvado:
+      // e assim que a altura a mais dos ecras altos se reparte (Figma 710:
+      // "hi" em 270, nome em 352, ou seja 82 abaixo, bloco de 402 de altura)
+      var navM = Math.round(68 * mscale);
+      var grassTop0 = L.vh - L.visible;
+      var blockH = Math.round(402 * mscale);
+      L.hiTop = Math.max(navM + Math.round(40 * mscale),
+                         Math.round(navM + (grassTop0 - navM - blockH) / 2));
+      root.style.setProperty('--hero-hi', L.hiTop + 'px');
+
       var anchor = Math.max(Math.round(1495 * mscale),
                             L.vh - L.visible + Math.round(876 * mscale));
       L.heroH = anchor + L.bandH;
@@ -462,8 +472,12 @@
     var a = document.querySelector(el.dataset.anchor || '#home');
     var r = a ? a.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0 };
     if (MOBILE() && el.dataset.mx) {
+      var off = parseFloat(el.dataset.my) * mscale, my;
+      if (el.dataset.mfrom === 'hi') my = L.hiTop + off;                  // segue o nome
+      else if (el.dataset.mfrom === 'grass') my = (L.vh - L.visible) + off; // segue o relvado
+      else my = off;
       return { x: r.left + parseFloat(el.dataset.mx) * mscale,
-               y: r.top + window.scrollY + parseFloat(el.dataset.my) * mscale };
+               y: r.top + window.scrollY + my };
     }
     return { x: r.left + parseFloat(el.dataset.x) * scale,
              y: r.top + window.scrollY + parseFloat(el.dataset.y) * scale };
