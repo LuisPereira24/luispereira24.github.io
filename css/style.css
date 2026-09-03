@@ -109,11 +109,11 @@ a{ color: inherit; text-decoration: none; }
   transition: transform .2s cubic-bezier(.333, 0, .667, 1);
 }
 .nav__burger.is-open .mx--t0,
-.nav__burger.is-open .mx--t4{ transform: translateY(-18.499px); }
-.nav__burger.is-open .mx--t2{ transform: translateY(17.250px); }
+.nav__burger.is-open .mx--t4{ transform: translateY(-18.652px); }
+.nav__burger.is-open .mx--t2{ transform: translateY(18.652px); }
 .nav__burger.is-open .mx--b0,
-.nav__burger.is-open .mx--b4{ transform: translateY(18.499px); }
-.nav__burger.is-open .mx--b2{ transform: translateY(-18.499px); }
+.nav__burger.is-open .mx--b4{ transform: translateY(18.652px); }
+.nav__burger.is-open .mx--b2{ transform: translateY(-18.652px); }
 
 .nav__links{
   position: absolute;
