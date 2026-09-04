@@ -87,13 +87,16 @@ q.convert("RGB").save("assets/img/works/loopclub.webp", "WEBP",
                       lossless=True, method=6)
 ```
 
-**O corte.** As caixas dos cards não são 16:9 — no Figma são 708 × 382 no
-computador e 453 × 328 no telemóvel. A imagem preenche a caixa e o resto é
-cortado (`object-fit: cover`). No computador perdem-se ~19px em cima, e é só
-por cima, para não tocar na faixa do título que estas imagens têm em baixo.
-No telemóvel o corte é lateral e é grande: ~11% de cada lado. Se o título da
-imagem chegar às bordas, as primeiras e últimas letras desaparecem no
-telemóvel — vale a pena deixar margem ao desenhar o mockup.
+**Nada é cortado.** As caixas dos cards não são 16:9 — no Figma são
+708 × 382 no computador e 453 × 328 no telemóvel. A imagem entra inteira,
+encolhida até caber e centrada (`object-fit: contain`). O que sobra nas
+margens fica pintado da cor do próprio card (`--card-bg`), por isso lê-se
+como se a imagem simplesmente tivesse aquele tamanho.
+
+Sobra pouco no computador (~2% de cada lado) e bastante no telemóvel
+(~11% em cima e em baixo). Se um dia quiseres que a imagem preencha a caixa
+toda, é trocar `contain` por `cover` no `.card__media img` — mas aí perde-se
+o que sair fora, e no telemóvel isso são 22% da largura.
 
 ### Fonte dos pictogramas — já instalada
 
