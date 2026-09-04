@@ -55,10 +55,45 @@ o site usa `image-rendering: pixelated`, por isso pixel a pixel importa):
 | Ficheiro | O que é | Onde entra |
 |---|---|---|
 | `retrato.png` | a foto do About (nó `DSC01445`) | secção ABOUT |
-| `work-loopclub.png` | mockup 1600×900 | card LOOP CLUB |
-| `work-aspect.png` | mockup 1600×900 | card ASPECT |
-| `work-alphahike.png` | mockup 1600×900 | card ALPHAHIKE |
 | `circ-anim.webm` | a animação circular (`CIRCanimPIXEL`) | secção WORKS |
+
+### Imagens dos cards (1600 × 900)
+
+Vivem em `assets/img/works/`, cada uma em dois formatos — o `.webp` é o que
+quase toda a gente recebe, o `.png` é o plano B:
+
+| Card | Ficheiros | Estado |
+|---|---|---|
+| LOOP CLUB | `works/loopclub.webp` + `.png` | feito |
+| ASPECT | `works/aspect.webp` + `.png` | falta |
+| ALPHAHIKE | `works/alphahike.webp` + `.png` | falta |
+
+Os cards já estão preparados: enquanto o ficheiro não existir fica só o
+rectângulo cinzento, sem texto nenhum por cima. Para ligar um card novo,
+copia o bloco `<picture>` do LOOP CLUB no `index.html` e troca o nome.
+
+**Como preparar uma imagem.** O original sai do Figma a 1600 × 900 em PNG.
+Estas imagens são todas trameadas (dither), o que quer dizer que compressão
+com perdas as borrata — daí o WebP ser *lossless*. O truque para não ficarem
+pesadas é reduzir a paleta a 256 cores primeiro: o erro é imperceptível
+(1,2 em 255) e corta o ficheiro para um terço.
+
+```python
+from PIL import Image
+im = Image.open("SITELOOPDISPLAY 2.png").convert("RGB")
+q  = im.quantize(colors=256, method=Image.MEDIANCUT)
+q.save("assets/img/works/loopclub.png", "PNG", optimize=True)
+q.convert("RGB").save("assets/img/works/loopclub.webp", "WEBP",
+                      lossless=True, method=6)
+```
+
+**O corte.** As caixas dos cards não são 16:9 — no Figma são 708 × 382 no
+computador e 453 × 328 no telemóvel. A imagem preenche a caixa e o resto é
+cortado (`object-fit: cover`). No computador perdem-se ~19px em cima, e é só
+por cima, para não tocar na faixa do título que estas imagens têm em baixo.
+No telemóvel o corte é lateral e é grande: ~11% de cada lado. Se o título da
+imagem chegar às bordas, as primeiras e últimas letras desaparecem no
+telemóvel — vale a pena deixar margem ao desenhar o mockup.
 
 ### Fonte dos pictogramas — já instalada
 

@@ -440,17 +440,30 @@ a{ color: inherit; text-decoration: none; }
 .card__inner > *{ min-width: 0; }
 .card__col--media{ display: flex; flex-direction: column; gap: calc(28 * var(--s)); min-width: 0; }
 .card__text{ overflow-wrap: anywhere; }
+/* Caixa de imagem do card. Fica com a proporcao do Figma (708x382) e as
+   imagens sao sempre 1600x900: entram em "cover", ou seja, preenchem a caixa
+   e o que sobra e cortado. Como a faixa do titulo das imagens esta em baixo,
+   o corte e feito por cima (object-position: bottom). Enquanto nao houver
+   imagem, fica so o cinzento. */
 .card__media{
   aspect-ratio: 708 / 382;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   background: #949494;
-  display: grid; place-items: center;
-  font-family: var(--font-hand);
-  font-variation-settings: var(--hand-axes), "wght" var(--hand-w, 400);
-  font-size: max(13px, calc(28 * var(--s)));
-  color: #f0f0f0;
+  position: relative;
+  overflow: hidden;
+}
+.card__media > picture,
+.card__media > img{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.card__media picture{ position: absolute; inset: 0; }
+.card__media img{
+  object-fit: cover;
+  object-position: center bottom;
 }
 .btn{
   display: flex; align-items: center; width: 100%;
@@ -934,7 +947,7 @@ a{ color: inherit; text-decoration: none; }
     text-align: left;
   }
   .card__col--media{ gap: calc(30 * var(--m)); margin-top: calc(24 * var(--m)); }
-  .card__media{ aspect-ratio: 453 / 328.4; font-size: calc(24 * var(--m)); }
+  .card__media{ aspect-ratio: 453 / 328.4; }
   .btn{ font-size: calc(58.55 * var(--m)); line-height: .83; }
   .btn__gap{ flex-basis: calc(34.253 * var(--m)); }
   .btn__arrow{ width: calc(31.684 * var(--m)); }
