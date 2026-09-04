@@ -292,3 +292,31 @@ O tratamento do ZIP faz sempre o mesmo:
   exportado, sem efeito
 - pedidos `wc-ajax` devolvem 405 — sao chamadas POST do carrinho do
   WooCommerce, que um alojamento estatico nao atende
+
+## 9. ASPECT (site estatico)
+
+Vive em `aspect/` e esta ligado ao botao CHECK WEBSITE do card ASPECT
+(`href="aspect/"`, abre em separador novo).
+
+Ao contrario do Loop Club, este ja era HTML/CSS/JS normal — nao houve
+exportacao nenhuma, a pasta entrou tal e qual, com todos os caminhos
+relativos que ja tinha.
+
+**O que fica de fora do repositorio.** As pastas do Bootstrap e do Font
+Awesome traziam 25 MB de ficheiros que o site nunca carrega: versoes nao
+minificadas, variantes RTL, source maps e a pasta `svgs-full` inteira. O
+`.gitignore` deixa passar so o que as paginas pedem — `bootstrap.min.css`,
+`bootstrap.min.js`, `all.min.css`, `all.min.js`, as quatro webfonts e o AOS.
+Resultado: 53 ficheiros, ~5 MB.
+
+Se um dia usares um ficheiro do vendor que hoje esta ignorado, tens de o
+tirar da lista no `.gitignore` — senao o `git add` ignora-o em silencio e o
+site publicado fica sem ele.
+
+**Uma imagem partida, de proposito.** Em `contactos.html` o pin do mapa
+aponta para `figma.com/api/mcp/asset/...`, um endereco temporario do Figma
+que expira. Nao lhe mexi (mexer era alterar o site). Para resolver, guarda
+a imagem em `aspect/img/` e troca o `src`.
+
+O mapa em si vem do MapTiler com uma chave publica no URL — funciona, mas
+qualquer pessoa a consegue ler no codigo-fonte.

@@ -8,3 +8,15 @@ node_modules/
 
 # exportacoes do WordPress (fica so a pasta loopclub/)
 simply-static-*.zip
+
+# ASPECT - vendor que o site nao carrega (ver README)
+aspect/**/*.map
+aspect/assets/fontawesome/svgs-full/
+aspect/assets/fontawesome/css/*
+!aspect/assets/fontawesome/css/all.min.css
+aspect/assets/fontawesome/js/*
+!aspect/assets/fontawesome/js/all.min.js
+aspect/assets/bootstrap/css/*
+!aspect/assets/bootstrap/css/bootstrap.min.css
+aspect/assets/bootstrap/js/*
+!aspect/assets/bootstrap/js/bootstrap.min.js
