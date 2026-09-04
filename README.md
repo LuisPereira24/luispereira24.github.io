@@ -254,24 +254,41 @@ esperar pelo `main.js`.
 
 ## 8. Loop Club (site em WordPress)
 
-O botao "CHECK WEBSITE" do card LOOP CLUB vai apontar para uma copia estatica
-do site WordPress, publicada dentro deste mesmo repositorio em `loopclub/`,
-ou seja `https://luispereira24.github.io/loopclub/`.
+O botao "CHECK WEBSITE" do primeiro card abre `loopclub/`, uma copia estatica do
+site WordPress publicada neste mesmo repositorio:
+`https://luispereira24.github.io/loopclub/`.
 
 Porque estatica: o GitHub Pages so serve ficheiros, nao corre PHP nem base de
-dados, por isso o WordPress em si nao pode ser alojado aqui. Uma copia estatica
-mantem o aspecto e a navegacao; deixa de funcionar tudo o que precisa de
-servidor (carrinho, checkout, formulario de contacto, pesquisa).
+dados. A copia mantem o aspecto, a navegacao, os videos e as imagens; nao
+funciona o que precisa de servidor (carrinho, checkout, formularios, pesquisa).
 
-Como gerar a copia (no WordPress local):
+### Como actualizar a copia
 
-1. Plugins -> Adicionar novo -> instalar e activar **Simply Static**
-2. Simply Static -> Settings -> **Destination URL**: absolute, com
-   `https://luispereira24.github.io/loopclub`
-3. Delivery method: **ZIP** (ou pasta local)
-4. Generate -> descarregar o ZIP
-5. Deixar o ZIP numa pasta ligada a sessao; a copia entra em `loopclub/` e o
-   link do card e trocado de `#` para `loopclub/`
+1. No WordPress: WooCommerce -> Site visibility -> **Live** (se estiver em
+   "Coming soon" o export sai todo com o aviso "Pardon our dust")
+2. Simply Static -> Destination URL: `luispereira24.github.io/loopclub`
+   (sem `https://` a frente, que o campo ja o poe; caso contrario todos os
+   links saem como `https://https://...`)
+3. Generate -> ZIP -> deixar o ZIP nesta pasta
 
-O site tem ~11 MB de uploads e um tema proprio de ~11 MB, portanto a copia
-estatica fica bem dentro dos limites do GitHub Pages.
+O tratamento do ZIP faz sempre o mesmo:
+
+- **filtragem**: o export traz ~126 MB e 4300 ficheiros, muito disso o
+  JavaScript do editor do WordPress que um site estatico nunca usa. Guarda-se
+  o que as paginas e as folhas de estilo referem de facto (fecho do grafo de
+  dependencias), mais o tema completo e todos os uploads: ~600 ficheiros, 24 MB
+- **enderecos**: os links absolutos passam a relativos, calculados pela
+  profundidade de cada ficheiro, para a copia funcionar em qualquer endereco.
+  Os sitemaps ficam absolutos, como devem ser
+- **restos locais**: `/wp-loopclub/` (caminho do WordPress local) e trocado
+  por `/loopclub/`
+- o ZIP nao entra no repositorio (esta no `.gitignore`)
+
+### Avisos conhecidos na consola
+
+- `wp-content/themes/loopclub-child/assets/css/custom.css` da 404 — esse
+  ficheiro nao existe nem na instalacao original, e um 404 que ja la estava
+- `wp-emoji-release.min.js` da 404 — script de emojis do WordPress, nao
+  exportado, sem efeito
+- pedidos `wc-ajax` devolvem 405 — sao chamadas POST do carrinho do
+  WooCommerce, que um alojamento estatico nao atende
