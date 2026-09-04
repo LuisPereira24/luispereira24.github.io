@@ -66,7 +66,7 @@ quase toda a gente recebe, o `.png` é o plano B:
 |---|---|---|
 | LOOP CLUB | `works/loopclub.mp4` + `loopclub-poster.webp` | feito (video, 11 MB) |
 | ASPECT | `works/aspect.webp` + `.png` | falta |
-| ALPHAHIKE | `works/alphahike.mp4` + `alphahike-poster.webp` | feito (video, 0,9 MB) |
+| ALPHAHIKE | `works/alphahike.mp4` + `alphahike-poster.webp` | feito (video, 4,8 MB) |
 
 ### Os cards do Loop Club e do AlphaHike sao video
 
@@ -87,10 +87,11 @@ O `crf 31` foi escolhido a olho, comparando recortes 1:1 com o original: e o
 ponto onde o grao do dither ainda se le. Acima disso (`crf 34`, ~4 MB) a
 imagem amacia e perde o aspecto trameado.
 
-O do AlphaHike veio de `alphahikegif.gif` (5,4 MB, 19 fotogramas, 0,63 s).
-E um ciclo curto, por isso mantive a cadencia original em vez de a forcar aos
-25 fps — reamostrar 19 fotogramas so ia introduzir salto. Como e curto, deu
-para usar `crf 28`, mais generoso, e mesmo assim ficou em 0,9 MB.
+O do AlphaHike veio de `alphahikegif.gif` (33 MB, 132 fotogramas, 4,4 s) e
+ficou em 4,8 MB, tambem a `crf 31`. Aqui mantive a cadencia original do GIF
+em vez de a forcar aos 25 fps: o ciclo e curto e reamostrar so introduzia
+salto. Comparei os recortes a 1:1 — como a animacao e quase toda pontilhado
+sobre fundo escuro, o `crf 31` aguenta-o tao bem como o 28, que dava 7 MB.
 
 O `poster` e o primeiro fotograma em WebP: e o que se ve enquanto o video nao
 chega. O `preload="none"` faz com que o video so comece a descarregar quando
