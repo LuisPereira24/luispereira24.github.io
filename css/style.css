@@ -455,14 +455,11 @@ a{ color: inherit; text-decoration: none; }
   overflow: hidden;
 }
 .card__media--img{ background: var(--card-bg, #949494); }
-.card__media > picture,
-.card__media > img{
+.card__media picture{ position: absolute; inset: 0; display: block; }
+.card__media img{
   display: block;
   width: 100%;
   height: 100%;
-}
-.card__media picture{ position: absolute; inset: 0; }
-.card__media img{
   object-fit: contain;
   object-position: center;
 }
