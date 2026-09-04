@@ -64,11 +64,11 @@ quase toda a gente recebe, o `.png` é o plano B:
 
 | Card | Ficheiros | Estado |
 |---|---|---|
-| LOOP CLUB | `works/loopclub.mp4` + `loopclub-poster.webp` | feito (video) |
+| LOOP CLUB | `works/loopclub.mp4` + `loopclub-poster.webp` | feito (video, 11 MB) |
 | ASPECT | `works/aspect.webp` + `.png` | falta |
-| ALPHAHIKE | `works/alphahike.webp` + `.png` | falta |
+| ALPHAHIKE | `works/alphahike.mp4` + `alphahike-poster.webp` | feito (video, 0,9 MB) |
 
-### O card do Loop Club e um video
+### Os cards do Loop Club e do AlphaHike sao video
 
 O original era um GIF de **181 MB** (`loopgifdither.gif`, 394 fotogramas a
 1000x562). Um GIF assim nao pode ir para o site: o GitHub recusa ficheiros
@@ -87,9 +87,18 @@ O `crf 31` foi escolhido a olho, comparando recortes 1:1 com o original: e o
 ponto onde o grao do dither ainda se le. Acima disso (`crf 34`, ~4 MB) a
 imagem amacia e perde o aspecto trameado.
 
+O do AlphaHike veio de `alphahikegif.gif` (5,4 MB, 19 fotogramas, 0,63 s).
+E um ciclo curto, por isso mantive a cadencia original em vez de a forcar aos
+25 fps — reamostrar 19 fotogramas so ia introduzir salto. Como e curto, deu
+para usar `crf 28`, mais generoso, e mesmo assim ficou em 0,9 MB.
+
 O `poster` e o primeiro fotograma em WebP: e o que se ve enquanto o video nao
 chega. O `preload="none"` faz com que o video so comece a descarregar quando
 o card aparece no ecra, para nao pesar no arranque da pagina.
+
+Para ligar um card novo a um video, copia o bloco `<video>` de um destes no
+`index.html`, troca o nome dos ficheiros e nao te esquecas da classe
+`card__media--img` na caixa (e ela que pinta as margens com a cor do card).
 
 Os cards já estão preparados: enquanto o ficheiro não existir fica só o
 rectângulo cinzento, sem texto nenhum por cima. Para ligar um card novo,
