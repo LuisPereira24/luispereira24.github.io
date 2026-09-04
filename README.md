@@ -64,9 +64,32 @@ quase toda a gente recebe, o `.png` é o plano B:
 
 | Card | Ficheiros | Estado |
 |---|---|---|
-| LOOP CLUB | `works/loopclub.webp` + `.png` | feito |
+| LOOP CLUB | `works/loopclub.mp4` + `loopclub-poster.webp` | feito (video) |
 | ASPECT | `works/aspect.webp` + `.png` | falta |
 | ALPHAHIKE | `works/alphahike.webp` + `.png` | falta |
+
+### O card do Loop Club e um video
+
+O original era um GIF de **181 MB** (`loopgifdither.gif`, 394 fotogramas a
+1000x562). Um GIF assim nao pode ir para o site: o GitHub recusa ficheiros
+acima de 100 MB, e mesmo que aceitasse ninguem espera 181 MB por um card.
+
+Ficou um MP4 (H.264) de ~11 MB, 13 segundos, 25 fps, em ciclo e sem som:
+
+```bash
+ffmpeg -i loopgifdither.gif \
+  -vf "fps=25,scale=1000:562:flags=lanczos,format=yuv420p" \
+  -c:v libx264 -preset slow -crf 31 -movflags +faststart -an \
+  assets/img/works/loopclub.mp4
+```
+
+O `crf 31` foi escolhido a olho, comparando recortes 1:1 com o original: e o
+ponto onde o grao do dither ainda se le. Acima disso (`crf 34`, ~4 MB) a
+imagem amacia e perde o aspecto trameado.
+
+O `poster` e o primeiro fotograma em WebP: e o que se ve enquanto o video nao
+chega. O `preload="none"` faz com que o video so comece a descarregar quando
+o card aparece no ecra, para nao pesar no arranque da pagina.
 
 Os cards já estão preparados: enquanto o ficheiro não existir fica só o
 rectângulo cinzento, sem texto nenhum por cima. Para ligar um card novo,

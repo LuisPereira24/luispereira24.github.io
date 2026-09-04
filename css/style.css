@@ -440,11 +440,11 @@ a{ color: inherit; text-decoration: none; }
 .card__inner > *{ min-width: 0; }
 .card__col--media{ display: flex; flex-direction: column; gap: calc(28 * var(--s)); min-width: 0; }
 .card__text{ overflow-wrap: anywhere; }
-/* Caixa de imagem do card. Fica com a proporcao do Figma (708x382), mas as
-   imagens sao 1600x900 (16:9), que nao e a mesma coisa. A imagem entra
+/* Caixa de imagem do card. Fica com a proporcao do Figma (708x382), mas o
+   que la entra e 16:9, que nao e a mesma coisa. A imagem (ou o video) entra
    inteira, encolhida ate caber (contain) e centrada — nunca e cortada. O que
    sobra nas margens fica da cor do proprio card, por isso nao se ve.
-   Enquanto nao houver imagem, a caixa fica com o cinzento do Figma. */
+   Enquanto nao houver nada, a caixa fica com o cinzento do Figma. */
 .card__media{
   aspect-ratio: 708 / 382;
   width: 100%;
@@ -456,13 +456,15 @@ a{ color: inherit; text-decoration: none; }
 }
 .card__media--img{ background: var(--card-bg, #949494); }
 .card__media picture{ position: absolute; inset: 0; display: block; }
-.card__media img{
+.card__media img,
+.card__media video{
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: center;
 }
+.card__media video{ position: absolute; inset: 0; }
 .btn{
   display: flex; align-items: center; width: 100%;
   min-width: 0; max-width: 100%;
