@@ -57,6 +57,11 @@ o site usa `image-rendering: pixelated`, por isso pixel a pixel importa):
 | `retrato.png` | a foto do About (nó `DSC01445`) | secção ABOUT |
 | `circ-anim.webm` | a animação circular (`CIRCanimPIXEL`) | secção WORKS |
 
+O CV já cá está: `assets/cv.pdf` (1 página A4, 1,4 MB). O botão DOWNLOAD CV
+aponta para lá com `download="Luis Pereira - CV 2026.pdf"`, para o ficheiro
+não chegar ao disco de quem o descarrega com o nome `cv.pdf`. Para o
+actualizar, substitui o ficheiro — o nome do link não muda.
+
 ### Imagens dos cards (1600 × 900)
 
 Vivem em `assets/img/works/`, cada uma em dois formatos — o `.webp` é o que
