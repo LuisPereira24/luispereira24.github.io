@@ -70,7 +70,7 @@ quase toda a gente recebe, o `.png` é o plano B:
 | Card | Ficheiros | Estado |
 |---|---|---|
 | LOOP CLUB | `works/loopclub.mp4` + `loopclub-poster.webp` | feito (video, 11 MB) |
-| ASPECT | `works/aspect.webp` + `.png` | falta |
+| ASPECT | `works/aspect.mp4` + `aspect-poster.webp` | feito (video, 3,6 MB) |
 | ALPHAHIKE | `works/alphahike.mp4` + `alphahike-poster.webp` | feito (video, 4,8 MB) |
 
 ### Os cards do Loop Club e do AlphaHike sao video
@@ -91,6 +91,11 @@ ffmpeg -i loopgifdither.gif \
 O `crf 31` foi escolhido a olho, comparando recortes 1:1 com o original: e o
 ponto onde o grao do dither ainda se le. Acima disso (`crf 34`, ~4 MB) a
 imagem amacia e perde o aspecto trameado.
+
+O do ASPECT veio de `aspect.gif` (36,7 MB, 150 fotogramas, 5 s) e ficou em
+3,6 MB, tambem a `crf 31`. Este vem a 754x424 em vez de 1000x562: e a
+resolucao nativa do GIF e nao vale a pena ampliar, porque ampliar dither so
+o borrata. A caixa do card e a mesma — o `contain` trata do resto.
 
 O do AlphaHike veio de `alphahikegif.gif` (33 MB, 132 fotogramas, 4,4 s) e
 ficou em 4,8 MB, tambem a `crf 31`. Aqui mantive a cadencia original do GIF
