@@ -401,3 +401,43 @@ a imagem em `aspect/img/` e troca o `src`.
 
 O mapa em si vem do MapTiler com uma chave publica no URL — funciona, mas
 qualquer pessoa a consegue ler no codigo-fonte.
+
+## 10. Icone e pre-visualizacao do link
+
+Tudo declarado no `<head>` do `index.html`. Nao mexe nas paginas de
+`loopclub/` nem de `aspect/`, que tem cabecalhos proprios.
+
+**O icone do separador** nasceu do `ICONsite.svg` (o sol pixelizado amarelo).
+O ficheiro original era 29x26, e um icone tem de ser quadrado, por isso
+alarguei a `viewBox` para 33,5x33,5 com a mesma margem dos quatro lados. O
+desenho nao foi tocado.
+
+| Ficheiro | Para que serve |
+|---|---|
+| `favicon.ico` (na raiz) | os 16/32/48 px que o browser pede sozinho |
+| `assets/img/favicon.svg` | browsers modernos, nitido em qualquer tamanho |
+| `assets/img/apple-touch-icon.png` | 180x180, ecra inicial do iPhone |
+
+O `apple-touch-icon` leva o verde `#27301d` por tras porque o iOS ignora a
+transparencia no ecra inicial — sem fundo, o sol ficava sobre preto.
+
+**A pre-visualizacao ao partilhar** usa `assets/img/og-banner.jpg`, que veio
+do `BANNER SITE.png` (1230x600). Convertido para JPEG a 92 ficou em 118 KB:
+o PNG tinha 600 KB e o WhatsApp ignora pre-visualizacoes acima de ~300 KB.
+
+Os `og:image` e `twitter:image` tem de ser **URLs absolutos** — os robots do
+Facebook, do LinkedIn e do WhatsApp nao resolvem caminhos relativos. Se um
+dia mudares de dominio, e aqui que tens de mexer, alem do `og:url` e do
+`canonical`.
+
+Nota sobre o formato: 1230x600 da 2,05:1 e o formato que a maioria das
+plataformas prefere e 1,91:1. Quase todas encaixam a imagem inteira, mas
+algumas cortam as laterais — e o "LUIS PEREIRA" do banner quase encosta as
+bordas. Se vires as pontas cortadas nalgum sitio, a solucao e refazer o
+banner a 1200x630 com mais folga lateral.
+
+Para testar depois de publicar (as plataformas guardam o resultado em cache,
+por isso e preciso forcar):
+
+- Facebook e WhatsApp: developers.facebook.com/tools/debug
+- LinkedIn: linkedin.com/post-inspector
